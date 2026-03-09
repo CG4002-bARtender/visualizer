@@ -1,0 +1,7 @@
+<linker>
+       <assembly fullname="UnityEngine.XR.ARFoundation" preserve="all"/>
+       <assembly fullname="UnityEngine.XR.ARKit" preserve="all"/>
+       <assembly fullname="UnityEngine.XR.ARSubsystems" preserve="all"/>
+       <assembly fullname="Unity.TextMeshPro" preserve="all"/>
+       <assembly fullname="UnityEngine.UI" preserve="all"/>
+   </linker>

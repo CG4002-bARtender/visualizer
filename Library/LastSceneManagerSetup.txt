@@ -1,0 +1,5 @@
+sceneSetups:
+- path: Assets/bARtender_3d_copy.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0

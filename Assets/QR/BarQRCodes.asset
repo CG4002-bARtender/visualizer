@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848409ee8ba454f42a5ddff137688a27, type: 3}
+  m_Name: BarQRCodes
+  m_EditorClassIdentifier: 
+  m_GuidLow: 4826337785949091397
+  m_GuidHigh: 11006755672733758086
+  m_DataStore:
+    m_Storage: []
+  m_Images:
+  - m_SerializedGuid:
+      m_GuidLow: 5408599969740566503
+      m_GuidHigh: 364939701540326562
+    m_SerializedTextureGuid:
+      m_GuidLow: 3784915516994191611
+      m_GuidHigh: 11786404316527471433
+    m_Size: {x: 0.04, y: 0.04}
+    m_SpecifySize: 1
+    m_Name: QR 1
+    m_Texture: {fileID: 2800000, guid: ff4d80fbb89b3486492bc06147b891a3, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 4840827064737358266
+      m_GuidHigh: 5970384582273835963
+    m_SerializedTextureGuid:
+      m_GuidLow: 8429846940781670645
+      m_GuidHigh: 9062509449501054601
+    m_Size: {x: 0.04, y: 0.04}
+    m_SpecifySize: 1
+    m_Name: QR 2
+    m_Texture: {fileID: 2800000, guid: 203470f5d52174fc8996213f5480c47d, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 4775071000666114876
+      m_GuidHigh: 16098460526534057615
+    m_SerializedTextureGuid:
+      m_GuidLow: 13025985383795165648
+      m_GuidHigh: 8827512221513043800
+    m_Size: {x: 0.04, y: 0.04}
+    m_SpecifySize: 1
+    m_Name: QR 3
+    m_Texture: {fileID: 2800000, guid: 228a89d098b1b4c5584fb465989f817a, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 5368836300514953193
+      m_GuidHigh: 3250498362298371481
+    m_SerializedTextureGuid:
+      m_GuidLow: 322158984230929494
+      m_GuidHigh: 4714596514214663465
+    m_Size: {x: 0.04, y: 0.04}
+    m_SpecifySize: 1
+    m_Name: QR 4
+    m_Texture: {fileID: 2800000, guid: a849045689e3047829550ff98c9c6d41, type: 3}
