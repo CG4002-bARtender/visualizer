@@ -66,6 +66,7 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
+    - UnityEngine.EventSystems.EventTrigger
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
@@ -109,6 +110,8 @@ ScriptsOnlyBuild:
     - UnityEngine.TextCore.GlyphMetrics
     - UnityEngine.TextCore.GlyphRect
     UnityEngine.UI:
+    - UnityEngine.EventSystems.EventTrigger/Entry
+    - UnityEngine.EventSystems.EventTrigger/TriggerEvent
     - UnityEngine.UI.AnimationTriggers
     - UnityEngine.UI.Button/ButtonClickedEvent
     - UnityEngine.UI.ColorBlock
@@ -124,7 +127,10 @@ ScriptsOnlyBuild:
     methodName: SimulateFakeInput
   - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
-    methodName: OnPourButton
+    methodName: OnPourButtonDown
+  - assembly: Assembly-CSharp
+    fullTypeName: SimpleHandSimulator
+    methodName: OnPourButtonUp
   - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnReleaseCupButton
@@ -210,6 +216,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 8774}
     - Class: 114
       Script: {instanceID: 8806}
+    - Class: 114
+      Script: {instanceID: 9334}
     - Class: 114
       Script: {instanceID: 9840}
     - Class: 114
@@ -311,12 +319,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Selectable
-  - hash:
-      serializedVersion: 2
-      Hash: 135e71ce08cec2c0248d8aaf4b3aedfd
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: EditorTestManager
   - hash:
       serializedVersion: 2
       Hash: 157d3cf40178d244cd11ae1c9791ead7
@@ -1694,4 +1696,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_red1
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour1
