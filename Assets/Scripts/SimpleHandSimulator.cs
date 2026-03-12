@@ -440,7 +440,7 @@ public void OnPourButtonUp()
 IEnumerator ContinuousPourAnimation()
 {
     Quaternion startRot = currentCup.transform.rotation;
-    Quaternion pourRot = startRot * Quaternion.Euler(pourAngle, 0, 0);
+    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);
     
     // PHASE 1: Tilt to pour angle
     float elapsed = 0;
@@ -464,7 +464,7 @@ IEnumerator ContinuousPourAnimation()
         if (currentCup != null)
         {
             Quaternion baseRot = arCamera.rotation;
-            currentCup.transform.rotation = baseRot * Quaternion.Euler(pourAngle, 0, 0);
+            currentCup.transform.rotation = baseRot * Quaternion.Euler(0, 0, pourAngle);
         }
         
         yield return null;

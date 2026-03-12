@@ -2176,7 +2176,7 @@ MonoBehaviour:
   crosshairSmoothSpeed: 25
   holdDistanceFromCamera: 0.3
   handOffset: {x: 0.1, y: -0.1, z: 0}
-  pourAngle: 60
+  pourAngle: 90
   pourDuration: 0.5
   maxPickupDistance: 0.5
   crosshairDetectionRadius: 0.3
