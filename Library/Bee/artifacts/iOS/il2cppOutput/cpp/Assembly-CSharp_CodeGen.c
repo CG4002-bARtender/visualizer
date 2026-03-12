@@ -15,6 +15,13 @@
 extern void Script_Start_m26181EB142F9E9D13BB497FAEA9E42CFDC132438 (void);
 extern void Script_Update_m3D73B366324BC0BF8F060D1E0CB6B52EAEED1518 (void);
 extern void Script__ctor_mC411C5D59BEB7BF2105E339FD817C5B1F8EB8451 (void);
+extern void EditorTestManager_Start_m63FDCD9A6C381045D1BC9E3D6ABEAFF3380F6C5B (void);
+extern void EditorTestManager_SpawnBottlesForTesting_mAE4E2CD046D6642BBB817607EC5594F393B752E8 (void);
+extern void EditorTestManager_SetupMouseTracking_m7E4024F7B649C4A6B9F0463ADF68576D5525A78D (void);
+extern void EditorTestManager_Update_m3E36C7ECBC539686E3DD2E617400E403B919F888 (void);
+extern void EditorTestManager_SimulateHandTrackingWithMouse_m30D92F0E72E7D6DDEB79F909617EE9B63BE28998 (void);
+extern void EditorTestManager_SimulateButtonsWithMouse_m81AB2D52793FD7FE4530800A1393D1B5CBDF1D34 (void);
+extern void EditorTestManager__ctor_m1ECE1C4EBBA7C95A1246087B24B817584B6F92ED (void);
 extern void QRCodeManager_OnEnable_m8D2C309D694EB91FF4443D2E9CF498DDFACA290F (void);
 extern void QRCodeManager_OnDisable_mD123CF777F26E6863C5C869B6D06699F92A21EBB (void);
 extern void QRCodeManager_OnTrackedImagesChanged_m9695297D66DCE99A60EC8FE9E6D39B0B17B4146E (void);
@@ -60,11 +67,18 @@ extern void U3CPourAnimationU3Ed__37_System_Collections_IEnumerator_get_Current_
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (void);
 extern void U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876 (void);
-static Il2CppMethodPointer s_methodPointers[48] = 
+static Il2CppMethodPointer s_methodPointers[55] = 
 {
 	Script_Start_m26181EB142F9E9D13BB497FAEA9E42CFDC132438,
 	Script_Update_m3D73B366324BC0BF8F060D1E0CB6B52EAEED1518,
 	Script__ctor_mC411C5D59BEB7BF2105E339FD817C5B1F8EB8451,
+	EditorTestManager_Start_m63FDCD9A6C381045D1BC9E3D6ABEAFF3380F6C5B,
+	EditorTestManager_SpawnBottlesForTesting_mAE4E2CD046D6642BBB817607EC5594F393B752E8,
+	EditorTestManager_SetupMouseTracking_m7E4024F7B649C4A6B9F0463ADF68576D5525A78D,
+	EditorTestManager_Update_m3E36C7ECBC539686E3DD2E617400E403B919F888,
+	EditorTestManager_SimulateHandTrackingWithMouse_m30D92F0E72E7D6DDEB79F909617EE9B63BE28998,
+	EditorTestManager_SimulateButtonsWithMouse_m81AB2D52793FD7FE4530800A1393D1B5CBDF1D34,
+	EditorTestManager__ctor_m1ECE1C4EBBA7C95A1246087B24B817584B6F92ED,
 	QRCodeManager_OnEnable_m8D2C309D694EB91FF4443D2E9CF498DDFACA290F,
 	QRCodeManager_OnDisable_mD123CF777F26E6863C5C869B6D06699F92A21EBB,
 	QRCodeManager_OnTrackedImagesChanged_m9695297D66DCE99A60EC8FE9E6D39B0B17B4146E,
@@ -111,8 +125,15 @@ static Il2CppMethodPointer s_methodPointers[48] =
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1,
 	U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876,
 };
-static const int32_t s_InvokerIndices[48] = 
+static const int32_t s_InvokerIndices[55] = 
 {
+	7031,
+	7031,
+	7031,
+	7031,
+	7031,
+	7031,
+	7031,
 	7031,
 	7031,
 	7031,
@@ -166,7 +187,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	48,
+	55,
 	s_methodPointers,
 	0,
 	NULL,

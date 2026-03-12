@@ -178,62 +178,48 @@ public class SimpleHandSimulator : MonoBehaviour
         }
     }
     
-    GameObject FindObjectAtCrosshair()
+GameObject FindObjectAtCrosshair() //CHANGEDDDDD
+{
+    if (handCrosshairRect == null || !redDotDetected) return null;
+    
+    Camera cam = arCamera.GetComponent<Camera>();
+    if (cam == null) return null;
+    
+    // Cast ray from camera through crosshair
+    Ray ray = cam.ScreenPointToRay(handCrosshairRect.position);
+    
+    GameObject[] allObjects = FindObjectsOfType<GameObject>();
+    
+    GameObject nearest = null;
+    float nearestDistanceToRay = float.MaxValue;  // Changed: now tracking distance to RAY, not camera
+    
+    foreach (GameObject obj in allObjects)
     {
-        if (handCrosshairRect == null || !redDotDetected)
+        if (!IsGrabbableObject(obj)) continue;
+        if (isHoldingCup && obj == currentCup) continue;
+        
+        Vector3 objectPos = obj.transform.position;
+        
+        // Calculate distance along ray
+        float rayDistance = Vector3.Dot(objectPos - ray.origin, ray.direction);
+        if (rayDistance <= 0) continue;  // Behind camera
+        
+        // Find closest point on ray to object
+        Vector3 closestPoint = ray.GetPoint(rayDistance);
+        
+        // Distance from object to the ray (how "aligned" it is with crosshair)
+        float distanceToRay = Vector3.Distance(objectPos, closestPoint);
+        
+        // Select the one CLOSEST TO THE RAY (nearest to where you're pointing)
+        if (distanceToRay < nearestDistanceToRay)
         {
-            return null;
+            nearest = obj;
+            nearestDistanceToRay = distanceToRay;
         }
-        
-        // Get crosshair position in screen space
-        Vector3 crosshairScreenPos = handCrosshairRect.position;
-        
-        // Create ray from camera through crosshair position
-        Camera cam = arCamera.GetComponent<Camera>();
-        if (cam == null) return null;
-        
-        Ray ray = cam.ScreenPointToRay(crosshairScreenPos);
-        
-        // Find all grabbable objects
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
-        
-        GameObject nearest = null;
-        float nearestDistance = float.MaxValue;
-        
-        foreach (GameObject obj in allObjects)
-        {
-            // Check if this is a grabbable object
-            if (!IsGrabbableObject(obj)) continue;
-            
-            // Skip if we're already holding it
-            if (isHoldingCup && obj == currentCup) continue;
-            
-            // Calculate distance from object to the ray
-            Vector3 objectPos = obj.transform.position;
-            Vector3 closestPoint = ray.GetPoint(Vector3.Dot(objectPos - ray.origin, ray.direction));
-            float distanceToRay = Vector3.Distance(objectPos, closestPoint);
-            
-            // Calculate distance from camera to object
-            float distanceFromCamera = Vector3.Distance(arCamera.position, objectPos);
-            
-            // Check if object is:
-            // 1. Close enough to the ray (within detection radius)
-            // 2. Within max pickup distance
-            // 3. In front of camera (positive ray direction)
-            float rayDistance = Vector3.Dot(objectPos - ray.origin, ray.direction);
-            
-            if (distanceToRay < crosshairDetectionRadius && 
-                distanceFromCamera <= maxPickupDistance && 
-                rayDistance > 0 &&
-                distanceFromCamera < nearestDistance)
-            {
-                nearest = obj;
-                nearestDistance = distanceFromCamera;
-            }
-        }
-        
-        return nearest;
     }
+    
+    return nearest;  // Returns object closest to crosshair, ignoring camera distance
+}
     
     bool IsGrabbableObject(GameObject obj)
     {

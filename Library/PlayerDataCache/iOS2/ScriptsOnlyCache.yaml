@@ -5,9 +5,12 @@ ScriptsOnlyBuild:
     - RedCircleTracker
     - SimpleHandSimulator
     Unity.InputSystem.dll:
+    - UnityEngine.InputSystem.InputActionAsset
+    - UnityEngine.InputSystem.InputActionReference
     - UnityEngine.InputSystem.InputSettings
     - UnityEngine.InputSystem.InputSystemObject
     - UnityEngine.InputSystem.RemoteInputPlayerConnection
+    - UnityEngine.InputSystem.UI.InputSystemUIInputModule
     - UnityEngine.InputSystem.XR.TrackedPoseDriver
     Unity.PlasticSCM.Editor.dll:
     - Unity.PlasticSCM.Editor.UVCSWindow
@@ -47,7 +50,6 @@ ScriptsOnlyBuild:
     - UnityEngine.XR.Management.XRManagerSettings
     Unity.XR.Simulation.Editor.dll:
     - UnityEditor.XR.Simulation.SimulationEnvironmentAssetsManager
-    - UnityEditor.XR.Simulation.XREnvironmentViewManager
     - UnityEditor.XR.Simulation.XRSimulationSettings
     Unity.XR.Simulation.dll:
     - UnityEngine.XR.Simulation.SimulatedBoundedPlane
@@ -63,7 +65,6 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
-    - UnityEngine.EventSystems.StandaloneInputModule
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
@@ -72,8 +73,11 @@ ScriptsOnlyBuild:
   serializedClasses:
     Unity.InputSystem:
     - UnityEngine.InputSystem.InputAction
+    - UnityEngine.InputSystem.InputActionMap
     - UnityEngine.InputSystem.InputActionProperty
     - UnityEngine.InputSystem.InputBinding
+    - UnityEngine.InputSystem.InputControlScheme
+    - UnityEngine.InputSystem.InputControlScheme/DeviceRequirement
     Unity.TextMeshPro:
     - TMPro.FaceInfo_Legacy
     - TMPro.FontAssetCreationSettings
@@ -158,11 +162,11 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1596}
+      Script: {instanceID: 1594}
     - Class: 114
-      Script: {instanceID: 1676}
+      Script: {instanceID: 1674}
     - Class: 114
-      Script: {instanceID: 1778}
+      Script: {instanceID: 1776}
     - Class: 114
       Script: {instanceID: 2494}
     - Class: 114
@@ -179,6 +183,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 4624}
     - Class: 114
       Script: {instanceID: 4710}
+    - Class: 114
+      Script: {instanceID: 4730}
     - Class: 114
       Script: {instanceID: 4826}
     - Class: 114
@@ -198,15 +204,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 8230}
     - Class: 114
-      Script: {instanceID: 8250}
-    - Class: 114
       Script: {instanceID: 8332}
     - Class: 114
       Script: {instanceID: 8774}
     - Class: 114
+      Script: {instanceID: 8806}
+    - Class: 114
+      Script: {instanceID: 9840}
+    - Class: 114
       Script: {instanceID: 10230}
     - Class: 114
       Script: {instanceID: 10586}
+    - Class: 114
+      Script: {instanceID: 26514}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -302,6 +312,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Selectable
+  - hash:
+      serializedVersion: 2
+      Hash: 135e71ce08cec2c0248d8aaf4b3aedfd
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: EditorTestManager
   - hash:
       serializedVersion: 2
       Hash: 157d3cf40178d244cd11ae1c9791ead7
@@ -1679,4 +1695,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build3.4
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_red2.5
