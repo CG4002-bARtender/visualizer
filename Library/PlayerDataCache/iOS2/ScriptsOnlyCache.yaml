@@ -50,6 +50,7 @@ ScriptsOnlyBuild:
     - UnityEngine.XR.Management.XRManagerSettings
     Unity.XR.Simulation.Editor.dll:
     - UnityEditor.XR.Simulation.SimulationEnvironmentAssetsManager
+    - UnityEditor.XR.Simulation.XREnvironmentViewManager
     - UnityEditor.XR.Simulation.XRSimulationSettings
     Unity.XR.Simulation.dll:
     - UnityEngine.XR.Simulation.SimulatedBoundedPlane
@@ -215,8 +216,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10230}
     - Class: 114
       Script: {instanceID: 10586}
-    - Class: 114
-      Script: {instanceID: 26514}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1695,4 +1694,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_red2.5
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_red1

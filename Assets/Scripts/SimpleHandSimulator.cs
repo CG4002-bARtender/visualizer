@@ -83,14 +83,32 @@ public class SimpleHandSimulator : MonoBehaviour
     }
     
     void UpdateHeldObjectPosition()
-    {
-        Vector3 holdPosition = arCamera.position + arCamera.forward * holdDistanceFromCamera;
-        holdPosition += arCamera.right * handOffset.x;
-        holdPosition += arCamera.up * handOffset.y;
-        
-        currentCup.transform.position = holdPosition;
-        currentCup.transform.rotation = arCamera.rotation;
-    }
+{
+    if (currentCup == null || arCamera == null) return;
+
+    // NEW: Use red dot position if available, otherwise use center
+    Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+    
+    // Convert normalized screen position (0-1) to actual screen coordinates
+    Vector3 screenPoint = new Vector3(
+        targetScreenPos.x * Screen.width,
+        targetScreenPos.y * Screen.height,
+        holdDistanceFromCamera  // Distance from camera
+    );
+    
+    // Convert screen point to world position
+    Vector3 worldPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
+    
+    // Smooth movement
+    currentCup.transform.position = Vector3.Lerp(
+        currentCup.transform.position,
+        worldPosition,
+        Time.deltaTime * 10f
+    );
+    
+    // Match camera rotation
+    currentCup.transform.rotation = arCamera.rotation;
+}
     
     void UpdateCrosshairPosition()
     {
