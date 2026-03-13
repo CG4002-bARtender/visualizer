@@ -28,9 +28,11 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("Pour Settings")]
     public float pourAngle = 60f;
     public float pourDuration = 0.5f;
+    public GameObject liquidStreamPrefab;
     private bool isPouring = false;
     private Coroutine pourCoroutine = null; 
-    
+    private GameObject activeLiquidStream;
+
     [Header("Pickup Settings")]
     public float maxPickupDistance = 0.5f; // 50cm range
     public float crosshairDetectionRadius = 0.3f; // How close to crosshair ray to detect
@@ -426,45 +428,84 @@ public void OnPourButtonUp()
         StopCoroutine(pourCoroutine);
         pourCoroutine = null;
     }
-    
+
+    // Stop and destroy liquid stream
+    if (activeLiquidStream != null)
+    {
+        Destroy(activeLiquidStream);
+        activeLiquidStream = null;
+    }
+
     // Return bottle to upright
     if (currentCup != null)
     {
         StartCoroutine(ReturnToUpright());
     }
     
-    if (showDebugLogs) Debug.Log("✓ Stopped pouring (released button)");
+    if (showDebugLogs) Debug.Log("✓ Stopped pouring");
 }
 
-// NEW: Continuous pour animation
 IEnumerator ContinuousPourAnimation()
 {
     Quaternion startRot = currentCup.transform.rotation;
-    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);
+    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);  // Sideways
     
-    // PHASE 1: Tilt to pour angle
+    // PHASE 1: Tilt sideways
     float elapsed = 0;
     while (elapsed < pourDuration && isPouring)
     {
         elapsed += Time.deltaTime;
-        float t = elapsed / pourDuration;
-        
         if (currentCup != null)
-        {
-            currentCup.transform.rotation = Quaternion.Lerp(startRot, pourRot, t);
-        }
-        
+            currentCup.transform.rotation = Quaternion.Lerp(startRot, pourRot, elapsed / pourDuration);
         yield return null;
     }
     
-    // PHASE 2: Hold pour angle while button is held
+    // PHASE 2: Spawn liquid stream when fully tilted
+    if (isPouring && liquidStreamPrefab != null && currentCup != null)
+    {
+        // Calculate spout position (right side of bottle when tilted)
+        // Vector3 spoutOffset = currentCup.transform.right * 0.15f +   // Right side
+        //                     currentCup.transform.up * 0.2f;          // Top of bottle
+        Vector3 spoutOffset = currentCup.transform.right * 0.3f +   // Further right
+                    currentCup.transform.up * 0.3f;  
+        
+        Vector3 spoutPosition = currentCup.transform.position + spoutOffset;
+        
+        // Spawn liquid particle system
+        activeLiquidStream = Instantiate(liquidStreamPrefab, spoutPosition, Quaternion.identity);
+        
+        // Point particles downward
+        activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
+        
+        Debug.Log($"✓ Spawned liquid at: {spoutPosition}");
+        Debug.Log($"✓ Bottle at: {currentCup.transform.position}");
+        Debug.Log($"✓ Camera at: {arCamera.position}");
+
+        // Start particles
+        ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Play();
+            Debug.Log($"✓ Particle count: {ps.particleCount}");
+            Debug.Log($"✓ Is playing: {ps.isPlaying}");
+        }
+    }
+    
+    // PHASE 3: Keep pouring while button held
     while (isPouring)
     {
-        // Keep bottle at pour angle
         if (currentCup != null)
         {
-            Quaternion baseRot = arCamera.rotation;
-            currentCup.transform.rotation = baseRot * Quaternion.Euler(0, 0, pourAngle);
+            // Keep bottle tilted
+            currentCup.transform.rotation = arCamera.rotation * Quaternion.Euler(0, 0, pourAngle);
+            
+            // Update liquid stream position to follow bottle spout
+            if (activeLiquidStream != null)
+            {
+                Vector3 spoutOffset = currentCup.transform.right * 0.15f + 
+                                    currentCup.transform.up * 0.2f;
+                activeLiquidStream.transform.position = currentCup.transform.position + spoutOffset;
+            }
         }
         
         yield return null;

@@ -232,6 +232,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 196
       Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
+      Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
     - Class: 222
@@ -1251,7 +1255,7 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerStay2DMessageListener
   - hash:
       serializedVersion: 2
-      Hash: c3171201e3538e9b9c2e4138bafd64fb
+      Hash: b968181acf518d6b6b178d613f0f8afb
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: SimpleHandSimulator
@@ -1696,4 +1700,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour2
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour2liquid2

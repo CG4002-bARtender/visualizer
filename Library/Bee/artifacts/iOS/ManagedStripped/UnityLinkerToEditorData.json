@@ -660,13 +660,17 @@
         "dependencies": [
           {
             "name": "ParticleSystem",
-            "scenes": [],
+            "scenes": [
+              "Assets/bARtender_3d_copy.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
           {
             "name": "ParticleSystemRenderer",
-            "scenes": [],
+            "scenes": [
+              "Assets/bARtender_3d_copy.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           }
