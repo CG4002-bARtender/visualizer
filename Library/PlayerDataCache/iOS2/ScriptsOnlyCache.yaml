@@ -1,9 +1,11 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - MQTTManager
     - QRCodeManager
     - RedCircleTracker
     - SimpleHandSimulator
+    - UnityMainThreadDispatcher
     Unity.InputSystem.dll:
     - UnityEngine.InputSystem.InputActionAsset
     - UnityEngine.InputSystem.InputActionReference
@@ -224,6 +226,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10230}
     - Class: 114
       Script: {instanceID: 10586}
+    - Class: 114
+      Script: {instanceID: 33418}
+    - Class: 114
+      Script: {instanceID: 33426}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1697,7 +1703,31 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 6062d5fad7f189b338d8d18085a83e41
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity
+    className: M2MqttUnityClient
+  - hash:
+      serializedVersion: 2
+      Hash: 9775f562347a44a610b6b165543a7842
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity.Examples
+    className: M2MqttUnityTest
+  - hash:
+      serializedVersion: 2
+      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MQTTManager
+  - hash:
+      serializedVersion: 2
+      Hash: 359a163207fb1c4f299e9a9533ca5f4e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UnityMainThreadDispatcher
   platform: 9
   scenePathNames:
   - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour2liquid2
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_mqtt
