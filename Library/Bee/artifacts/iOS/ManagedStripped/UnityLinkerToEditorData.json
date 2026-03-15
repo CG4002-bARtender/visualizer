@@ -36,7 +36,7 @@
           {
             "name": "AudioBehaviour",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -50,7 +50,7 @@
           {
             "name": "AudioListener",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -87,7 +87,7 @@
           {
             "name": "Camera",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -107,7 +107,7 @@
           {
             "name": "Cubemap",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -127,7 +127,7 @@
           {
             "name": "EditorExtension",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -141,7 +141,7 @@
           {
             "name": "GameObject",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -167,7 +167,7 @@
           {
             "name": "LevelGameManager",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -175,7 +175,7 @@
           {
             "name": "Light",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -195,7 +195,7 @@
           {
             "name": "LightmapSettings",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -215,7 +215,7 @@
           {
             "name": "Material",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -223,7 +223,7 @@
           {
             "name": "Mesh",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -231,7 +231,7 @@
           {
             "name": "MeshFilter",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -239,7 +239,7 @@
           {
             "name": "MeshRenderer",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -247,7 +247,7 @@
           {
             "name": "MonoBehaviour",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -261,7 +261,7 @@
           {
             "name": "MonoScript",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -269,7 +269,7 @@
           {
             "name": "NamedObject",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -301,7 +301,7 @@
           {
             "name": "RectTransform",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -315,7 +315,7 @@
           {
             "name": "RenderSettings",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -347,7 +347,7 @@
           {
             "name": "Shader",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -367,7 +367,7 @@
           {
             "name": "Sprite",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -661,7 +661,7 @@
           {
             "name": "ParticleSystem",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -669,7 +669,7 @@
           {
             "name": "ParticleSystemRenderer",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -682,7 +682,7 @@
           {
             "name": "BoxCollider",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -708,7 +708,7 @@
           {
             "name": "Rigidbody",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -931,7 +931,7 @@
           {
             "name": "Font",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -974,7 +974,7 @@
           {
             "name": "Canvas",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -988,7 +988,7 @@
           {
             "name": "CanvasRenderer",
             "scenes": [
-              "Assets/bARtender_3d_copy.unity"
+              "Assets/Scenes/bARtender_3d_nomqtt.unity"
             ],
             "dependencyType": 0,
             "icon": null

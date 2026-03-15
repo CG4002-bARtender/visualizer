@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5720844995751464437, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
+      propertyPath: m_TagString
+      value: PourReceiver
+      objectReference: {fileID: 0}
     - target: {fileID: 7452335726414993066, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.3
@@ -82,6 +86,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5720844995751464437, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7177069195913853557}
+    - targetCorrespondingSourceObject: {fileID: 5720844995751464437, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2001845771708289272}
   m_SourcePrefab: {fileID: 100100000, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
 --- !u!1 &1929304118835237842 stripped
 GameObject:
@@ -103,12 +110,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.18213585, y: 0.25852987, z: 0.15773427}
-  m_Center: {x: 0.000000018626451, y: -0.03902478, z: 0.0000000037252903}
+  m_Size: {x: 0.18213584, y: 0.03147701, z: 0.15773426}
+  m_Center: {x: 0.000000018626451, y: 0.07450171, z: 0.000000006208817}
 --- !u!54 &7177069195913853557
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -136,3 +143,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2001845771708289272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929304118835237842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422646975e07c47608f365e8091759fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  containerName: Glass
+  type: 1
+  fillAmount: 0
+  maxCapacity: 1
+  emptyColor: {r: 0, g: 0, b: 0, a: 0}
+  fullColor: {r: 1, g: 0.8, b: 0, a: 0.5}

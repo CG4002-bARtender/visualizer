@@ -1,11 +1,10 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - MQTTManager
+    - PourReceiver
     - QRCodeManager
     - RedCircleTracker
     - SimpleHandSimulator
-    - UnityMainThreadDispatcher
     Unity.InputSystem.dll:
     - UnityEngine.InputSystem.InputActionAsset
     - UnityEngine.InputSystem.InputActionReference
@@ -137,7 +136,7 @@ ScriptsOnlyBuild:
     fullTypeName: SimpleHandSimulator
     methodName: OnReleaseCupButton
   sceneClasses:
-    Assets/bARtender_3d_copy.unity:
+    Assets/Scenes/bARtender_3d_nomqtt.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -175,61 +174,59 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1674}
     - Class: 114
-      Script: {instanceID: 1776}
+      Script: {instanceID: 1778}
     - Class: 114
-      Script: {instanceID: 2494}
+      Script: {instanceID: 2498}
     - Class: 114
-      Script: {instanceID: 3116}
+      Script: {instanceID: 3130}
     - Class: 114
-      Script: {instanceID: 3398}
+      Script: {instanceID: 3414}
     - Class: 114
-      Script: {instanceID: 3816}
+      Script: {instanceID: 3840}
     - Class: 114
-      Script: {instanceID: 4072}
+      Script: {instanceID: 4102}
     - Class: 114
-      Script: {instanceID: 4284}
+      Script: {instanceID: 4314}
     - Class: 114
-      Script: {instanceID: 4624}
+      Script: {instanceID: 4656}
     - Class: 114
-      Script: {instanceID: 4710}
+      Script: {instanceID: 4742}
     - Class: 114
-      Script: {instanceID: 4730}
+      Script: {instanceID: 4762}
     - Class: 114
-      Script: {instanceID: 4826}
+      Script: {instanceID: 4860}
     - Class: 114
-      Script: {instanceID: 5290}
+      Script: {instanceID: 5326}
     - Class: 114
-      Script: {instanceID: 5506}
+      Script: {instanceID: 5544}
     - Class: 114
-      Script: {instanceID: 5662}
+      Script: {instanceID: 5702}
     - Class: 114
-      Script: {instanceID: 5960}
+      Script: {instanceID: 6002}
     - Class: 114
-      Script: {instanceID: 6710}
+      Script: {instanceID: 6764}
     - Class: 114
-      Script: {instanceID: 7566}
+      Script: {instanceID: 7264}
     - Class: 114
-      Script: {instanceID: 7756}
+      Script: {instanceID: 7630}
     - Class: 114
-      Script: {instanceID: 8230}
+      Script: {instanceID: 7822}
     - Class: 114
-      Script: {instanceID: 8332}
+      Script: {instanceID: 8308}
     - Class: 114
-      Script: {instanceID: 8774}
+      Script: {instanceID: 8414}
     - Class: 114
-      Script: {instanceID: 8806}
+      Script: {instanceID: 8860}
     - Class: 114
-      Script: {instanceID: 9334}
+      Script: {instanceID: 8892}
     - Class: 114
-      Script: {instanceID: 9840}
+      Script: {instanceID: 9426}
     - Class: 114
-      Script: {instanceID: 10230}
+      Script: {instanceID: 9934}
     - Class: 114
-      Script: {instanceID: 10586}
+      Script: {instanceID: 10328}
     - Class: 114
-      Script: {instanceID: 33418}
-    - Class: 114
-      Script: {instanceID: 33426}
+      Script: {instanceID: 10688}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -505,6 +502,12 @@ ScriptsOnlyBuild:
     className: CoroutineRunner
   - hash:
       serializedVersion: 2
+      Hash: 6062d5fad7f189b338d8d18085a83e41
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity
+    className: M2MqttUnityClient
+  - hash:
+      serializedVersion: 2
       Hash: 6ddf94363c6ce4b02d9fdd51290cb0f9
     assemblyName: UnityEngine.TestRunner
     namespaceName: UnityEngine.TestRunner.Utils
@@ -527,6 +530,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.XR.CoreUtils
     namespaceName: Unity.XR.CoreUtils
     className: OnDestroyNotifier
+  - hash:
+      serializedVersion: 2
+      Hash: 9775f562347a44a610b6b165543a7842
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity.Examples
+    className: M2MqttUnityTest
   - hash:
       serializedVersion: 2
       Hash: 28fd3d045acc780719a17f02073eb448
@@ -1177,10 +1186,22 @@ ScriptsOnlyBuild:
     className: Text
   - hash:
       serializedVersion: 2
+      Hash: f79191b0a4127d4238a9aa20bdc06c8c
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PourReceiver
+  - hash:
+      serializedVersion: 2
       Hash: f73532c9cb82aea7168d19ec253c2f5f
     assemblyName: Unity.XR.ARKit
     namespaceName: UnityEngine.XR.ARKit
     className: ARKitReferenceObjectEntry
+  - hash:
+      serializedVersion: 2
+      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MQTTManager
   - hash:
       serializedVersion: 2
       Hash: 2071f7ac454ae14eafecfd4041edae3a
@@ -1261,7 +1282,7 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerStay2DMessageListener
   - hash:
       serializedVersion: 2
-      Hash: b968181acf518d6b6b178d613f0f8afb
+      Hash: f2931655820a3f9f556847d8dbef7db4
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: SimpleHandSimulator
@@ -1579,6 +1600,12 @@ ScriptsOnlyBuild:
     className: MultiplayerEventSystem
   - hash:
       serializedVersion: 2
+      Hash: 359a163207fb1c4f299e9a9533ca5f4e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UnityMainThreadDispatcher
+  - hash:
+      serializedVersion: 2
       Hash: 2bbd05175d4cdd21e24f9716cdd24f83
     assemblyName: Unity.InputSystem
     namespaceName: UnityEngine.InputSystem.XR
@@ -1703,31 +1730,7 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 6062d5fad7f189b338d8d18085a83e41
-    assemblyName: Assembly-CSharp
-    namespaceName: M2MqttUnity
-    className: M2MqttUnityClient
-  - hash:
-      serializedVersion: 2
-      Hash: 9775f562347a44a610b6b165543a7842
-    assemblyName: Assembly-CSharp
-    namespaceName: M2MqttUnity.Examples
-    className: M2MqttUnityTest
-  - hash:
-      serializedVersion: 2
-      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MQTTManager
-  - hash:
-      serializedVersion: 2
-      Hash: 359a163207fb1c4f299e9a9533ca5f4e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UnityMainThreadDispatcher
   platform: 9
   scenePathNames:
-  - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_mqtt
+  - Assets/Scenes/bARtender_3d_nomqtt.unity
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_aimpour2.1

@@ -774,6 +774,10 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Debug_ExtractStackTraceNoAlloc();
 		Register_UnityEngine_Debug_ExtractStackTraceNoAlloc();
 
+		//System.Void UnityEngine.Debug::DrawLine_Injected(UnityEngine.Vector3&,UnityEngine.Vector3&,UnityEngine.Color&,System.Single,System.Boolean)
+		void Register_UnityEngine_Debug_DrawLine_Injected();
+		Register_UnityEngine_Debug_DrawLine_Injected();
+
 	//End Registrations for type : UnityEngine.Debug
 
 	//Start Registrations for type : UnityEngine.DebugLogHandler
@@ -2173,14 +2177,6 @@ void RegisterAllStrippedInternalCalls()
 	//End Registrations for type : UnityEngine.ObjectGUIState
 
 	//Start Registrations for type : UnityEngine.ParticleSystem
-
-		//System.Boolean UnityEngine.ParticleSystem::get_isPlaying()
-		void Register_UnityEngine_ParticleSystem_get_isPlaying();
-		Register_UnityEngine_ParticleSystem_get_isPlaying();
-
-		//System.Int32 UnityEngine.ParticleSystem::get_particleCount()
-		void Register_UnityEngine_ParticleSystem_get_particleCount();
-		Register_UnityEngine_ParticleSystem_get_particleCount();
 
 		//System.Void UnityEngine.ParticleSystem::EmitOld_Internal(UnityEngine.ParticleSystem/Particle&)
 		void Register_UnityEngine_ParticleSystem_EmitOld_Internal();

@@ -27,6 +27,11 @@ extern void MQTTManager__ctor_mF1701CA4738429FC279CB95CD3608F5CB7B36735 (void);
 extern void U3CU3Ec__DisplayClass11_0__ctor_m5DDEC8717C9198B32A5EB60CE955FF265F913458 (void);
 extern void U3CU3Ec__DisplayClass11_0_U3COnMessageReceivedU3Eb__0_m44F7624762FA4D23E48241336A1B337AEEB965B4 (void);
 extern void GameStateData__ctor_mC8CA5F27011C6A4B057BD84A20553FABA84238B0 (void);
+extern void PourReceiver_CanReceiveLiquid_m87B70002D4A247D6C5C76BCE3E399C9BA5F68C4D (void);
+extern void PourReceiver_AddLiquid_m64EDCFF74AFC8681E4DB52A2417362A051A5C297 (void);
+extern void PourReceiver_Empty_m0E59A5683F32AE103D8454ACD103918F7ADE3A53 (void);
+extern void PourReceiver_GetContents_m4D74E994BFD504760D37EA086F958B7A30711DCE (void);
+extern void PourReceiver__ctor_m110E8BF73C378529E9EE004275C5C2E54F92DDBB (void);
 extern void QRCodeManager_OnEnable_m8D2C309D694EB91FF4443D2E9CF498DDFACA290F (void);
 extern void QRCodeManager_OnDisable_mD123CF777F26E6863C5C869B6D06699F92A21EBB (void);
 extern void QRCodeManager_OnTrackedImagesChanged_m9695297D66DCE99A60EC8FE9E6D39B0B17B4146E (void);
@@ -62,28 +67,30 @@ extern void SimpleHandSimulator_OnHandPositionReceived_m036F070351342C64A7812F34
 extern void SimpleHandSimulator_OnRedDotLost_m158B2FD8E0E3E8FFEE903BDC8C5B5FAA5BA3D49D (void);
 extern void SimpleHandSimulator_OnPourButtonDown_mC237415AC5B1811F8712DA9D6FAEC6CCFAD4FB8A (void);
 extern void SimpleHandSimulator_OnPourButtonUp_m22E36D444D9448A7A4FEF86D351910ABF458FE18 (void);
+extern void SimpleHandSimulator_FindPourTarget_mBED473F97AD0EC08CA3DE915BF9466373D79F3E7 (void);
 extern void SimpleHandSimulator_ContinuousPourAnimation_m780679D744E20ED1AED9513D5C60B068C54C072F (void);
+extern void SimpleHandSimulator_GetLiquidType_m98E94DDDE3560BEF7AC9F577AF427624AD01DE17 (void);
 extern void SimpleHandSimulator_ReturnToUpright_m4425FD83245A8BA2EFDCAD5A89FB71878A34A056 (void);
 extern void SimpleHandSimulator_SimulateFakeInput_m61045DEC0588A1E2317A30C3F3D647ECD9741355 (void);
 extern void SimpleHandSimulator__ctor_mC525E19BB36E9EBBFE6EB416D8E8920CA27153FB (void);
-extern void U3CContinuousPourAnimationU3Ed__45__ctor_m6C43CC0BA104570A71BEB151D899B31F06EF4377 (void);
-extern void U3CContinuousPourAnimationU3Ed__45_System_IDisposable_Dispose_mBB15D0A5B15002F7B091E9B39EC8CA0946932A81 (void);
-extern void U3CContinuousPourAnimationU3Ed__45_MoveNext_m2BBECCE03338E43176A6DDB2E20D467744F9FAEA (void);
-extern void U3CContinuousPourAnimationU3Ed__45_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mF3456C4854663E6E7A1C984DF93A8A3282A36C56 (void);
-extern void U3CContinuousPourAnimationU3Ed__45_System_Collections_IEnumerator_Reset_mDDBA33F1AB10533D2893F8D4EC9E068EDFCA9C63 (void);
-extern void U3CContinuousPourAnimationU3Ed__45_System_Collections_IEnumerator_get_Current_mD3E89DBE5397F3F8CA6026FC4D0DD43D3EBF27C8 (void);
-extern void U3CPourAnimationU3Ed__40__ctor_m5D817DAA78EF02EC2CEEFB83172EB4ABA88B4263 (void);
-extern void U3CPourAnimationU3Ed__40_System_IDisposable_Dispose_m94D4575DB19A85D515A8E5EA281ED423527DF814 (void);
-extern void U3CPourAnimationU3Ed__40_MoveNext_m9DB7CB61CD107D509D7BE854686D3F2D674F2073 (void);
-extern void U3CPourAnimationU3Ed__40_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m0875C980F18FF2108C8CEF768CD321DAD7A70044 (void);
-extern void U3CPourAnimationU3Ed__40_System_Collections_IEnumerator_Reset_m7BFD4472B1E393C3CC08B104C749691655FA5BE2 (void);
-extern void U3CPourAnimationU3Ed__40_System_Collections_IEnumerator_get_Current_m8CF16F92AD14D5DEDBD7F54D4B52198E7C64DF82 (void);
-extern void U3CReturnToUprightU3Ed__46__ctor_mAAAF998267A6FA59CE7FF98B9205A252EE8ED3BA (void);
-extern void U3CReturnToUprightU3Ed__46_System_IDisposable_Dispose_m006C3A529D2CA05A2B797493E5591A8EB5B8CDB4 (void);
-extern void U3CReturnToUprightU3Ed__46_MoveNext_m4BD2302E0F3986ED59CA69B2687B0D8A4822456F (void);
-extern void U3CReturnToUprightU3Ed__46_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mB1407740F72CBA85D645B87E115D4A4F4264DE8D (void);
-extern void U3CReturnToUprightU3Ed__46_System_Collections_IEnumerator_Reset_m1A020D76BA249152ACCB26286A6B75B831533AFD (void);
-extern void U3CReturnToUprightU3Ed__46_System_Collections_IEnumerator_get_Current_m8986DDCBAB3CB854C8D4CB84A6A2C5740A47A4A4 (void);
+extern void U3CContinuousPourAnimationU3Ed__49__ctor_m8D6A1179855CAA63A704EA914CE6B04F17F47DDA (void);
+extern void U3CContinuousPourAnimationU3Ed__49_System_IDisposable_Dispose_mD3FB87ED1BC8BECB7C6B95C8276461E606FDAF87 (void);
+extern void U3CContinuousPourAnimationU3Ed__49_MoveNext_m03C3C1FE2FFBBDA13613EED59B44AE123D090910 (void);
+extern void U3CContinuousPourAnimationU3Ed__49_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m94176236AA7606EB63030BB1DE8B4315125E76A1 (void);
+extern void U3CContinuousPourAnimationU3Ed__49_System_Collections_IEnumerator_Reset_m4810953DF9F3FE9C329079980EB400175EE41958 (void);
+extern void U3CContinuousPourAnimationU3Ed__49_System_Collections_IEnumerator_get_Current_m1968704D99F3C764664023B71E430EB486142229 (void);
+extern void U3CPourAnimationU3Ed__43__ctor_mA15FEF96BEFC9AF170054F45383D74FD51705FE7 (void);
+extern void U3CPourAnimationU3Ed__43_System_IDisposable_Dispose_m60461000588E5B1CD8E2CEAE988EB56D35DE561C (void);
+extern void U3CPourAnimationU3Ed__43_MoveNext_mA1C18A015657021F632C2E00F612E9D6870ABEC9 (void);
+extern void U3CPourAnimationU3Ed__43_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m6C2AA4C17DA0350E48AEE29F6B778E8C320B9C50 (void);
+extern void U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_Reset_m9F196AAF2BAEB97F740B61A2E89D95F8142155E2 (void);
+extern void U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_get_Current_m02F141B90AA335A12D64ACC4DBD3C378A47B999E (void);
+extern void U3CReturnToUprightU3Ed__51__ctor_m69CD05D6FA61019F2F9DA3AE5A0D25158A6127E1 (void);
+extern void U3CReturnToUprightU3Ed__51_System_IDisposable_Dispose_m6B852D3FE0D03F92162B37F926840AE43824DFE5 (void);
+extern void U3CReturnToUprightU3Ed__51_MoveNext_m038F7FC9C956D0BBC4ABA4B03C981959FC4B4833 (void);
+extern void U3CReturnToUprightU3Ed__51_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mDBA18DE347CC145E8528541760BB4F555D3A13E3 (void);
+extern void U3CReturnToUprightU3Ed__51_System_Collections_IEnumerator_Reset_m92F6D42ED49B85BCDF4BFB9135B4BC5B0911799E (void);
+extern void U3CReturnToUprightU3Ed__51_System_Collections_IEnumerator_get_Current_mC0A6D8056E391059A2EE508D1E776BD5B263157D (void);
 extern void UnityMainThreadDispatcher_Instance_m0B17E9E95172FC70FF269E3E5EAEC2761BCB7E2A (void);
 extern void UnityMainThreadDispatcher_Awake_m518E1A8505DD06DAC84D9A11FE8C69E5501307AB (void);
 extern void UnityMainThreadDispatcher_Update_mA4581B031CF68811CC6957B72109257C5FB953BA (void);
@@ -486,7 +493,7 @@ extern void MqttCommunicationException__ctor_m0AF8276EBCE12EDEF85EC8CAB5D75CC393
 extern void MqttConnectionException__ctor_mB3D08501C9415D641FA2A3EB4F4BBAFB3F36DF37 (void);
 extern void MqttTimeoutException__ctor_mE628E891112184AE977020286DEB216CC838A7B0 (void);
 extern void U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876 (void);
-static Il2CppMethodPointer s_methodPointers[481] = 
+static Il2CppMethodPointer s_methodPointers[488] = 
 {
 	Script_Start_m26181EB142F9E9D13BB497FAEA9E42CFDC132438,
 	Script_Update_m3D73B366324BC0BF8F060D1E0CB6B52EAEED1518,
@@ -503,6 +510,11 @@ static Il2CppMethodPointer s_methodPointers[481] =
 	U3CU3Ec__DisplayClass11_0__ctor_m5DDEC8717C9198B32A5EB60CE955FF265F913458,
 	U3CU3Ec__DisplayClass11_0_U3COnMessageReceivedU3Eb__0_m44F7624762FA4D23E48241336A1B337AEEB965B4,
 	GameStateData__ctor_mC8CA5F27011C6A4B057BD84A20553FABA84238B0,
+	PourReceiver_CanReceiveLiquid_m87B70002D4A247D6C5C76BCE3E399C9BA5F68C4D,
+	PourReceiver_AddLiquid_m64EDCFF74AFC8681E4DB52A2417362A051A5C297,
+	PourReceiver_Empty_m0E59A5683F32AE103D8454ACD103918F7ADE3A53,
+	PourReceiver_GetContents_m4D74E994BFD504760D37EA086F958B7A30711DCE,
+	PourReceiver__ctor_m110E8BF73C378529E9EE004275C5C2E54F92DDBB,
 	QRCodeManager_OnEnable_m8D2C309D694EB91FF4443D2E9CF498DDFACA290F,
 	QRCodeManager_OnDisable_mD123CF777F26E6863C5C869B6D06699F92A21EBB,
 	QRCodeManager_OnTrackedImagesChanged_m9695297D66DCE99A60EC8FE9E6D39B0B17B4146E,
@@ -538,28 +550,30 @@ static Il2CppMethodPointer s_methodPointers[481] =
 	SimpleHandSimulator_OnRedDotLost_m158B2FD8E0E3E8FFEE903BDC8C5B5FAA5BA3D49D,
 	SimpleHandSimulator_OnPourButtonDown_mC237415AC5B1811F8712DA9D6FAEC6CCFAD4FB8A,
 	SimpleHandSimulator_OnPourButtonUp_m22E36D444D9448A7A4FEF86D351910ABF458FE18,
+	SimpleHandSimulator_FindPourTarget_mBED473F97AD0EC08CA3DE915BF9466373D79F3E7,
 	SimpleHandSimulator_ContinuousPourAnimation_m780679D744E20ED1AED9513D5C60B068C54C072F,
+	SimpleHandSimulator_GetLiquidType_m98E94DDDE3560BEF7AC9F577AF427624AD01DE17,
 	SimpleHandSimulator_ReturnToUpright_m4425FD83245A8BA2EFDCAD5A89FB71878A34A056,
 	SimpleHandSimulator_SimulateFakeInput_m61045DEC0588A1E2317A30C3F3D647ECD9741355,
 	SimpleHandSimulator__ctor_mC525E19BB36E9EBBFE6EB416D8E8920CA27153FB,
-	U3CContinuousPourAnimationU3Ed__45__ctor_m6C43CC0BA104570A71BEB151D899B31F06EF4377,
-	U3CContinuousPourAnimationU3Ed__45_System_IDisposable_Dispose_mBB15D0A5B15002F7B091E9B39EC8CA0946932A81,
-	U3CContinuousPourAnimationU3Ed__45_MoveNext_m2BBECCE03338E43176A6DDB2E20D467744F9FAEA,
-	U3CContinuousPourAnimationU3Ed__45_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mF3456C4854663E6E7A1C984DF93A8A3282A36C56,
-	U3CContinuousPourAnimationU3Ed__45_System_Collections_IEnumerator_Reset_mDDBA33F1AB10533D2893F8D4EC9E068EDFCA9C63,
-	U3CContinuousPourAnimationU3Ed__45_System_Collections_IEnumerator_get_Current_mD3E89DBE5397F3F8CA6026FC4D0DD43D3EBF27C8,
-	U3CPourAnimationU3Ed__40__ctor_m5D817DAA78EF02EC2CEEFB83172EB4ABA88B4263,
-	U3CPourAnimationU3Ed__40_System_IDisposable_Dispose_m94D4575DB19A85D515A8E5EA281ED423527DF814,
-	U3CPourAnimationU3Ed__40_MoveNext_m9DB7CB61CD107D509D7BE854686D3F2D674F2073,
-	U3CPourAnimationU3Ed__40_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m0875C980F18FF2108C8CEF768CD321DAD7A70044,
-	U3CPourAnimationU3Ed__40_System_Collections_IEnumerator_Reset_m7BFD4472B1E393C3CC08B104C749691655FA5BE2,
-	U3CPourAnimationU3Ed__40_System_Collections_IEnumerator_get_Current_m8CF16F92AD14D5DEDBD7F54D4B52198E7C64DF82,
-	U3CReturnToUprightU3Ed__46__ctor_mAAAF998267A6FA59CE7FF98B9205A252EE8ED3BA,
-	U3CReturnToUprightU3Ed__46_System_IDisposable_Dispose_m006C3A529D2CA05A2B797493E5591A8EB5B8CDB4,
-	U3CReturnToUprightU3Ed__46_MoveNext_m4BD2302E0F3986ED59CA69B2687B0D8A4822456F,
-	U3CReturnToUprightU3Ed__46_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mB1407740F72CBA85D645B87E115D4A4F4264DE8D,
-	U3CReturnToUprightU3Ed__46_System_Collections_IEnumerator_Reset_m1A020D76BA249152ACCB26286A6B75B831533AFD,
-	U3CReturnToUprightU3Ed__46_System_Collections_IEnumerator_get_Current_m8986DDCBAB3CB854C8D4CB84A6A2C5740A47A4A4,
+	U3CContinuousPourAnimationU3Ed__49__ctor_m8D6A1179855CAA63A704EA914CE6B04F17F47DDA,
+	U3CContinuousPourAnimationU3Ed__49_System_IDisposable_Dispose_mD3FB87ED1BC8BECB7C6B95C8276461E606FDAF87,
+	U3CContinuousPourAnimationU3Ed__49_MoveNext_m03C3C1FE2FFBBDA13613EED59B44AE123D090910,
+	U3CContinuousPourAnimationU3Ed__49_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m94176236AA7606EB63030BB1DE8B4315125E76A1,
+	U3CContinuousPourAnimationU3Ed__49_System_Collections_IEnumerator_Reset_m4810953DF9F3FE9C329079980EB400175EE41958,
+	U3CContinuousPourAnimationU3Ed__49_System_Collections_IEnumerator_get_Current_m1968704D99F3C764664023B71E430EB486142229,
+	U3CPourAnimationU3Ed__43__ctor_mA15FEF96BEFC9AF170054F45383D74FD51705FE7,
+	U3CPourAnimationU3Ed__43_System_IDisposable_Dispose_m60461000588E5B1CD8E2CEAE988EB56D35DE561C,
+	U3CPourAnimationU3Ed__43_MoveNext_mA1C18A015657021F632C2E00F612E9D6870ABEC9,
+	U3CPourAnimationU3Ed__43_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m6C2AA4C17DA0350E48AEE29F6B778E8C320B9C50,
+	U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_Reset_m9F196AAF2BAEB97F740B61A2E89D95F8142155E2,
+	U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_get_Current_m02F141B90AA335A12D64ACC4DBD3C378A47B999E,
+	U3CReturnToUprightU3Ed__51__ctor_m69CD05D6FA61019F2F9DA3AE5A0D25158A6127E1,
+	U3CReturnToUprightU3Ed__51_System_IDisposable_Dispose_m6B852D3FE0D03F92162B37F926840AE43824DFE5,
+	U3CReturnToUprightU3Ed__51_MoveNext_m038F7FC9C956D0BBC4ABA4B03C981959FC4B4833,
+	U3CReturnToUprightU3Ed__51_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mDBA18DE347CC145E8528541760BB4F555D3A13E3,
+	U3CReturnToUprightU3Ed__51_System_Collections_IEnumerator_Reset_m92F6D42ED49B85BCDF4BFB9135B4BC5B0911799E,
+	U3CReturnToUprightU3Ed__51_System_Collections_IEnumerator_get_Current_mC0A6D8056E391059A2EE508D1E776BD5B263157D,
 	UnityMainThreadDispatcher_Instance_m0B17E9E95172FC70FF269E3E5EAEC2761BCB7E2A,
 	UnityMainThreadDispatcher_Awake_m518E1A8505DD06DAC84D9A11FE8C69E5501307AB,
 	UnityMainThreadDispatcher_Update_mA4581B031CF68811CC6957B72109257C5FB953BA,
@@ -970,7 +984,7 @@ static Il2CppMethodPointer s_methodPointers[481] =
 	MqttTimeoutException__ctor_mE628E891112184AE977020286DEB216CC838A7B0,
 	U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876,
 };
-static const int32_t s_InvokerIndices[481] = 
+static const int32_t s_InvokerIndices[488] = 
 {
 	7087,
 	7087,
@@ -986,6 +1000,11 @@ static const int32_t s_InvokerIndices[481] =
 	7087,
 	7087,
 	7087,
+	7087,
+	6852,
+	2912,
+	7087,
+	6973,
 	7087,
 	7087,
 	7087,
@@ -1024,6 +1043,8 @@ static const int32_t s_InvokerIndices[481] =
 	7087,
 	6973,
 	6973,
+	4872,
+	6973,
 	5565,
 	7087,
 	5522,
@@ -1044,13 +1065,13 @@ static const int32_t s_InvokerIndices[481] =
 	6973,
 	7087,
 	6973,
-	10581,
+	10584,
 	7087,
 	7087,
 	5565,
 	7087,
-	10627,
-	10646,
+	10630,
+	10649,
 	7087,
 	7087,
 	5565,
@@ -1227,10 +1248,10 @@ static const int32_t s_InvokerIndices[481] =
 	5522,
 	6927,
 	5522,
-	10581,
+	10584,
 	7087,
-	10413,
-	10408,
+	10416,
+	10411,
 	7087,
 	6973,
 	6973,
@@ -1246,9 +1267,9 @@ static const int32_t s_InvokerIndices[481] =
 	2014,
 	7087,
 	7087,
-	10046,
-	10035,
-	9374,
+	10049,
+	10038,
+	9377,
 	2904,
 	3902,
 	1244,
@@ -1257,11 +1278,11 @@ static const int32_t s_InvokerIndices[481] =
 	2908,
 	870,
 	5565,
-	9649,
-	9616,
-	8720,
-	8152,
-	7734,
+	9652,
+	9619,
+	8723,
+	8154,
+	7735,
 	5565,
 	6973,
 	5565,
@@ -1282,14 +1303,14 @@ static const int32_t s_InvokerIndices[481] =
 	5651,
 	0,
 	1201,
-	10046,
+	10049,
 	7087,
 	6852,
 	5444,
 	6852,
 	5444,
 	7087,
-	8469,
+	8472,
 	4858,
 	6973,
 	6973,
@@ -1319,7 +1340,7 @@ static const int32_t s_InvokerIndices[481] =
 	7087,
 	5565,
 	23,
-	8469,
+	8472,
 	4858,
 	6973,
 	6973,
@@ -1338,24 +1359,24 @@ static const int32_t s_InvokerIndices[481] =
 	6973,
 	7087,
 	7087,
-	8469,
+	8472,
 	4858,
 	6973,
 	7087,
 	4858,
-	8469,
+	8472,
 	6973,
 	7087,
-	8469,
+	8472,
 	4858,
 	6973,
 	7087,
 	4858,
-	8469,
+	8472,
 	6973,
 	7087,
 	4858,
-	8469,
+	8472,
 	6973,
 	6973,
 	5565,
@@ -1365,7 +1386,7 @@ static const int32_t s_InvokerIndices[481] =
 	2908,
 	505,
 	4858,
-	8469,
+	8472,
 	6973,
 	7072,
 	5651,
@@ -1386,16 +1407,16 @@ static const int32_t s_InvokerIndices[481] =
 	505,
 	7087,
 	4858,
-	8469,
+	8472,
 	6973,
 	7087,
 	4858,
-	8469,
+	8472,
 	6973,
 	6973,
 	5565,
 	7087,
-	8469,
+	8472,
 	4858,
 	6973,
 	6973,
@@ -1404,7 +1425,7 @@ static const int32_t s_InvokerIndices[481] =
 	5565,
 	7087,
 	2908,
-	8469,
+	8472,
 	4858,
 	6973,
 	7072,
@@ -1420,14 +1441,14 @@ static const int32_t s_InvokerIndices[481] =
 	5565,
 	1513,
 	7087,
-	8469,
+	8472,
 	4858,
 	6973,
 	6973,
 	5565,
 	7087,
 	5565,
-	8469,
+	8472,
 	4858,
 	6973,
 	7072,
@@ -1452,13 +1473,13 @@ static const int32_t s_InvokerIndices[481] =
 	5565,
 	2908,
 	7087,
-	10355,
+	10358,
 };
 IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	481,
+	488,
 	s_methodPointers,
 	0,
 	NULL,

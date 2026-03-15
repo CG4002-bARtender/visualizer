@@ -338,7 +338,6 @@
 -r:"/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/NetStandard/ref/2.1.0/netstandard.dll"
 -r:"/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.iOS.Extensions.Xcode.dll"
 -r:"/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll"
--r:"Assets/Plugins/MQTTnet.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.11.3/Lib/Editor/log4netPlastic.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.11.3/Lib/Editor/Unity.Plastic.Antlr3.Runtime.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.11.3/Lib/Editor/Unity.Plastic.Newtonsoft.Json.dll"

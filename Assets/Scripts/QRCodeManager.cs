@@ -78,14 +78,19 @@ public class QRCodeManager : MonoBehaviour
         
         if (spawnedBottles.ContainsKey(imageName))
         {
-            // Show/hide based on tracking state
-            bool isTracking = trackedImage.trackingState == TrackingState.Tracking;
-            spawnedBottles[imageName].SetActive(isTracking);
-            
-            if (isTracking)
-            {
-                trackedImages[imageName] = trackedImage;
-            }
+            // NEW: Keep visible unless tracking is completely lost
+            GameObject bottle = spawnedBottles[imageName];
+            bool shouldShow = trackedImage.trackingState != TrackingState.None;
+            if (shouldShow)
+                {
+                    trackedImages[imageName] = trackedImage;
+                    
+                    // Ensure bottle stays parented and anchored
+                    if (bottle.transform.parent != trackedImage.transform)
+                    {
+                        bottle.transform.SetParent(trackedImage.transform, true);
+                    }
+                }
         }
     }
     
