@@ -133,6 +133,9 @@ ScriptsOnlyBuild:
     fullTypeName: SimpleHandSimulator
     methodName: OnPourButtonUp
   - assembly: Assembly-CSharp
+    fullTypeName: QRCodeManager
+    methodName: ResetAllBottlePositions
+  - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnReleaseCupButton
   sceneClasses:
@@ -170,63 +173,63 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1594}
+      Script: {instanceID: 1568}
     - Class: 114
-      Script: {instanceID: 1674}
+      Script: {instanceID: 1658}
     - Class: 114
-      Script: {instanceID: 1778}
+      Script: {instanceID: 1762}
     - Class: 114
-      Script: {instanceID: 2498}
+      Script: {instanceID: 2482}
     - Class: 114
-      Script: {instanceID: 3130}
+      Script: {instanceID: 3114}
     - Class: 114
-      Script: {instanceID: 3414}
+      Script: {instanceID: 3398}
     - Class: 114
-      Script: {instanceID: 3840}
+      Script: {instanceID: 3824}
     - Class: 114
-      Script: {instanceID: 4102}
+      Script: {instanceID: 4086}
     - Class: 114
-      Script: {instanceID: 4314}
+      Script: {instanceID: 4638}
     - Class: 114
-      Script: {instanceID: 4656}
+      Script: {instanceID: 4724}
     - Class: 114
-      Script: {instanceID: 4742}
+      Script: {instanceID: 4744}
     - Class: 114
-      Script: {instanceID: 4762}
+      Script: {instanceID: 4842}
     - Class: 114
-      Script: {instanceID: 4860}
+      Script: {instanceID: 5308}
     - Class: 114
-      Script: {instanceID: 5326}
+      Script: {instanceID: 5526}
     - Class: 114
-      Script: {instanceID: 5544}
+      Script: {instanceID: 5684}
     - Class: 114
-      Script: {instanceID: 5702}
+      Script: {instanceID: 5984}
     - Class: 114
-      Script: {instanceID: 6002}
+      Script: {instanceID: 6744}
     - Class: 114
-      Script: {instanceID: 6764}
+      Script: {instanceID: 7244}
     - Class: 114
-      Script: {instanceID: 7264}
+      Script: {instanceID: 7570}
     - Class: 114
-      Script: {instanceID: 7630}
+      Script: {instanceID: 7610}
     - Class: 114
-      Script: {instanceID: 7822}
+      Script: {instanceID: 7802}
     - Class: 114
-      Script: {instanceID: 8308}
+      Script: {instanceID: 8288}
     - Class: 114
-      Script: {instanceID: 8414}
+      Script: {instanceID: 8394}
     - Class: 114
-      Script: {instanceID: 8860}
+      Script: {instanceID: 8840}
     - Class: 114
-      Script: {instanceID: 8892}
+      Script: {instanceID: 8872}
     - Class: 114
-      Script: {instanceID: 9426}
+      Script: {instanceID: 9408}
     - Class: 114
-      Script: {instanceID: 9934}
+      Script: {instanceID: 9916}
     - Class: 114
-      Script: {instanceID: 10328}
+      Script: {instanceID: 10310}
     - Class: 114
-      Script: {instanceID: 10688}
+      Script: {instanceID: 10670}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -250,16 +253,16 @@ ScriptsOnlyBuild:
   scriptHashData:
   - hash:
       serializedVersion: 2
-      Hash: 67f2e533bbfe68206e21fd8cf233561c
-    assemblyName: UnityEngine.SpatialTracking
-    namespaceName: UnityEngine.SpatialTracking
-    className: TrackedPoseDriver
+      Hash: 231d626d121be4cad80e8c31b5323ff2
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: QRCodeManager
   - hash:
       serializedVersion: 2
-      Hash: 540882762544409cc4530e60db00e951
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: CanvasScaler
+      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MQTTManager
   - hash:
       serializedVersion: 2
       Hash: 55060a7bf226ac385ce19ebd450f199f
@@ -686,12 +689,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSelectMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 231d626d121be4cad80e8c31b5323ff2
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: QRCodeManager
   - hash:
       serializedVersion: 2
       Hash: 5b8b7230ad968399f6726aa1269dcdcb
@@ -1198,12 +1195,6 @@ ScriptsOnlyBuild:
     className: ARKitReferenceObjectEntry
   - hash:
       serializedVersion: 2
-      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MQTTManager
-  - hash:
-      serializedVersion: 2
       Hash: 2071f7ac454ae14eafecfd4041edae3a
     assemblyName: Unity.InputSystem
     namespaceName: UnityEngine.InputSystem.Editor
@@ -1220,6 +1211,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem
     namespaceName: UnityEngine.InputSystem.Editor
     className: PlayerInputManagerEditor
+  - hash:
+      serializedVersion: 2
+      Hash: 540882762544409cc4530e60db00e951
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: CanvasScaler
   - hash:
       serializedVersion: 2
       Hash: f575854bcd9263bcceb3a0f2b8f26e82
@@ -1424,6 +1421,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: VerticalLayoutGroup
+  - hash:
+      serializedVersion: 2
+      Hash: 67f2e533bbfe68206e21fd8cf233561c
+    assemblyName: UnityEngine.SpatialTracking
+    namespaceName: UnityEngine.SpatialTracking
+    className: TrackedPoseDriver
   - hash:
       serializedVersion: 2
       Hash: c4b85a67513b4f0cf7b5fb2d5ded04b0
@@ -1733,4 +1736,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/Scenes/bARtender_3d_nomqtt.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_aimpour2.1
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour_sprout

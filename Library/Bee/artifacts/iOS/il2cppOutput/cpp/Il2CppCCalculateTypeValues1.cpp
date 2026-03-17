@@ -5010,7 +5010,7 @@ struct ContainerType_t69111B7DC81EA6D53EF9C63893ACC15BF82321AC
 {
 	int32_t ___value__;
 };
-struct U3CContinuousPourAnimationU3Ed__49_tC83AA78865C942ABCAC693CA1A5394BB9A827774  : public RuntimeObject
+struct U3CContinuousPourAnimationU3Ed__50_tE083F6733319CAF04836CDF60FDCDFD468FB851C  : public RuntimeObject
 {
 	int32_t ___U3CU3E1__state;
 	RuntimeObject* ___U3CU3E2__current;
@@ -5020,7 +5020,7 @@ struct U3CContinuousPourAnimationU3Ed__49_tC83AA78865C942ABCAC693CA1A5394BB9A827
 	float ___U3CelapsedU3E5__4;
 	float ___U3CpourRateU3E5__5;
 };
-struct U3CReturnToUprightU3Ed__51_tD7CBD7B80CB3BC555035FD3C5A122A9DBB27984C  : public RuntimeObject
+struct U3CReturnToUprightU3Ed__52_t1E020693490E86E0F7DEA24CB49F875FF74EBD26  : public RuntimeObject
 {
 	int32_t ___U3CU3E1__state;
 	RuntimeObject* ___U3CU3E2__current;
@@ -9648,11 +9648,11 @@ const Il2CppTypeDefinitionSizes g_typeDefinitionSize5791 = { sizeof(QRCodeManage
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5792;
 const Il2CppTypeDefinitionSizes g_typeDefinitionSize5792 = { sizeof(RedCircleTracker_tB9298A48D277EA72DECC912D31BF444C7DD5C45D), -1, 0, 0 };
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5793;
-const Il2CppTypeDefinitionSizes g_typeDefinitionSize5793 = { sizeof(U3CContinuousPourAnimationU3Ed__49_tC83AA78865C942ABCAC693CA1A5394BB9A827774), -1, 0, 0 };
+const Il2CppTypeDefinitionSizes g_typeDefinitionSize5793 = { sizeof(U3CContinuousPourAnimationU3Ed__50_tE083F6733319CAF04836CDF60FDCDFD468FB851C), -1, 0, 0 };
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5794;
 const Il2CppTypeDefinitionSizes g_typeDefinitionSize5794 = { sizeof(U3CPourAnimationU3Ed__43_tDC92AA5A083301B895B249EAD76FBDD16993E18D), -1, 0, 0 };
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5795;
-const Il2CppTypeDefinitionSizes g_typeDefinitionSize5795 = { sizeof(U3CReturnToUprightU3Ed__51_tD7CBD7B80CB3BC555035FD3C5A122A9DBB27984C), -1, 0, 0 };
+const Il2CppTypeDefinitionSizes g_typeDefinitionSize5795 = { sizeof(U3CReturnToUprightU3Ed__52_t1E020693490E86E0F7DEA24CB49F875FF74EBD26), -1, 0, 0 };
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5796;
 const Il2CppTypeDefinitionSizes g_typeDefinitionSize5796 = { sizeof(SimpleHandSimulator_t582B4652DA8F0F606BE4FC691589AE4BA65E7FD9), -1, 0, 0 };
 extern const Il2CppTypeDefinitionSizes g_typeDefinitionSize5797;

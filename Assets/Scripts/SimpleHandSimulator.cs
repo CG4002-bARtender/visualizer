@@ -502,13 +502,26 @@ PourReceiver FindPourTarget()
     return null;
 }
 
+Transform GetSpoutTransform(GameObject bottle)
+{
+    // Look for child named "SpoutPosition"
+    Transform spout = bottle.transform.Find("SpoutPosition");
+    
+    if (spout == null)
+    {
+        Debug.LogWarning($"⚠ No SpoutPosition found on {bottle.name}! Using fallback calculation.");
+        return null;
+    }
+    
+    return spout;
+}
 
 IEnumerator ContinuousPourAnimation()
 {
     Quaternion startRot = currentCup.transform.rotation;
-    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);  // tilt left
+    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);
     
-    // PHASE 1: Tilt sideways
+    // PHASE 1: Tilt left
     float elapsed = 0;
     while (elapsed < pourDuration && isPouring)
     {
@@ -518,65 +531,81 @@ IEnumerator ContinuousPourAnimation()
         yield return null;
     }
     
-    // PHASE 2: Spawn liquid stream when fully tilted
+    // PHASE 2: Spawn particles
     if (isPouring && liquidStreamPrefab != null && currentCup != null)
     {
-        Vector3 cameraRight = arCamera.right;
-        Vector3 cameraUp = arCamera.up;
-        // CORRECTED: Spout is to the LEFT (negative right) and slightly up
-        Vector3 spoutOffset = cameraRight * -0.15f +   // LEFT in screen space (negative!)
-                            cameraUp * 0.05f;         // Slightly UP
+        // NEW: Get spout position from marker
+        Transform spoutTransform = GetSpoutTransform(currentCup);
+        Vector3 spoutWorldPos;
         
-        Vector3 spoutWorldPos = currentCup.transform.position + spoutOffset;
+        if (spoutTransform != null)
+        {
+            // Use the exact marked position!
+            spoutWorldPos = spoutTransform.position;
+            Debug.Log("✓ Using marked spout position");
+        }
+        else
+        {
+            // Fallback to calculation if no marker found
+            Vector3 spoutOffset = currentCup.transform.up * 0.15f;
+            spoutWorldPos = currentCup.transform.position + spoutOffset;
+            Debug.Log("⚠ Using calculated spout position");
+        }
         
-        Debug.Log($"📍 Spout at: {spoutWorldPos} (LEFT of bottle)");
+        Debug.Log($"📍 Spout at: {spoutWorldPos}");
         
-        // Spawn particles
         activeLiquidStream = Instantiate(liquidStreamPrefab, spoutWorldPos, Quaternion.identity);
-        activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);  // Down
+        activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
         activeLiquidStream.transform.parent = null;
         
         ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
-        if (ps != null) ps.Play();
+        if (ps != null)
+        {
+            ps.Play();
+            Debug.Log("✓ Liquid particles started");
+        }
     }
     
-    // PHASE 3: Keep pouring while button held
-    float pourRate = 0.1f;  // 10% per second
+    // PHASE 3: Continuous update
+    float pourRate = 0.1f;
     
-    while (isPouring && currentPourTarget != null)
+    while (isPouring)
     {
         if (currentCup != null)
         {
-            // Keep bottle tilted
             currentCup.transform.rotation = arCamera.rotation * Quaternion.Euler(0, 0, pourAngle);
             
-            // Update particle position
             if (activeLiquidStream != null)
             {
-                     Vector3 spoutOffset = currentCup.transform.right * -0.15f +   // LEFT (negative)
-                                    currentCup.transform.up * 0.05f;
-                activeLiquidStream.transform.position = currentCup.transform.position + spoutOffset;
+                // NEW: Use marker position
+                Transform spoutTransform = GetSpoutTransform(currentCup);
+                
+                if (spoutTransform != null)
+                {
+                    activeLiquidStream.transform.position = spoutTransform.position;
+                }
+                else
+                {
+                    // Fallback
+                    Vector3 spoutOffset = currentCup.transform.up * 0.15f;
+                    activeLiquidStream.transform.position = currentCup.transform.position + spoutOffset;
+                }
+                
+                activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
             }
             
-            // Fill target container
-            if (currentPourTarget.CanReceiveLiquid())
+            // Fill container
+            if (currentPourTarget != null && currentPourTarget.CanReceiveLiquid())
             {
-                // Get liquid type from current bottle
                 string liquidType = GetLiquidType(currentCup.name);
                 currentPourTarget.AddLiquid(liquidType, pourRate * Time.deltaTime);
-            }
-            else
-            {
-                Debug.Log($"✓ {currentPourTarget.containerName} is full!");
-                isPouring = false;
-                OnPourButtonUp();
-                break;
             }
         }
         
         yield return null;
     }
 }
+
 //Helper: determine which liquid is in this bottle
 string GetLiquidType(string bottleName)
 {

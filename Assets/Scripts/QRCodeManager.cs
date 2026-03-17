@@ -60,11 +60,12 @@ public class QRCodeManager : MonoBehaviour
         GameObject bottlePrefab = GetBottlePrefabByName(imageName);
         if (bottlePrefab != null)
         {
-            // Spawn bottle above QR code
             Vector3 spawnPos = trackedImage.transform.position + Vector3.up * bottleHeightOffset;
-            GameObject bottle = Instantiate(bottlePrefab, spawnPos, trackedImage.transform.rotation);
-            bottle.transform.parent = trackedImage.transform;
-            
+            // Spawn bottle above QR code
+            GameObject bottle = Instantiate(bottlePrefab, spawnPos, Quaternion.identity);
+            bottle.transform.SetParent(trackedImage.transform, false);  // ← false is key!
+            bottle.transform.localRotation = Quaternion.identity;    
+
             spawnedBottles.Add(imageName, bottle);
             trackedImages.Add(imageName, trackedImage);
             
@@ -87,9 +88,10 @@ public class QRCodeManager : MonoBehaviour
                     
                     // Ensure bottle stays parented and anchored
                     if (bottle.transform.parent != trackedImage.transform)
-                    {
-                        bottle.transform.SetParent(trackedImage.transform, true);
-                    }
+                        {
+                            bottle.transform.SetParent(trackedImage.transform, false);  // ← Change true to false
+                        }
+                        bottle.transform.localRotation = Quaternion.identity;  // ← Add this line
                 }
         }
     }
@@ -165,5 +167,29 @@ public class QRCodeManager : MonoBehaviour
     public bool HasTrackedQRCodes()
     {
         return trackedImages.Count > 0;
+    }
+
+    // Add this method anywhere in the class
+    public void ResetAllBottlePositions()
+    {
+        foreach (var kvp in spawnedBottles)
+        {
+            string imageName = kvp.Key;
+            GameObject bottle = kvp.Value;
+            
+            if (trackedImages.ContainsKey(imageName))
+            {
+                ARTrackedImage trackedImage = trackedImages[imageName];
+                
+                // Re-parent with clean transform
+                bottle.transform.SetParent(trackedImage.transform, false);
+                bottle.transform.localPosition = Vector3.up * bottleHeightOffset;
+                bottle.transform.localRotation = Quaternion.identity;
+                
+                Debug.Log($"✓ Reset {bottle.name} to QR anchor");
+            }
+        }
+        
+        Debug.Log("✓ All bottles reset!");
     }
 }
