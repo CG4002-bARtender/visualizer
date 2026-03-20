@@ -11,8 +11,14 @@ public class QRCodeManager : MonoBehaviour
     [Header("Bottle Prefabs (4 items)")]
     public GameObject[] bottlePrefabs; // AlcoBottleV1, AlcoBottleV7, EmptyGlassV4, Shaker
     
-    [Header("Bottle Positioning")]
-    public float bottleHeightOffset = 0.08f; // How high above QR code (adjust to taste)
+    [Header("Bottle Positioning")] // How high above QR code (adjust to taste)
+    public float bottleHeightOffset = 0.08f;  // Default (not used anymore)
+    public float bottle1Offset = 0.08f;  // AlcoBottleV1
+    public float bottle2Offset = 0.05f;  // AlcoBottleV7
+    public float bottle3Offset = 0.03f;  // EmptyGlassV4
+    public float bottle4Offset = 0.06f;  // Shaker 
+    public float bottle5Offset = 0.06f;  // Serving cup 
+
     
     // Track spawned objects
     private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
@@ -110,36 +116,30 @@ public class QRCodeManager : MonoBehaviour
     }
     
     GameObject GetBottlePrefabByName(string qrCodeName)
-{
-    // This function maps QR code names to bottle prefabs
-    // The string names MUST match your Reference Image Library exactly (case-sensitive!)
-    
-    switch (qrCodeName)
     {
-        case "QR 1":
-            // QR 1 shows AlcoBottleV1 (bottlePrefabs[0])
-            return bottlePrefabs[0];
-            
-        case "QR 2":
-            // QR 2 shows AlcoBottleV7 (bottlePrefabs[1])
-            return bottlePrefabs[1];
-            
-        case "QR 3":
-            // QR 3 shows EmptyGlassV4 (bottlePrefabs[2])
-            return bottlePrefabs[2];
-            
-        case "QR 4":
-            // QR 4 shows Shaker (bottlePrefabs[3])
-            return bottlePrefabs[3];
-            
-        default:
-            // If QR code name doesn't match anything above, show warning
-            Debug.LogWarning($"⚠ No prefab mapped for QR code: {qrCodeName}");
-            Debug.LogWarning($"💡 Make sure Reference Image Library names match the case statements!");
-            return null;
+        switch (qrCodeName)
+        {
+            case "qr0":  // Was "QR 1"
+                return bottlePrefabs[0];  // AlcoBottleV1
+                
+            case "qr1":  // Was "QR 2"
+                return bottlePrefabs[1];  // AlcoBottleV7
+                
+            case "qr2":  // Was "QR 3"
+                return bottlePrefabs[2];  // EmptyGlassV4
+                
+            case "qr3":  // Was "QR 4"
+                return bottlePrefabs[3];  // Shaker
+                
+            case "qr4":  // Was "QRserve"
+                return bottlePrefabs[4];  // ServingCup
+                
+            default:
+                Debug.LogWarning($"⚠ No prefab mapped for QR code: {qrCodeName}");
+                return null;
+        }
     }
-}
-    
+        
     // Public method to get nearest QR code position (for cup snapping)
     public Vector3 GetNearestQRPosition(Vector3 referencePosition)
     {
@@ -169,7 +169,6 @@ public class QRCodeManager : MonoBehaviour
         return trackedImages.Count > 0;
     }
 
-    // Add this method anywhere in the class
     public void ResetAllBottlePositions()
     {
         foreach (var kvp in spawnedBottles)
@@ -192,4 +191,51 @@ public class QRCodeManager : MonoBehaviour
         
         Debug.Log("✓ All bottles reset!");
     }
+
+    float GetBottleHeightOffset(string qrCodeName)
+    {
+        switch (qrCodeName)
+        {
+            case "qr0": return bottle1Offset;
+            case "qr1": return bottle2Offset;
+            case "qr2": return bottle3Offset;
+            case "qr3": return bottle4Offset;
+            case "qr4": return bottle5Offset;
+            default: return bottleHeightOffset;
+        }
+    }
+
+    // Get the Transform of a tracked QR code
+    public Transform GetQRTransform(string qrName)
+    {
+        if (trackedImages.ContainsKey(qrName))
+        {
+            return trackedImages[qrName].transform;
+        }
+        
+        return null;
+    }
+    public void RemoveBottleAtQR(string qrName)
+    {
+        if (spawnedBottles.ContainsKey(qrName))
+        {
+            GameObject bottle = spawnedBottles[qrName];
+            if (bottle != null)
+            {
+                Destroy(bottle);
+            }
+            spawnedBottles.Remove(qrName);
+        }
+    }
+
+    // Register a new bottle at QR (for cocktail manager)
+    public void RegisterBottleAtQR(string qrName, GameObject bottle)
+    {
+        // Remove old if exists
+        RemoveBottleAtQR(qrName);
+        
+        // Add new
+        spawnedBottles[qrName] = bottle;
+    }
+
 }

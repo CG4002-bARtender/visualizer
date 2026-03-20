@@ -680,14 +680,6 @@
         "name": "Physics",
         "dependencies": [
           {
-            "name": "BoxCollider",
-            "scenes": [
-              "Assets/Scenes/bARtender_3d_nomqtt.unity"
-            ],
-            "dependencyType": 0,
-            "icon": null
-          },
-          {
             "name": "Collider",
             "scenes": [],
             "dependencyType": 1,
@@ -703,14 +695,6 @@
             "name": "PhysicsManager",
             "scenes": [],
             "dependencyType": 1,
-            "icon": null
-          },
-          {
-            "name": "Rigidbody",
-            "scenes": [
-              "Assets/Scenes/bARtender_3d_nomqtt.unity"
-            ],
-            "dependencyType": 0,
             "icon": null
           },
           {

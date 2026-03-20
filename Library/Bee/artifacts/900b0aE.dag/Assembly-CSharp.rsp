@@ -435,6 +435,7 @@
 "Assets/M2MqttUnity/Scripts/BrokerSettings.cs"
 "Assets/M2MqttUnity/Scripts/M2MqttUnityClient.cs"
 "Assets/Script.cs"
+"Assets/Scripts/CocktailManager.cs"
 "Assets/Scripts/DrinkColorizer.cs"
 "Assets/Scripts/MQTTManager.cs"
 "Assets/Scripts/PourReceiver.cs"

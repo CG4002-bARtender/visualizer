@@ -1,7 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - PourReceiver
+    - CocktailManager
     - QRCodeManager
     - RedCircleTracker
     - SimpleHandSimulator
@@ -124,8 +124,17 @@ ScriptsOnlyBuild:
     fullTypeName: SimpleHandSimulator
     methodName: OnGrabCupButton
   - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
+  - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
+  - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: SimulateFakeInput
+  - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
   - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnPourButtonDown
@@ -160,10 +169,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 49
       Script: {instanceID: 0}
-    - Class: 54
-      Script: {instanceID: 0}
-    - Class: 65
-      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
@@ -173,63 +178,63 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1568}
+      Script: {instanceID: 1598}
     - Class: 114
-      Script: {instanceID: 1658}
+      Script: {instanceID: 1678}
     - Class: 114
-      Script: {instanceID: 1762}
+      Script: {instanceID: 1782}
     - Class: 114
-      Script: {instanceID: 2482}
+      Script: {instanceID: 2502}
     - Class: 114
-      Script: {instanceID: 3114}
+      Script: {instanceID: 3134}
     - Class: 114
-      Script: {instanceID: 3398}
+      Script: {instanceID: 3418}
     - Class: 114
-      Script: {instanceID: 3824}
+      Script: {instanceID: 3844}
     - Class: 114
-      Script: {instanceID: 4086}
+      Script: {instanceID: 4106}
     - Class: 114
-      Script: {instanceID: 4638}
+      Script: {instanceID: 4280}
     - Class: 114
-      Script: {instanceID: 4724}
+      Script: {instanceID: 4320}
     - Class: 114
-      Script: {instanceID: 4744}
+      Script: {instanceID: 4662}
     - Class: 114
-      Script: {instanceID: 4842}
+      Script: {instanceID: 4748}
     - Class: 114
-      Script: {instanceID: 5308}
+      Script: {instanceID: 4768}
     - Class: 114
-      Script: {instanceID: 5526}
+      Script: {instanceID: 4866}
     - Class: 114
-      Script: {instanceID: 5684}
+      Script: {instanceID: 5332}
     - Class: 114
-      Script: {instanceID: 5984}
+      Script: {instanceID: 5550}
     - Class: 114
-      Script: {instanceID: 6744}
+      Script: {instanceID: 5708}
     - Class: 114
-      Script: {instanceID: 7244}
+      Script: {instanceID: 6008}
     - Class: 114
-      Script: {instanceID: 7570}
+      Script: {instanceID: 6768}
     - Class: 114
-      Script: {instanceID: 7610}
+      Script: {instanceID: 7632}
     - Class: 114
-      Script: {instanceID: 7802}
+      Script: {instanceID: 7824}
     - Class: 114
-      Script: {instanceID: 8288}
+      Script: {instanceID: 8310}
     - Class: 114
-      Script: {instanceID: 8394}
+      Script: {instanceID: 8416}
     - Class: 114
-      Script: {instanceID: 8840}
+      Script: {instanceID: 8862}
     - Class: 114
-      Script: {instanceID: 8872}
+      Script: {instanceID: 8894}
     - Class: 114
-      Script: {instanceID: 9408}
+      Script: {instanceID: 9428}
     - Class: 114
-      Script: {instanceID: 9916}
+      Script: {instanceID: 9938}
     - Class: 114
-      Script: {instanceID: 10310}
+      Script: {instanceID: 10332}
     - Class: 114
-      Script: {instanceID: 10670}
+      Script: {instanceID: 10692}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -253,16 +258,22 @@ ScriptsOnlyBuild:
   scriptHashData:
   - hash:
       serializedVersion: 2
-      Hash: 231d626d121be4cad80e8c31b5323ff2
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: QRCodeManager
-  - hash:
-      serializedVersion: 2
       Hash: 43d846cc187b00d3afa41a27d9e2ee3e
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: MQTTManager
+  - hash:
+      serializedVersion: 2
+      Hash: 67f2e533bbfe68206e21fd8cf233561c
+    assemblyName: UnityEngine.SpatialTracking
+    namespaceName: UnityEngine.SpatialTracking
+    className: TrackedPoseDriver
+  - hash:
+      serializedVersion: 2
+      Hash: 540882762544409cc4530e60db00e951
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: CanvasScaler
   - hash:
       serializedVersion: 2
       Hash: 55060a7bf226ac385ce19ebd450f199f
@@ -689,6 +700,18 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSelectMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 63dd928033e46d88bdedc539b2844f47
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CocktailManager
+  - hash:
+      serializedVersion: 2
+      Hash: 67b0e6622659efe7b38c31155af5b0a1
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: QRCodeManager
   - hash:
       serializedVersion: 2
       Hash: 5b8b7230ad968399f6726aa1269dcdcb
@@ -1213,12 +1236,6 @@ ScriptsOnlyBuild:
     className: PlayerInputManagerEditor
   - hash:
       serializedVersion: 2
-      Hash: 540882762544409cc4530e60db00e951
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: CanvasScaler
-  - hash:
-      serializedVersion: 2
       Hash: f575854bcd9263bcceb3a0f2b8f26e82
     assemblyName: Unity.XR.ARFoundation
     namespaceName: UnityEngine.XR.ARFoundation
@@ -1423,12 +1440,6 @@ ScriptsOnlyBuild:
     className: VerticalLayoutGroup
   - hash:
       serializedVersion: 2
-      Hash: 67f2e533bbfe68206e21fd8cf233561c
-    assemblyName: UnityEngine.SpatialTracking
-    namespaceName: UnityEngine.SpatialTracking
-    className: TrackedPoseDriver
-  - hash:
-      serializedVersion: 2
       Hash: c4b85a67513b4f0cf7b5fb2d5ded04b0
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1493,6 +1504,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnScrollRectValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 7a67aea82f51093493678bd3565c9d0b
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: DrinkColorizer
   - hash:
       serializedVersion: 2
       Hash: 830c3b545f6e6ee60a4cebab90516f2c
@@ -1736,4 +1753,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/Scenes/bARtender_3d_nomqtt.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour_sprout
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_midori1
