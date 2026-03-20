@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3072067182585668311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3752067981578548413}
+  - component: {fileID: 1505399889987020968}
+  m_Layer: 0
+  m_Name: CocktailManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3752067981578548413
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072067182585668311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 164.93259, y: 846.4253, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1505399889987020968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072067182585668311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b650b1bab5b7a47f3b0969d561480364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  qrCodeManager: {fileID: 0}
+  bourbonPrefab: {fileID: 4529606608989990094, guid: 60a5811c46d763845b7ae06502cd397e, type: 3}
+  darkRumPrefab: {fileID: 8427286599217702477, guid: 61c7ea17184aa254690ef5eb943965ad, type: 3}
+  ginPrefab: {fileID: 1416363266738764723, guid: 96156f481cb6a1d4492f351dfbe6c542, type: 3}
+  midoriPrefab: {fileID: 301814982150458299, guid: 079581de47d19b14fae5ea0b59a6316e, type: 3}
+  purpleLiqueurPrefab: {fileID: 462167549459759977, guid: 6c3d7477a1810a140a03ea8a40e603d3, type: 3}
+  ryeWhiskeyPrefab: {fileID: 2751956093277577698, guid: 13e940923fd9e3141b07dbfa8a3800ef, type: 3}
+  vodkaPrefab: {fileID: 3740369041242573948, guid: 4586150fd931f15448f1ef4d95e3d875, type: 3}
+  scotchPrefab: {fileID: 3207803841501195979, guid: 306c8431279bdc748869ee6940d0c11f, type: 3}
+  whiskeyPrefab: {fileID: 6269587150276878201, guid: ef870d14343535640812ce7cca38eb06, type: 3}
+  drinkGodfatherPrefab: {fileID: 4913355586239114750, guid: af5e91f4ba137dd44bcffd8f8be671ab, type: 3}
+  drinkIrishCoffeePrefab: {fileID: 6416444088054251418, guid: a14d5c39f56c09e4987d3ba79d5ae082, type: 3}
+  drinkMartiniPrefab: {fileID: 7516986750324358339, guid: a21cba8fb78c3984693526e2cd7e41d4, type: 3}
+  drinkMidoriSourPrefab: {fileID: 1004017310165481860, guid: 94440f60b64a6af4485e352524ceadcc, type: 3}
+  drinkNeatPrefab: {fileID: 7292896836730036026, guid: f5428484152dc7741af412a40f45dfa0, type: 3}
+  drinkOldFashionedPrefab: {fileID: 7606646410040664753, guid: 09a021bfd0325444ebfce51ba618cf02, type: 3}
+  drinkTuxedoPrefab: {fileID: 5133948806980927908, guid: 8b102506dd2bbbf49baeee50452943eb, type: 3}
+  drinkVodkaPrefab: {fileID: 4880523766140717366, guid: b0d924b10f4ee394da20d993a682bef3, type: 3}
+  emptyGlassGodfatherPrefab: {fileID: 8345139180269264999, guid: ca2e3152771895147af38734a48b88fa, type: 3}
+  emptyGlassIrishCoffeePrefab: {fileID: 5888378454767430694, guid: 80eebc887ec4f3a4eb86ccd57767bc0c, type: 3}
+  emptyGlassMartiniPrefab: {fileID: 4847311845941964572, guid: 357698f0d0f06d64e8825934927d8441, type: 3}
+  emptyGlassMidoriSourPrefab: {fileID: 6922779023651844469, guid: 1ed2983c48461214886681457feedf79, type: 3}
+  emptyGlassNeatPrefab: {fileID: 5943096556238826874, guid: 4ba5f11d73b0e44499d359f2f2e91300, type: 3}
+  emptyGlassOldFashionedPrefab: {fileID: 405332144502335150, guid: 0ccdec9e315495041a3eb821f4abec2c, type: 3}
+  emptyGlassTuxedoPrefab: {fileID: 5720844995751464437, guid: efd047dda2bf47f47bb278a04a132b9d, type: 3}
+  emptyGlassVodkaPrefab: {fileID: 5973741906373363894, guid: 818facca8da77a543bac021c1a6b8293, type: 3}
+  shakerPrefab: {fileID: 4719518006706772081, guid: 202053d64c6efc2438a26f01871802e9, type: 3}
+  qr0Transform: {fileID: 0}
+  qr1Transform: {fileID: 0}
+  qr2Transform: {fileID: 0}
+  qr3Transform: {fileID: 0}
+  qr4Transform: {fileID: 0}
+  bottleHeight: 0.08
+  shakerHeight: 0.06
+  glassHeight: 0.03

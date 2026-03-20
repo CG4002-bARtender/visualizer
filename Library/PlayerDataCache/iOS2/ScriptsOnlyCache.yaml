@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - CocktailManager
     - QRCodeManager
     - RedCircleTracker
     - SimpleHandSimulator
@@ -123,8 +124,17 @@ ScriptsOnlyBuild:
     fullTypeName: SimpleHandSimulator
     methodName: OnGrabCupButton
   - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
+  - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
+  - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: SimulateFakeInput
+  - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
   - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnPourButtonDown
@@ -132,10 +142,13 @@ ScriptsOnlyBuild:
     fullTypeName: SimpleHandSimulator
     methodName: OnPourButtonUp
   - assembly: Assembly-CSharp
+    fullTypeName: QRCodeManager
+    methodName: ResetAllBottlePositions
+  - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnReleaseCupButton
   sceneClasses:
-    Assets/bARtender_3d_copy.unity:
+    Assets/Scenes/bARtender_3d_nomqtt.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -156,10 +169,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 49
       Script: {instanceID: 0}
-    - Class: 54
-      Script: {instanceID: 0}
-    - Class: 65
-      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
@@ -169,61 +178,63 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1594}
+      Script: {instanceID: 1598}
     - Class: 114
-      Script: {instanceID: 1674}
+      Script: {instanceID: 1678}
     - Class: 114
-      Script: {instanceID: 1776}
+      Script: {instanceID: 1782}
     - Class: 114
-      Script: {instanceID: 2494}
+      Script: {instanceID: 2502}
     - Class: 114
-      Script: {instanceID: 3116}
+      Script: {instanceID: 3134}
     - Class: 114
-      Script: {instanceID: 3398}
+      Script: {instanceID: 3418}
     - Class: 114
-      Script: {instanceID: 3816}
+      Script: {instanceID: 3844}
     - Class: 114
-      Script: {instanceID: 4072}
+      Script: {instanceID: 4106}
     - Class: 114
-      Script: {instanceID: 4284}
+      Script: {instanceID: 4280}
     - Class: 114
-      Script: {instanceID: 4624}
+      Script: {instanceID: 4320}
     - Class: 114
-      Script: {instanceID: 4710}
+      Script: {instanceID: 4662}
     - Class: 114
-      Script: {instanceID: 4730}
+      Script: {instanceID: 4748}
     - Class: 114
-      Script: {instanceID: 4826}
+      Script: {instanceID: 4768}
     - Class: 114
-      Script: {instanceID: 5290}
+      Script: {instanceID: 4866}
     - Class: 114
-      Script: {instanceID: 5506}
+      Script: {instanceID: 5332}
     - Class: 114
-      Script: {instanceID: 5662}
+      Script: {instanceID: 5550}
     - Class: 114
-      Script: {instanceID: 5960}
+      Script: {instanceID: 5708}
     - Class: 114
-      Script: {instanceID: 6710}
+      Script: {instanceID: 6008}
     - Class: 114
-      Script: {instanceID: 7566}
+      Script: {instanceID: 6768}
     - Class: 114
-      Script: {instanceID: 7756}
+      Script: {instanceID: 7632}
     - Class: 114
-      Script: {instanceID: 8230}
+      Script: {instanceID: 7824}
     - Class: 114
-      Script: {instanceID: 8332}
+      Script: {instanceID: 8310}
     - Class: 114
-      Script: {instanceID: 8774}
+      Script: {instanceID: 8416}
     - Class: 114
-      Script: {instanceID: 8806}
+      Script: {instanceID: 8862}
     - Class: 114
-      Script: {instanceID: 9334}
+      Script: {instanceID: 8894}
     - Class: 114
-      Script: {instanceID: 9840}
+      Script: {instanceID: 9428}
     - Class: 114
-      Script: {instanceID: 10230}
+      Script: {instanceID: 9938}
     - Class: 114
-      Script: {instanceID: 10586}
+      Script: {instanceID: 10332}
+    - Class: 114
+      Script: {instanceID: 10692}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -231,6 +242,10 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
       Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
@@ -241,6 +256,12 @@ ScriptsOnlyBuild:
     - Class: 224
       Script: {instanceID: 0}
   scriptHashData:
+  - hash:
+      serializedVersion: 2
+      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MQTTManager
   - hash:
       serializedVersion: 2
       Hash: 67f2e533bbfe68206e21fd8cf233561c
@@ -495,6 +516,12 @@ ScriptsOnlyBuild:
     className: CoroutineRunner
   - hash:
       serializedVersion: 2
+      Hash: 6062d5fad7f189b338d8d18085a83e41
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity
+    className: M2MqttUnityClient
+  - hash:
+      serializedVersion: 2
       Hash: 6ddf94363c6ce4b02d9fdd51290cb0f9
     assemblyName: UnityEngine.TestRunner
     namespaceName: UnityEngine.TestRunner.Utils
@@ -517,6 +544,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.XR.CoreUtils
     namespaceName: Unity.XR.CoreUtils
     className: OnDestroyNotifier
+  - hash:
+      serializedVersion: 2
+      Hash: 9775f562347a44a610b6b165543a7842
+    assemblyName: Assembly-CSharp
+    namespaceName: M2MqttUnity.Examples
+    className: M2MqttUnityTest
   - hash:
       serializedVersion: 2
       Hash: 28fd3d045acc780719a17f02073eb448
@@ -669,7 +702,13 @@ ScriptsOnlyBuild:
     className: UnityOnSelectMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 231d626d121be4cad80e8c31b5323ff2
+      Hash: 63dd928033e46d88bdedc539b2844f47
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CocktailManager
+  - hash:
+      serializedVersion: 2
+      Hash: 67b0e6622659efe7b38c31155af5b0a1
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: QRCodeManager
@@ -1167,6 +1206,12 @@ ScriptsOnlyBuild:
     className: Text
   - hash:
       serializedVersion: 2
+      Hash: f79191b0a4127d4238a9aa20bdc06c8c
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PourReceiver
+  - hash:
+      serializedVersion: 2
       Hash: f73532c9cb82aea7168d19ec253c2f5f
     assemblyName: Unity.XR.ARKit
     namespaceName: UnityEngine.XR.ARKit
@@ -1251,7 +1296,7 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerStay2DMessageListener
   - hash:
       serializedVersion: 2
-      Hash: c3171201e3538e9b9c2e4138bafd64fb
+      Hash: f2931655820a3f9f556847d8dbef7db4
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: SimpleHandSimulator
@@ -1461,6 +1506,12 @@ ScriptsOnlyBuild:
     className: UnityOnScrollRectValueChangedMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 7a67aea82f51093493678bd3565c9d0b
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: DrinkColorizer
+  - hash:
+      serializedVersion: 2
       Hash: 830c3b545f6e6ee60a4cebab90516f2c
     assemblyName: UnityEngine.TestRunner
     namespaceName: UnityEngine.TestTools.TestRunner.Callbacks
@@ -1567,6 +1618,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem
     namespaceName: UnityEngine.InputSystem.UI
     className: MultiplayerEventSystem
+  - hash:
+      serializedVersion: 2
+      Hash: 359a163207fb1c4f299e9a9533ca5f4e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UnityMainThreadDispatcher
   - hash:
       serializedVersion: 2
       Hash: 2bbd05175d4cdd21e24f9716cdd24f83
@@ -1695,5 +1752,5 @@ ScriptsOnlyBuild:
     className: UnityOnSliderValueChangedMessageListener
   platform: 9
   scenePathNames:
-  - Assets/bARtender_3d_copy.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pour1
+  - Assets/Scenes/bARtender_3d_nomqtt.unity
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_midori1

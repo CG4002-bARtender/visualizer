@@ -28,9 +28,15 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("Pour Settings")]
     public float pourAngle = 60f;
     public float pourDuration = 0.5f;
+    public GameObject liquidStreamPrefab;
+    public float pourRayDistance = 0.5f;  // How far to check for containers below
+    public LayerMask pourTargetLayer = -1;  // All layers
+
     private bool isPouring = false;
     private Coroutine pourCoroutine = null; 
-    
+    private GameObject activeLiquidStream;
+    private PourReceiver currentPourTarget = null;
+
     [Header("Pickup Settings")]
     public float maxPickupDistance = 0.5f; // 50cm range
     public float crosshairDetectionRadius = 0.3f; // How close to crosshair ray to detect
@@ -391,7 +397,6 @@ GameObject FindObjectAtCrosshair() //CHANGEDDDDD
         redDotDetected = false;
     }
     
-    // NEW: Called when button is PRESSED DOWN
 public void OnPourButtonDown()
 {
     if (!isHoldingCup || currentCup == null)
@@ -399,7 +404,25 @@ public void OnPourButtonDown()
         Debug.Log("⚠ Not holding anything to pour");
         return;
     }
-    
+
+    // NEW: Find what we're pouring into
+    currentPourTarget = FindPourTarget();
+   if (currentPourTarget != null)
+    {
+        if (!currentPourTarget.CanReceiveLiquid())
+        {
+            Debug.Log($"⚠ {currentPourTarget.containerName} is already full, spilling.");
+        }
+        else
+        {
+            Debug.Log($"✓ Pouring into {currentPourTarget.containerName}");
+        }
+    }
+    else
+    {
+        Debug.Log("⚠ No container detected - liquid will spill");
+    }
+
     if (isPouring) return;  // Already pouring
     
     isPouring = true;
@@ -414,7 +437,6 @@ public void OnPourButtonDown()
     if (showDebugLogs) Debug.Log("✓ Started pouring (hold button)");
 }
 
-// NEW: Called when button is RELEASED
 public void OnPourButtonUp()
 {
     if (!isPouring) return;
@@ -426,52 +448,174 @@ public void OnPourButtonUp()
         StopCoroutine(pourCoroutine);
         pourCoroutine = null;
     }
-    
+
+    // Stop and destroy liquid stream
+    if (activeLiquidStream != null)
+    {
+        Destroy(activeLiquidStream);
+        activeLiquidStream = null;
+    }
+
     // Return bottle to upright
     if (currentCup != null)
     {
         StartCoroutine(ReturnToUpright());
     }
     
-    if (showDebugLogs) Debug.Log("✓ Stopped pouring (released button)");
+    if (showDebugLogs) Debug.Log("✓ Stopped pouring");
 }
 
-// NEW: Continuous pour animation
+// NEW: Find container below the bottle
+PourReceiver FindPourTarget()
+{
+    if (currentCup == null) return null;
+    
+    // Cast ray downward from bottle spout
+    Vector3 spoutOffset = currentCup.transform.right * 0.15f + 
+                         currentCup.transform.up * 0.2f;
+    Vector3 spoutPosition = currentCup.transform.position + spoutOffset;
+    
+    // Ray points downward
+    Ray ray = new Ray(spoutPosition, Vector3.down);
+    
+    // Debug visualization
+    Debug.DrawRay(spoutPosition, Vector3.down * pourRayDistance, Color.cyan, 0.5f);
+    
+    RaycastHit hit;
+    if (Physics.Raycast(ray, out hit, pourRayDistance, pourTargetLayer))
+    {
+        PourReceiver receiver = hit.collider.GetComponent<PourReceiver>();
+        
+        if (receiver == null)
+        {
+            // Check parent
+            receiver = hit.collider.GetComponentInParent<PourReceiver>();
+        }
+        
+        if (receiver != null)
+        {
+            Debug.Log($"🎯 Found pour target: {receiver.containerName} at {hit.distance:F2}m below");
+            return receiver;
+        }
+    }
+    
+    return null;
+}
+
+Transform GetSpoutTransform(GameObject bottle)
+{
+    // Look for child named "SpoutPosition"
+    Transform spout = bottle.transform.Find("SpoutPosition");
+    
+    if (spout == null)
+    {
+        Debug.LogWarning($"⚠ No SpoutPosition found on {bottle.name}! Using fallback calculation.");
+        return null;
+    }
+    
+    return spout;
+}
+
 IEnumerator ContinuousPourAnimation()
 {
     Quaternion startRot = currentCup.transform.rotation;
-    Quaternion pourRot = startRot * Quaternion.Euler(pourAngle, 0, 0);
+    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);
     
-    // PHASE 1: Tilt to pour angle
+    // PHASE 1: Tilt left
     float elapsed = 0;
     while (elapsed < pourDuration && isPouring)
     {
         elapsed += Time.deltaTime;
-        float t = elapsed / pourDuration;
-        
         if (currentCup != null)
-        {
-            currentCup.transform.rotation = Quaternion.Lerp(startRot, pourRot, t);
-        }
-        
+            currentCup.transform.rotation = Quaternion.Lerp(startRot, pourRot, elapsed / pourDuration);
         yield return null;
     }
     
-    // PHASE 2: Hold pour angle while button is held
+    // PHASE 2: Spawn particles
+    if (isPouring && liquidStreamPrefab != null && currentCup != null)
+    {
+        // NEW: Get spout position from marker
+        Transform spoutTransform = GetSpoutTransform(currentCup);
+        Vector3 spoutWorldPos;
+        
+        if (spoutTransform != null)
+        {
+            // Use the exact marked position!
+            spoutWorldPos = spoutTransform.position;
+            Debug.Log("✓ Using marked spout position");
+        }
+        else
+        {
+            // Fallback to calculation if no marker found
+            Vector3 spoutOffset = currentCup.transform.up * 0.15f;
+            spoutWorldPos = currentCup.transform.position + spoutOffset;
+            Debug.Log("⚠ Using calculated spout position");
+        }
+        
+        Debug.Log($"📍 Spout at: {spoutWorldPos}");
+        
+        activeLiquidStream = Instantiate(liquidStreamPrefab, spoutWorldPos, Quaternion.identity);
+        activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
+        activeLiquidStream.transform.parent = null;
+        
+        ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Play();
+            Debug.Log("✓ Liquid particles started");
+        }
+    }
+    
+    // PHASE 3: Continuous update
+    float pourRate = 0.1f;
+    
     while (isPouring)
     {
-        // Keep bottle at pour angle
         if (currentCup != null)
         {
-            Quaternion baseRot = arCamera.rotation;
-            currentCup.transform.rotation = baseRot * Quaternion.Euler(pourAngle, 0, 0);
+            currentCup.transform.rotation = arCamera.rotation * Quaternion.Euler(0, 0, pourAngle);
+            
+            if (activeLiquidStream != null)
+            {
+                // NEW: Use marker position
+                Transform spoutTransform = GetSpoutTransform(currentCup);
+                
+                if (spoutTransform != null)
+                {
+                    activeLiquidStream.transform.position = spoutTransform.position;
+                }
+                else
+                {
+                    // Fallback
+                    Vector3 spoutOffset = currentCup.transform.up * 0.15f;
+                    activeLiquidStream.transform.position = currentCup.transform.position + spoutOffset;
+                }
+                
+                activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
+            }
+            
+            // Fill container
+            if (currentPourTarget != null && currentPourTarget.CanReceiveLiquid())
+            {
+                string liquidType = GetLiquidType(currentCup.name);
+                currentPourTarget.AddLiquid(liquidType, pourRate * Time.deltaTime);
+            }
         }
         
         yield return null;
     }
 }
 
-// NEW: Return to upright when button released
+//Helper: determine which liquid is in this bottle
+string GetLiquidType(string bottleName)
+{
+    if (bottleName.Contains("AlcoBottleV1")) return "Vodka";
+    if (bottleName.Contains("AlcoBottleV7")) return "Rum";
+    if (bottleName.Contains("Shaker")) return "Mixed";
+    return "Unknown";
+}
+
+// Return to upright when button released
 IEnumerator ReturnToUpright()
 {
     if (currentCup == null) yield break;

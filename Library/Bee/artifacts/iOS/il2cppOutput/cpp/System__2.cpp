@@ -196,6 +196,7 @@ struct Capture_tE11B735186DAFEE5F7A3BF5A739E9CCCE99DC24A;
 struct CaptureCollection_t38405272BD6A6DA77CD51487FD39624C6E95CC93;
 struct CaseSensitiveStringDictionary_t580762BF4259ED72CCB6E21746B96AFA5C410D0F;
 struct CodePageDataItem_t52460FA30AE37F4F26ACB81055E58002262F19F2;
+struct CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F;
 struct CompareInfo_t1B1A6AC3486B570C76ABA52149C9BD4CD82F9E57;
 struct Component_t7DA251DAA9E59801CC5FE8E27F37027143BED083;
 struct ConsoleCancelEventHandler_t7E25E018B7944F60BD34AE7F32E119F34DCEA053;
@@ -296,6 +297,7 @@ struct WaitOrTimerCallback_t7F57455D2C211D4751694104BA7DD36A9AB51711;
 struct WeakReference_tD4B0518CE911FFD9FAAB3FCD492644A354312D8E;
 struct Win32Exception_t15A75629914EB77C816D8219D93ED78E50C74BE9;
 struct X509BasicConstraintsExtension_t8CC04BD96EBD61494CC89A3272DDBB5F0B3B8A35;
+struct X509CertificateCollection_t2900D71D188EDCA7DEB5077D36103EE5DA6805CE;
 struct X509EnhancedKeyUsageExtension_t237A41510BAC916B5FFC67B464E1D38980D70BFF;
 struct X509Extension_tEDB806DCCB5A652375D9CC60A7A75AE8A2F4B7E5;
 struct X509KeyUsageExtension_t8AD500911A72309DBA02AF6C8461FA465CC56F1B;
@@ -724,6 +726,13 @@ struct ASN1_t33549D58797C9C33AA83F13AD184EAA00C584A6F  : public RuntimeObject
 	ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___m_aValue;
 	ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* ___elist;
 };
+struct ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A  : public RuntimeObject
+{
+	ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918* ____items;
+	int32_t ____size;
+	int32_t ____version;
+	RuntimeObject* ____syncRoot;
+};
 struct AsnEncodedData_t9341C847F05FA5D9D579173CBB19B4448445C8A8  : public RuntimeObject
 {
 	Oid_t9CF958D45B2027FCEDB1EE544E3FBB8351F61287* ____oid;
@@ -749,6 +758,10 @@ struct Capture_tE11B735186DAFEE5F7A3BF5A739E9CCCE99DC24A  : public RuntimeObject
 	int32_t ___U3CIndexU3Ek__BackingField;
 	int32_t ___U3CLengthU3Ek__BackingField;
 	String_t* ___U3CTextU3Ek__BackingField;
+};
+struct CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F  : public RuntimeObject
+{
+	ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* ____list;
 };
 struct Console_t5EDF9498D011BD48287171978EDBBA6964829C3E  : public RuntimeObject
 {
@@ -1017,6 +1030,9 @@ struct ValueType_t6D9B272BD21782F0A9A14F2E41F85A50E97A986F_marshaled_pinvoke
 struct ValueType_t6D9B272BD21782F0A9A14F2E41F85A50E97A986F_marshaled_com
 {
 };
+struct X509Chain_t2E7F88A4C97CAB82AF938F13A11354A0475469E5  : public RuntimeObject
+{
+};
 struct Nullable_1_t78F453FADB4A9F50F267A4E349019C34410D1A01 
 {
 	bool ___hasValue;
@@ -1149,6 +1165,9 @@ struct Void_t4861ACF8F4594C3437BB48B6E56783494B843915
 		};
 		uint8_t Void_t4861ACF8F4594C3437BB48B6E56783494B843915__padding[1];
 	};
+};
+struct X509CertificateCollection_t2900D71D188EDCA7DEB5077D36103EE5DA6805CE  : public CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F
+{
 };
 struct X509Extension_tEDB806DCCB5A652375D9CC60A7A75AE8A2F4B7E5  : public AsnEncodedData_t9341C847F05FA5D9D579173CBB19B4448445C8A8
 {
@@ -1354,6 +1373,10 @@ struct SafeHandle_tC1A4DA80DA89B867CC011B707A07275230321BF7  : public CriticalFi
 	int32_t ____state;
 	bool ____ownsHandle;
 	bool ____fullyInitialized;
+};
+struct SslProtocols_t21FADB874FCAEC5039AE593AA3544639C938C77E 
+{
+	int32_t ___value__;
 };
 struct StreamReader_t81027449065C1B0C339DB46241D8001A6F61130B  : public TextReader_tB8D43017CB6BE1633E5A86D64E7757366507C1F7
 {
@@ -2921,6 +2944,8 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR ASN1_t33549D58797C9C33AA83F13AD184EAA00C584A6
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* X509Extension_FormatUnkownData_mD0463F5096A6937E95E3165048299CBA9A1A6F7D (X509Extension_tEDB806DCCB5A652375D9CC60A7A75AE8A2F4B7E5* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool String_op_Inequality_m8C940F3CFC42866709D7CA931B3D77B4BE94BCB6 (String_t* ___0_a, String_t* ___1_b, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR StringBuilder_t* StringBuilder_Append_m283B617AC29FB0DD6F3A7D8C01D385C25A5F0FAA (StringBuilder_t* __this, int32_t ___0_value, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CollectionBase__ctor_m9AB03A7692AA8F78FA5519ACA74FF3FA2F9520BC (CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F* __this, const RuntimeMethod* method) ;
+IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* CollectionBase_get_InnerList_mD37144662A9045A5CA82681C265719733934DEAB_inline (CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F* __this, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t X509EnhancedKeyUsageExtension_Decode_m1110DD9BD5D717540009DB5D90805458CF07423C (X509EnhancedKeyUsageExtension_t237A41510BAC916B5FFC67B464E1D38980D70BFF* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_extension, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void OidCollection__ctor_m9B8C252AE048962DAD7419597007ABA2793F9D98 (OidCollection_tAAFE5AD288B6365182B7C9D4D66D0DA9A56712B3* __this, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ASN1Convert_ToOid_mBCE4FD3970C556190FB00A6AD409A6ABB4C627D8 (ASN1_t33549D58797C9C33AA83F13AD184EAA00C584A6F* ___0_asn1, const RuntimeMethod* method) ;
@@ -21485,6 +21510,14 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExcludeFromCodeCoverageAttribute__ctor_m
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Oid__ctor_m4AF81B9D51BED48AE505251E0874EC654BA07B72 (Oid_t9CF958D45B2027FCEDB1EE544E3FBB8351F61287* __this, String_t* ___0_oid, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -22515,7 +22548,7 @@ IL_0055_1:
 			L_13 = ASN1_get_Value_mA6F9BE5AC19AC060AC42673C8FD5AA864EA046B6(L_12, NULL);
 			NullCheck(L_11);
 			String_t* L_14;
-			L_14 = VirtualFuncInvoker1< String_t*, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(33, L_11, L_13);
+			L_14 = VirtualFuncInvoker1< String_t*, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(34, L_11, L_13);
 			V_5 = L_14;
 			goto IL_00af_1;
 		}
@@ -22531,7 +22564,7 @@ IL_0070_1:
 			L_17 = ASN1_get_Value_mA6F9BE5AC19AC060AC42673C8FD5AA864EA046B6(L_16, NULL);
 			NullCheck(L_15);
 			String_t* L_18;
-			L_18 = VirtualFuncInvoker1< String_t*, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(33, L_15, L_17);
+			L_18 = VirtualFuncInvoker1< String_t*, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(34, L_15, L_17);
 			V_5 = L_18;
 			goto IL_00af_1;
 		}
@@ -23831,6 +23864,40 @@ IL_00f6:
 		return L_38;
 	}
 }
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void X509CertificateCollection__ctor_m237A27DC157785FBC50EBAF3562AAF0907BF97EB (X509CertificateCollection_t2900D71D188EDCA7DEB5077D36103EE5DA6805CE* __this, const RuntimeMethod* method) 
+{
+	{
+		CollectionBase__ctor_m9AB03A7692AA8F78FA5519ACA74FF3FA2F9520BC(__this, NULL);
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t X509CertificateCollection_GetHashCode_m3F1BB9203AB722A6A9CF574390B0244F47485111 (X509CertificateCollection_t2900D71D188EDCA7DEB5077D36103EE5DA6805CE* __this, const RuntimeMethod* method) 
+{
+	{
+		ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* L_0;
+		L_0 = CollectionBase_get_InnerList_mD37144662A9045A5CA82681C265719733934DEAB_inline(__this, NULL);
+		NullCheck(L_0);
+		int32_t L_1;
+		L_1 = VirtualFuncInvoker0< int32_t >::Invoke(2, L_0);
+		return L_1;
+	}
+}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25815,6 +25882,13 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool X509Extension_get_Critical_m
 {
 	{
 		bool L_0 = __this->____critical;
+		return L_0;
+	}
+}
+IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* CollectionBase_get_InnerList_mD37144662A9045A5CA82681C265719733934DEAB_inline (CollectionBase_t44F966CC555C87F2815D668FB4586526E1C2383F* __this, const RuntimeMethod* method) 
+{
+	{
+		ArrayList_t7A8E5AF0C4378015B5731ABE2BED8F2782FEEF8A* L_0 = __this->____list;
 		return L_0;
 	}
 }

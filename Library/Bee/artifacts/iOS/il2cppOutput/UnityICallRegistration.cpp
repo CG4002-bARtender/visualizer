@@ -774,6 +774,10 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Debug_ExtractStackTraceNoAlloc();
 		Register_UnityEngine_Debug_ExtractStackTraceNoAlloc();
 
+		//System.Void UnityEngine.Debug::DrawLine_Injected(UnityEngine.Vector3&,UnityEngine.Vector3&,UnityEngine.Color&,System.Single,System.Boolean)
+		void Register_UnityEngine_Debug_DrawLine_Injected();
+		Register_UnityEngine_Debug_DrawLine_Injected();
+
 	//End Registrations for type : UnityEngine.Debug
 
 	//Start Registrations for type : UnityEngine.DebugLogHandler
@@ -2186,6 +2190,10 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_ParticleSystem_Emit_Internal();
 		Register_UnityEngine_ParticleSystem_Emit_Internal();
 
+		//System.Void UnityEngine.ParticleSystem::Play(System.Boolean)
+		void Register_UnityEngine_ParticleSystem_Play();
+		Register_UnityEngine_ParticleSystem_Play();
+
 		//System.Void UnityEngine.ParticleSystem::SetParticles(UnityEngine.ParticleSystem/Particle[],System.Int32,System.Int32)
 		void Register_UnityEngine_ParticleSystem_SetParticles();
 		Register_UnityEngine_ParticleSystem_SetParticles();
@@ -2439,6 +2447,14 @@ void RegisterAllStrippedInternalCalls()
 		Register_UnityEngine_Quaternion_LookRotation_Injected();
 
 	//End Registrations for type : UnityEngine.Quaternion
+
+	//Start Registrations for type : UnityEngine.Random
+
+		//System.Int32 UnityEngine.Random::RandomRangeInt(System.Int32,System.Int32)
+		void Register_UnityEngine_Random_RandomRangeInt();
+		Register_UnityEngine_Random_RandomRangeInt();
+
+	//End Registrations for type : UnityEngine.Random
 
 	//Start Registrations for type : UnityEngine.RectOffset
 
