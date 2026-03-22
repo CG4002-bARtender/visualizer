@@ -39,6 +39,7 @@ extern void MQTTManager__ctor_mF1701CA4738429FC279CB95CD3608F5CB7B36735 (void);
 extern void U3CU3Ec__DisplayClass11_0__ctor_m5DDEC8717C9198B32A5EB60CE955FF265F913458 (void);
 extern void U3CU3Ec__DisplayClass11_0_U3COnMessageReceivedU3Eb__0_m44F7624762FA4D23E48241336A1B337AEEB965B4 (void);
 extern void GameStateData__ctor_mC8CA5F27011C6A4B057BD84A20553FABA84238B0 (void);
+extern void PourReceiver_Start_mBD73ED285DE9DCBA22A3EAFC8E2FB9D6D9966E71 (void);
 extern void PourReceiver_CanReceiveLiquid_m87B70002D4A247D6C5C76BCE3E399C9BA5F68C4D (void);
 extern void PourReceiver_AddLiquid_m64EDCFF74AFC8681E4DB52A2417362A051A5C297 (void);
 extern void PourReceiver_Empty_m0E59A5683F32AE103D8454ACD103918F7ADE3A53 (void);
@@ -82,33 +83,28 @@ extern void SimpleHandSimulator_PickUpObject_mE698F37878FB5E55350C766FC7612533F1
 extern void SimpleHandSimulator_PourAnimation_mB7077E12B938FBFFA35F49EB67BB16F79221CD5A (void);
 extern void SimpleHandSimulator_OnHandPositionReceived_m036F070351342C64A7812F349A7443EFA2BD2E6B (void);
 extern void SimpleHandSimulator_OnRedDotLost_m158B2FD8E0E3E8FFEE903BDC8C5B5FAA5BA3D49D (void);
-extern void SimpleHandSimulator_OnPourButtonDown_mC237415AC5B1811F8712DA9D6FAEC6CCFAD4FB8A (void);
-extern void SimpleHandSimulator_OnPourButtonUp_m22E36D444D9448A7A4FEF86D351910ABF458FE18 (void);
-extern void SimpleHandSimulator_FindPourTarget_mBED473F97AD0EC08CA3DE915BF9466373D79F3E7 (void);
-extern void SimpleHandSimulator_GetSpoutTransform_m82F776AB1F188C97F94CA8A9569E559224398AA1 (void);
-extern void SimpleHandSimulator_ContinuousPourAnimation_m780679D744E20ED1AED9513D5C60B068C54C072F (void);
+extern void SimpleHandSimulator_OnPourButton_mA04D2F1E36FC2FA3F22EFF689BE2C414788FCE2A (void);
+extern void SimpleHandSimulator_DeterminePourTarget_m1F1D25FB934EC21B6445A8E839F5526FD8453623 (void);
+extern void SimpleHandSimulator_FindPourReceiverByType_m1314C6CD8C9F13A820EF01E85AC013B5A49235D5 (void);
+extern void SimpleHandSimulator_PourCutsceneAnimation_m2D93092E1A56BD51CA387021C3CC7A06B677A1BB (void);
 extern void SimpleHandSimulator_GetLiquidType_m98E94DDDE3560BEF7AC9F577AF427624AD01DE17 (void);
-extern void SimpleHandSimulator_ReturnToUpright_m4425FD83245A8BA2EFDCAD5A89FB71878A34A056 (void);
+extern void SimpleHandSimulator_GetSpoutTransform_m82F776AB1F188C97F94CA8A9569E559224398AA1 (void);
 extern void SimpleHandSimulator_SimulateFakeInput_m61045DEC0588A1E2317A30C3F3D647ECD9741355 (void);
+extern void SimpleHandSimulator_ShowPourUI_m25D306143237A99AEBB90608026C0B5B23942E34 (void);
+extern void SimpleHandSimulator_UpdatePourUI_mF759F52EEC057987010D096EBCEAFB16AEF6B798 (void);
 extern void SimpleHandSimulator__ctor_mC525E19BB36E9EBBFE6EB416D8E8920CA27153FB (void);
-extern void U3CContinuousPourAnimationU3Ed__50__ctor_m9357C5C5A8982D8235783F848D7747555FD4D964 (void);
-extern void U3CContinuousPourAnimationU3Ed__50_System_IDisposable_Dispose_m90544AFFD057B6408F3420A58F97860220B00DD2 (void);
-extern void U3CContinuousPourAnimationU3Ed__50_MoveNext_m52C5F1BB9D0395AC53CF14F967CAA2E83ACB91E3 (void);
-extern void U3CContinuousPourAnimationU3Ed__50_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mC36B968391D925D1873C772A587488E3766B00E0 (void);
-extern void U3CContinuousPourAnimationU3Ed__50_System_Collections_IEnumerator_Reset_mE89DAF1CF1FAD6F88A5D3FE1A92F0776C5F93406 (void);
-extern void U3CContinuousPourAnimationU3Ed__50_System_Collections_IEnumerator_get_Current_m827740ACCC5C646DAE28A634291C1055D52DA380 (void);
-extern void U3CPourAnimationU3Ed__43__ctor_mA15FEF96BEFC9AF170054F45383D74FD51705FE7 (void);
-extern void U3CPourAnimationU3Ed__43_System_IDisposable_Dispose_m60461000588E5B1CD8E2CEAE988EB56D35DE561C (void);
-extern void U3CPourAnimationU3Ed__43_MoveNext_mA1C18A015657021F632C2E00F612E9D6870ABEC9 (void);
-extern void U3CPourAnimationU3Ed__43_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m6C2AA4C17DA0350E48AEE29F6B778E8C320B9C50 (void);
-extern void U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_Reset_m9F196AAF2BAEB97F740B61A2E89D95F8142155E2 (void);
-extern void U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_get_Current_m02F141B90AA335A12D64ACC4DBD3C378A47B999E (void);
-extern void U3CReturnToUprightU3Ed__52__ctor_m78755DDA756CB3612696AF15B9423264BF9FE03A (void);
-extern void U3CReturnToUprightU3Ed__52_System_IDisposable_Dispose_mFEAFD465BE854A77C3E76F78C17A7E21AB616050 (void);
-extern void U3CReturnToUprightU3Ed__52_MoveNext_m9BAD0FBDD5F6DA1F850659B382175A1515F54AB9 (void);
-extern void U3CReturnToUprightU3Ed__52_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mABD5D0D20647C9E11D00EBB7F40238C5A9AF9E53 (void);
-extern void U3CReturnToUprightU3Ed__52_System_Collections_IEnumerator_Reset_mD03A9C7E3A0540D7EA98C7443ADE7C9567B3427E (void);
-extern void U3CReturnToUprightU3Ed__52_System_Collections_IEnumerator_get_Current_mD6EFAD0114EDC8B5A317BA8AB2025605EF6CF7A6 (void);
+extern void U3CPourAnimationU3Ed__47__ctor_m06D7C40C2BFE9794E0F1C38BD5BDE435A70B8D47 (void);
+extern void U3CPourAnimationU3Ed__47_System_IDisposable_Dispose_m1D4660B59A39ECDBF2A9FDB825BE9CEC0B76D40F (void);
+extern void U3CPourAnimationU3Ed__47_MoveNext_mF01C5E728C3D8E036A2B7D86AF3279EE497A1B20 (void);
+extern void U3CPourAnimationU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m448FAA02651EE2D460BCBD1022142017C66C411E (void);
+extern void U3CPourAnimationU3Ed__47_System_Collections_IEnumerator_Reset_m746A428A1F499D530A3F0E4ED997634CF23C1C35 (void);
+extern void U3CPourAnimationU3Ed__47_System_Collections_IEnumerator_get_Current_m658110053427820EC2E6F80D351A1164650A0B6D (void);
+extern void U3CPourCutsceneAnimationU3Ed__53__ctor_m439361153CA4005A56BEA5E4F3D3BA726561FDD0 (void);
+extern void U3CPourCutsceneAnimationU3Ed__53_System_IDisposable_Dispose_mB1DF16C642EDEFAD768135F604E907E227E42083 (void);
+extern void U3CPourCutsceneAnimationU3Ed__53_MoveNext_mF2E7A18646364A30953775739A05BBE51562D786 (void);
+extern void U3CPourCutsceneAnimationU3Ed__53_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m139737798AA00BB43DCE572EF452086A5C2874CA (void);
+extern void U3CPourCutsceneAnimationU3Ed__53_System_Collections_IEnumerator_Reset_mACB6AD177AD5C2C0B03F4137E15C8BAE36A3F2AC (void);
+extern void U3CPourCutsceneAnimationU3Ed__53_System_Collections_IEnumerator_get_Current_m0771D0B5524831748286CA6156A6F261AEB00361 (void);
 extern void UnityMainThreadDispatcher_Instance_m0B17E9E95172FC70FF269E3E5EAEC2761BCB7E2A (void);
 extern void UnityMainThreadDispatcher_Awake_m518E1A8505DD06DAC84D9A11FE8C69E5501307AB (void);
 extern void UnityMainThreadDispatcher_Update_mA4581B031CF68811CC6957B72109257C5FB953BA (void);
@@ -511,7 +507,7 @@ extern void MqttCommunicationException__ctor_m0AF8276EBCE12EDEF85EC8CAB5D75CC393
 extern void MqttConnectionException__ctor_mB3D08501C9415D641FA2A3EB4F4BBAFB3F36DF37 (void);
 extern void MqttTimeoutException__ctor_mE628E891112184AE977020286DEB216CC838A7B0 (void);
 extern void U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876 (void);
-static Il2CppMethodPointer s_methodPointers[506] = 
+static Il2CppMethodPointer s_methodPointers[502] = 
 {
 	Script_Start_m26181EB142F9E9D13BB497FAEA9E42CFDC132438,
 	Script_Update_m3D73B366324BC0BF8F060D1E0CB6B52EAEED1518,
@@ -540,6 +536,7 @@ static Il2CppMethodPointer s_methodPointers[506] =
 	U3CU3Ec__DisplayClass11_0__ctor_m5DDEC8717C9198B32A5EB60CE955FF265F913458,
 	U3CU3Ec__DisplayClass11_0_U3COnMessageReceivedU3Eb__0_m44F7624762FA4D23E48241336A1B337AEEB965B4,
 	GameStateData__ctor_mC8CA5F27011C6A4B057BD84A20553FABA84238B0,
+	PourReceiver_Start_mBD73ED285DE9DCBA22A3EAFC8E2FB9D6D9966E71,
 	PourReceiver_CanReceiveLiquid_m87B70002D4A247D6C5C76BCE3E399C9BA5F68C4D,
 	PourReceiver_AddLiquid_m64EDCFF74AFC8681E4DB52A2417362A051A5C297,
 	PourReceiver_Empty_m0E59A5683F32AE103D8454ACD103918F7ADE3A53,
@@ -583,33 +580,28 @@ static Il2CppMethodPointer s_methodPointers[506] =
 	SimpleHandSimulator_PourAnimation_mB7077E12B938FBFFA35F49EB67BB16F79221CD5A,
 	SimpleHandSimulator_OnHandPositionReceived_m036F070351342C64A7812F349A7443EFA2BD2E6B,
 	SimpleHandSimulator_OnRedDotLost_m158B2FD8E0E3E8FFEE903BDC8C5B5FAA5BA3D49D,
-	SimpleHandSimulator_OnPourButtonDown_mC237415AC5B1811F8712DA9D6FAEC6CCFAD4FB8A,
-	SimpleHandSimulator_OnPourButtonUp_m22E36D444D9448A7A4FEF86D351910ABF458FE18,
-	SimpleHandSimulator_FindPourTarget_mBED473F97AD0EC08CA3DE915BF9466373D79F3E7,
-	SimpleHandSimulator_GetSpoutTransform_m82F776AB1F188C97F94CA8A9569E559224398AA1,
-	SimpleHandSimulator_ContinuousPourAnimation_m780679D744E20ED1AED9513D5C60B068C54C072F,
+	SimpleHandSimulator_OnPourButton_mA04D2F1E36FC2FA3F22EFF689BE2C414788FCE2A,
+	SimpleHandSimulator_DeterminePourTarget_m1F1D25FB934EC21B6445A8E839F5526FD8453623,
+	SimpleHandSimulator_FindPourReceiverByType_m1314C6CD8C9F13A820EF01E85AC013B5A49235D5,
+	SimpleHandSimulator_PourCutsceneAnimation_m2D93092E1A56BD51CA387021C3CC7A06B677A1BB,
 	SimpleHandSimulator_GetLiquidType_m98E94DDDE3560BEF7AC9F577AF427624AD01DE17,
-	SimpleHandSimulator_ReturnToUpright_m4425FD83245A8BA2EFDCAD5A89FB71878A34A056,
+	SimpleHandSimulator_GetSpoutTransform_m82F776AB1F188C97F94CA8A9569E559224398AA1,
 	SimpleHandSimulator_SimulateFakeInput_m61045DEC0588A1E2317A30C3F3D647ECD9741355,
+	SimpleHandSimulator_ShowPourUI_m25D306143237A99AEBB90608026C0B5B23942E34,
+	SimpleHandSimulator_UpdatePourUI_mF759F52EEC057987010D096EBCEAFB16AEF6B798,
 	SimpleHandSimulator__ctor_mC525E19BB36E9EBBFE6EB416D8E8920CA27153FB,
-	U3CContinuousPourAnimationU3Ed__50__ctor_m9357C5C5A8982D8235783F848D7747555FD4D964,
-	U3CContinuousPourAnimationU3Ed__50_System_IDisposable_Dispose_m90544AFFD057B6408F3420A58F97860220B00DD2,
-	U3CContinuousPourAnimationU3Ed__50_MoveNext_m52C5F1BB9D0395AC53CF14F967CAA2E83ACB91E3,
-	U3CContinuousPourAnimationU3Ed__50_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mC36B968391D925D1873C772A587488E3766B00E0,
-	U3CContinuousPourAnimationU3Ed__50_System_Collections_IEnumerator_Reset_mE89DAF1CF1FAD6F88A5D3FE1A92F0776C5F93406,
-	U3CContinuousPourAnimationU3Ed__50_System_Collections_IEnumerator_get_Current_m827740ACCC5C646DAE28A634291C1055D52DA380,
-	U3CPourAnimationU3Ed__43__ctor_mA15FEF96BEFC9AF170054F45383D74FD51705FE7,
-	U3CPourAnimationU3Ed__43_System_IDisposable_Dispose_m60461000588E5B1CD8E2CEAE988EB56D35DE561C,
-	U3CPourAnimationU3Ed__43_MoveNext_mA1C18A015657021F632C2E00F612E9D6870ABEC9,
-	U3CPourAnimationU3Ed__43_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m6C2AA4C17DA0350E48AEE29F6B778E8C320B9C50,
-	U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_Reset_m9F196AAF2BAEB97F740B61A2E89D95F8142155E2,
-	U3CPourAnimationU3Ed__43_System_Collections_IEnumerator_get_Current_m02F141B90AA335A12D64ACC4DBD3C378A47B999E,
-	U3CReturnToUprightU3Ed__52__ctor_m78755DDA756CB3612696AF15B9423264BF9FE03A,
-	U3CReturnToUprightU3Ed__52_System_IDisposable_Dispose_mFEAFD465BE854A77C3E76F78C17A7E21AB616050,
-	U3CReturnToUprightU3Ed__52_MoveNext_m9BAD0FBDD5F6DA1F850659B382175A1515F54AB9,
-	U3CReturnToUprightU3Ed__52_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mABD5D0D20647C9E11D00EBB7F40238C5A9AF9E53,
-	U3CReturnToUprightU3Ed__52_System_Collections_IEnumerator_Reset_mD03A9C7E3A0540D7EA98C7443ADE7C9567B3427E,
-	U3CReturnToUprightU3Ed__52_System_Collections_IEnumerator_get_Current_mD6EFAD0114EDC8B5A317BA8AB2025605EF6CF7A6,
+	U3CPourAnimationU3Ed__47__ctor_m06D7C40C2BFE9794E0F1C38BD5BDE435A70B8D47,
+	U3CPourAnimationU3Ed__47_System_IDisposable_Dispose_m1D4660B59A39ECDBF2A9FDB825BE9CEC0B76D40F,
+	U3CPourAnimationU3Ed__47_MoveNext_mF01C5E728C3D8E036A2B7D86AF3279EE497A1B20,
+	U3CPourAnimationU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m448FAA02651EE2D460BCBD1022142017C66C411E,
+	U3CPourAnimationU3Ed__47_System_Collections_IEnumerator_Reset_m746A428A1F499D530A3F0E4ED997634CF23C1C35,
+	U3CPourAnimationU3Ed__47_System_Collections_IEnumerator_get_Current_m658110053427820EC2E6F80D351A1164650A0B6D,
+	U3CPourCutsceneAnimationU3Ed__53__ctor_m439361153CA4005A56BEA5E4F3D3BA726561FDD0,
+	U3CPourCutsceneAnimationU3Ed__53_System_IDisposable_Dispose_mB1DF16C642EDEFAD768135F604E907E227E42083,
+	U3CPourCutsceneAnimationU3Ed__53_MoveNext_mF2E7A18646364A30953775739A05BBE51562D786,
+	U3CPourCutsceneAnimationU3Ed__53_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m139737798AA00BB43DCE572EF452086A5C2874CA,
+	U3CPourCutsceneAnimationU3Ed__53_System_Collections_IEnumerator_Reset_mACB6AD177AD5C2C0B03F4137E15C8BAE36A3F2AC,
+	U3CPourCutsceneAnimationU3Ed__53_System_Collections_IEnumerator_get_Current_m0771D0B5524831748286CA6156A6F261AEB00361,
 	UnityMainThreadDispatcher_Instance_m0B17E9E95172FC70FF269E3E5EAEC2761BCB7E2A,
 	UnityMainThreadDispatcher_Awake_m518E1A8505DD06DAC84D9A11FE8C69E5501307AB,
 	UnityMainThreadDispatcher_Update_mA4581B031CF68811CC6957B72109257C5FB953BA,
@@ -1020,7 +1012,7 @@ static Il2CppMethodPointer s_methodPointers[506] =
 	MqttTimeoutException__ctor_mE628E891112184AE977020286DEB216CC838A7B0,
 	U3CPrivateImplementationDetailsU3E_ComputeStringHash_m6EA1F233618497AEFF8902A5EDFA24C74E2F2876,
 };
-static const int32_t s_InvokerIndices[506] = 
+static const int32_t s_InvokerIndices[502] = 
 {
 	7088,
 	7088,
@@ -1043,6 +1035,7 @@ static const int32_t s_InvokerIndices[506] =
 	5566,
 	5566,
 	5566,
+	7088,
 	7088,
 	7088,
 	7088,
@@ -1093,12 +1086,13 @@ static const int32_t s_InvokerIndices[506] =
 	2962,
 	7088,
 	7088,
-	7088,
 	6974,
 	4873,
-	6974,
 	4873,
-	6974,
+	4873,
+	4873,
+	5566,
+	5445,
 	5566,
 	7088,
 	5523,
@@ -1113,19 +1107,13 @@ static const int32_t s_InvokerIndices[506] =
 	6974,
 	7088,
 	6974,
-	5523,
-	7088,
-	6853,
-	6974,
-	7088,
-	6974,
-	10585,
+	10582,
 	7088,
 	7088,
 	5566,
 	7088,
-	10631,
-	10650,
+	10628,
+	10647,
 	7088,
 	7088,
 	5566,
@@ -1302,10 +1290,10 @@ static const int32_t s_InvokerIndices[506] =
 	5523,
 	6928,
 	5523,
-	10585,
+	10582,
 	7088,
-	10417,
-	10412,
+	10414,
+	10409,
 	7088,
 	6974,
 	6974,
@@ -1321,9 +1309,9 @@ static const int32_t s_InvokerIndices[506] =
 	2014,
 	7088,
 	7088,
-	10050,
-	10039,
-	9378,
+	10047,
+	10036,
+	9375,
 	2905,
 	3903,
 	1244,
@@ -1332,11 +1320,11 @@ static const int32_t s_InvokerIndices[506] =
 	2909,
 	870,
 	5566,
-	9653,
-	9620,
-	8724,
-	8155,
-	7736,
+	9650,
+	9617,
+	8721,
+	8153,
+	7735,
 	5566,
 	6974,
 	5566,
@@ -1357,14 +1345,14 @@ static const int32_t s_InvokerIndices[506] =
 	5652,
 	0,
 	1201,
-	10050,
+	10047,
 	7088,
 	6853,
 	5445,
 	6853,
 	5445,
 	7088,
-	8473,
+	8470,
 	4859,
 	6974,
 	6974,
@@ -1394,7 +1382,7 @@ static const int32_t s_InvokerIndices[506] =
 	7088,
 	5566,
 	23,
-	8473,
+	8470,
 	4859,
 	6974,
 	6974,
@@ -1413,24 +1401,24 @@ static const int32_t s_InvokerIndices[506] =
 	6974,
 	7088,
 	7088,
-	8473,
+	8470,
 	4859,
 	6974,
 	7088,
 	4859,
-	8473,
+	8470,
 	6974,
 	7088,
-	8473,
+	8470,
 	4859,
 	6974,
 	7088,
 	4859,
-	8473,
+	8470,
 	6974,
 	7088,
 	4859,
-	8473,
+	8470,
 	6974,
 	6974,
 	5566,
@@ -1440,7 +1428,7 @@ static const int32_t s_InvokerIndices[506] =
 	2909,
 	505,
 	4859,
-	8473,
+	8470,
 	6974,
 	7073,
 	5652,
@@ -1461,16 +1449,16 @@ static const int32_t s_InvokerIndices[506] =
 	505,
 	7088,
 	4859,
-	8473,
+	8470,
 	6974,
 	7088,
 	4859,
-	8473,
+	8470,
 	6974,
 	6974,
 	5566,
 	7088,
-	8473,
+	8470,
 	4859,
 	6974,
 	6974,
@@ -1479,7 +1467,7 @@ static const int32_t s_InvokerIndices[506] =
 	5566,
 	7088,
 	2909,
-	8473,
+	8470,
 	4859,
 	6974,
 	7073,
@@ -1495,14 +1483,14 @@ static const int32_t s_InvokerIndices[506] =
 	5566,
 	1513,
 	7088,
-	8473,
+	8470,
 	4859,
 	6974,
 	6974,
 	5566,
 	7088,
 	5566,
-	8473,
+	8470,
 	4859,
 	6974,
 	7073,
@@ -1527,13 +1515,13 @@ static const int32_t s_InvokerIndices[506] =
 	5566,
 	2909,
 	7088,
-	10359,
+	10356,
 };
 IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	506,
+	502,
 	s_methodPointers,
 	0,
 	NULL,

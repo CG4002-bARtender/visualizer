@@ -43,6 +43,12 @@ public class SimpleHandSimulator : MonoBehaviour
     
     [Header("Debug")]
     public bool showDebugLogs = true;
+
+    [Header("UI References")]
+    public GameObject pourProgressPanel;  // The panel
+    public TextMeshProUGUI pourStatusText;  // "Pouring into: Shaker"
+    public TextMeshProUGUI pourPercentText;  // "45%"
+    public Image fillBar;  // Optional: visual fill bar
     
     // Object holding state
     private GameObject currentCup;
@@ -71,6 +77,8 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             handCrosshairRect = handCrosshair.GetComponent<RectTransform>();
         }
+        ShowPourUI(false);
+
     }
     
     void Update()
@@ -424,246 +432,290 @@ GameObject FindObjectAtCrosshair()
         redDotDetected = false;
     }
     
-public void OnPourButtonDown()
-{
-    if (!isHoldingCup || currentCup == null)
+    // ===== NEW POUR BUTTON - CUTSCENE STYLE =====
+
+    public void OnPourButton()
     {
-        Debug.Log("⚠ Not holding anything to pour");
-        return;
+        if (!isHoldingCup || currentCup == null)
+        {
+            Debug.Log("⚠ Not holding anything to pour");
+            return;
+        }
+        
+        if (isPouring)
+        {
+            Debug.Log("⚠ Already pouring!");
+            return;
+        }
+        
+        // Determine pour target based on what we're holding
+        PourReceiver pourTarget = DeterminePourTarget();
+        
+        if (pourTarget == null)
+        {
+            Debug.Log("⚠ No valid pour target found");
+            return;
+        }
+        
+        if (!pourTarget.CanReceiveLiquid())
+        {
+            Debug.Log($"⚠ {pourTarget.containerName} is already full!");
+            return;
+        }
+        
+        // Start cutscene animation
+        StartCoroutine(PourCutsceneAnimation(pourTarget));
     }
 
-    // NEW: Find what we're pouring into
-    currentPourTarget = FindPourTarget();
-   if (currentPourTarget != null)
+    PourReceiver DeterminePourTarget()
     {
-        if (!currentPourTarget.CanReceiveLiquid())
+        if (currentCup == null) return null;
+        
+        string heldItemName = currentCup.name.ToLower();
+        
+        // If holding shaker → pour into serving glass
+        if (heldItemName.Contains("shaker"))
         {
-            Debug.Log($"⚠ {currentPourTarget.containerName} is already full, spilling.");
+            return FindPourReceiverByType("serving");
         }
+        // If holding bottle → pour into shaker (or serving glass if no shaker needed)
         else
         {
-            Debug.Log($"✓ Pouring into {currentPourTarget.containerName}");
+            // Try to find shaker first
+            PourReceiver shaker = FindPourReceiverByType("shaker");
+            
+            if (shaker == null)
+            {
+                Debug.LogWarning("⚠ No shaker found!");
+            }
+            
+            return shaker;
         }
     }
-    else
-    {
-        Debug.Log("⚠ No container detected - liquid will spill");
-    }
 
-    if (isPouring) return;  // Already pouring
-    
-    isPouring = true;
-    
-    if (pourCoroutine != null)
+    PourReceiver FindPourReceiverByType(string containerType)
     {
-        StopCoroutine(pourCoroutine);
-    }
-    
-    pourCoroutine = StartCoroutine(ContinuousPourAnimation());
-    
-    if (showDebugLogs) Debug.Log("✓ Started pouring (hold button)");
-}
-
-public void OnPourButtonUp()
-{
-    if (!isPouring) return;
-    
-    isPouring = false;
-    
-    if (pourCoroutine != null)
-    {
-        StopCoroutine(pourCoroutine);
-        pourCoroutine = null;
-    }
-
-    // Stop and destroy liquid stream
-    if (activeLiquidStream != null)
-    {
-        Destroy(activeLiquidStream);
-        activeLiquidStream = null;
-    }
-
-    // Return bottle to upright
-    if (currentCup != null)
-    {
-        StartCoroutine(ReturnToUpright());
-    }
-    
-    if (showDebugLogs) Debug.Log("✓ Stopped pouring");
-}
-
-// NEW: Find container below the bottle
-PourReceiver FindPourTarget()
-{
-    if (currentCup == null) return null;
-    
-    // Cast ray downward from bottle spout
-    Vector3 spoutOffset = currentCup.transform.right * 0.15f + 
-                         currentCup.transform.up * 0.2f;
-    Vector3 spoutPosition = currentCup.transform.position + spoutOffset;
-    
-    // Ray points downward
-    Ray ray = new Ray(spoutPosition, Vector3.down);
-    
-    // Debug visualization
-    Debug.DrawRay(spoutPosition, Vector3.down * pourRayDistance, Color.cyan, 0.5f);
-    
-    RaycastHit hit;
-    if (Physics.Raycast(ray, out hit, pourRayDistance, pourTargetLayer))
-    {
-        PourReceiver receiver = hit.collider.GetComponent<PourReceiver>();
+        PourReceiver[] allReceivers = FindObjectsOfType<PourReceiver>();
         
-        if (receiver == null)
+        foreach (PourReceiver receiver in allReceivers)
         {
-            // Check parent
-            receiver = hit.collider.GetComponentInParent<PourReceiver>();
+            if (containerType == "shaker" && receiver.containerType == PourReceiver.ContainerType.Shaker)
+            {
+                return receiver;
+            }
+            else if (containerType == "serving" && receiver.containerType == PourReceiver.ContainerType.ServingGlass)
+            {
+                return receiver;
+            }
         }
         
-        if (receiver != null)
-        {
-            Debug.Log($"🎯 Found pour target: {receiver.containerName} at {hit.distance:F2}m below");
-            return receiver;
-        }
-    }
-    
-    return null;
-}
-
-Transform GetSpoutTransform(GameObject bottle)
-{
-    // Look for child named "SpoutPosition"
-    Transform spout = bottle.transform.Find("SpoutPosition");
-    
-    if (spout == null)
-    {
-        Debug.LogWarning($"⚠ No SpoutPosition found on {bottle.name}! Using fallback calculation.");
         return null;
     }
-    
-    return spout;
-}
 
-IEnumerator ContinuousPourAnimation()
-{
-    Quaternion startRot = currentCup.transform.rotation;
-    Quaternion pourRot = startRot * Quaternion.Euler(0, 0, pourAngle);
-    
-    // PHASE 1: Tilt left
-    float elapsed = 0;
-    while (elapsed < pourDuration && isPouring)
+    IEnumerator PourCutsceneAnimation(PourReceiver pourTarget)
     {
-        elapsed += Time.deltaTime;
-        if (currentCup != null)
-            currentCup.transform.rotation = Quaternion.Lerp(startRot, pourRot, elapsed / pourDuration);
-        yield return null;
-    }
-    
-    // PHASE 2: Spawn particles
-    if (isPouring && liquidStreamPrefab != null && currentCup != null)
-    {
-        // NEW: Get spout position from marker
-        Transform spoutTransform = GetSpoutTransform(currentCup);
-        Vector3 spoutWorldPos;
+        isPouring = true;
         
-        if (spoutTransform != null)
-        {
-            // Use the exact marked position!
-            spoutWorldPos = spoutTransform.position;
-            Debug.Log("✓ Using marked spout position");
-        }
-        else
-        {
-            // Fallback to calculation if no marker found
-            Vector3 spoutOffset = currentCup.transform.up * 0.15f;
-            spoutWorldPos = currentCup.transform.position + spoutOffset;
-            Debug.Log("⚠ Using calculated spout position");
-        }
+        Debug.Log($"🎬 Starting pour cutscene into {pourTarget.containerName}");
         
-        Debug.Log($"📍 Spout at: {spoutWorldPos}");
+        ShowPourUI(true);
+        UpdatePourUI(pourTarget);
+
+        // Remember starting state (hand position)
+        Vector3 startPosition = currentCup.transform.position;
+        Quaternion startRotation = currentCup.transform.rotation;
         
-        activeLiquidStream = Instantiate(liquidStreamPrefab, spoutWorldPos, Quaternion.identity);
-        activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
-        activeLiquidStream.transform.parent = null;
+        // Calculate pour position (above the target container)
+        Vector3 pourPosition = pourTarget.transform.position + Vector3.up * 0.25f;
         
-        ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
-        if (ps != null)
+        // PHASE 1: Move bottle to pour position (1 second)
+        float moveTime = 1.0f;
+        float elapsed = 0;
+        
+        while (elapsed < moveTime)
         {
-            ps.Play();
-            Debug.Log("✓ Liquid particles started");
-        }
-    }
-    
-    // PHASE 3: Continuous update
-    float pourRate = 0.1f;
-    
-    while (isPouring)
-    {
-        if (currentCup != null)
-        {
-            currentCup.transform.rotation = arCamera.rotation * Quaternion.Euler(0, 0, pourAngle);
+            elapsed += Time.deltaTime;
+            float t = elapsed / moveTime;
             
-            if (activeLiquidStream != null)
+            if (currentCup != null)
             {
-                // NEW: Use marker position
+                currentCup.transform.position = Vector3.Lerp(startPosition, pourPosition, t);
+                currentCup.transform.rotation = Quaternion.Lerp(startRotation, Quaternion.Euler(0, 0, 0), t);
+            }
+            
+            yield return null;
+        }
+        
+        // PHASE 2: Tilt to pour (0.5 seconds)
+        // Quaternion uprightRot = currentCup.transform.rotation;
+        // Quaternion pouringRot = uprightRot * Quaternion.Euler(0, 0, pourAngle);
+        Quaternion uprightRot = Quaternion.identity;
+        Quaternion pouringRot = Quaternion.Euler(0, 0, pourAngle);
+        
+        float tiltTime = 0.5f;
+        elapsed = 0;
+        
+        while (elapsed < tiltTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / tiltTime;
+            
+            if (currentCup != null)
+            {
+                currentCup.transform.rotation = Quaternion.Lerp(uprightRot, pouringRot, t);
+            }
+            
+            yield return null;
+        }
+        
+        // PHASE 3: Spawn liquid particles and pour (2 seconds)
+        if (liquidStreamPrefab != null && currentCup != null)
+        {
+            Transform spoutTransform = GetSpoutTransform(currentCup);
+            Vector3 spoutWorldPos = spoutTransform != null ? spoutTransform.position : currentCup.transform.position + currentCup.transform.up * 0.15f;
+            
+            activeLiquidStream = Instantiate(liquidStreamPrefab, spoutWorldPos, Quaternion.Euler(90, 0, 0));
+            activeLiquidStream.transform.parent = null;
+            
+            ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Play();
+            }
+        }
+        
+        // Pour liquid into container
+        float pourTime = 2.0f;
+        float pourAmount = 1.0f; // Full pour
+        float pourRate = pourAmount / pourTime;
+        elapsed = 0;
+        
+        while (elapsed < pourTime)
+        {
+            elapsed += Time.deltaTime;
+            
+            // Update liquid stream position
+            if (activeLiquidStream != null && currentCup != null)
+            {
                 Transform spoutTransform = GetSpoutTransform(currentCup);
-                
                 if (spoutTransform != null)
                 {
                     activeLiquidStream.transform.position = spoutTransform.position;
                 }
-                else
-                {
-                    // Fallback
-                    Vector3 spoutOffset = currentCup.transform.up * 0.15f;
-                    activeLiquidStream.transform.position = currentCup.transform.position + spoutOffset;
-                }
-                
-                activeLiquidStream.transform.rotation = Quaternion.Euler(90, 0, 0);
             }
             
-            // Fill container
-            if (currentPourTarget != null && currentPourTarget.CanReceiveLiquid())
+            // Add liquid to receiver
+            if (pourTarget != null && pourTarget.CanReceiveLiquid())
             {
                 string liquidType = GetLiquidType(currentCup.name);
-                currentPourTarget.AddLiquid(liquidType, pourRate * Time.deltaTime);
+                pourTarget.AddLiquid(liquidType, pourRate * Time.deltaTime);
             }
+            
+            yield return null;
         }
         
-        yield return null;
-    }
-}
-
-//Helper: determine which liquid is in this bottle
-string GetLiquidType(string bottleName)
-{
-    if (bottleName.Contains("AlcoBottleV1")) return "Vodka";
-    if (bottleName.Contains("AlcoBottleV7")) return "Rum";
-    if (bottleName.Contains("Shaker")) return "Mixed";
-    return "Unknown";
-}
-
-// Return to upright when button released
-IEnumerator ReturnToUpright()
-{
-    if (currentCup == null) yield break;
-    
-    Quaternion currentRot = currentCup.transform.rotation;
-    Quaternion uprightRot = arCamera.rotation;
-    
-    float elapsed = 0;
-    while (elapsed < pourDuration)
-    {
-        elapsed += Time.deltaTime;
-        float t = elapsed / pourDuration;
-        
-        if (currentCup != null)
+        // PHASE 4: Stop particles
+        if (activeLiquidStream != null)
         {
-            currentCup.transform.rotation = Quaternion.Lerp(currentRot, uprightRot, t);
+            ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Stop();
+            }
+            
+            Destroy(activeLiquidStream, 1.0f); // Destroy after particles finish
+            activeLiquidStream = null;
         }
         
-        yield return null;
+        // PHASE 5: Tilt back upright (0.5 seconds)
+        elapsed = 0;
+        Quaternion currentRot = currentCup.transform.rotation;
+
+        while (elapsed < tiltTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / tiltTime;
+            
+            if (currentCup != null)
+            {
+                currentCup.transform.rotation = Quaternion.Lerp(currentRot, uprightRot, t);
+            }
+            
+            yield return null;
+        }
+        
+        // PHASE 6: Return bottle to hand position (1 second)
+        elapsed = 0;
+        Vector3 currentPosition = currentCup.transform.position;
+        
+        // Calculate current hand position
+        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+        Vector3 screenPoint = new Vector3(
+            targetScreenPos.x * Screen.width,
+            targetScreenPos.y * Screen.height,
+            holdDistanceFromCamera
+        );
+        Vector3 handPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
+        
+        while (elapsed < moveTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / moveTime;
+            
+            // Recalculate hand position each frame (in case hand moved)
+            targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+            screenPoint = new Vector3(
+                targetScreenPos.x * Screen.width,
+                targetScreenPos.y * Screen.height,
+                holdDistanceFromCamera
+            );
+            handPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
+            
+            if (currentCup != null)
+            {
+                currentCup.transform.position = Vector3.Lerp(currentPosition, handPosition, t);
+                currentCup.transform.rotation = Quaternion.Lerp(currentCup.transform.rotation, arCamera.rotation, t);
+            }
+            
+            yield return null;
+        }
+        
+        ShowPourUI(false);
+
+        // Done - bottle is back in hand, still holding
+        isPouring = false;
+        
+        Debug.Log("✅ Pour cutscene complete! Bottle returned to hand.");
     }
-}
+
+    // Helper: determine which liquid is in this bottle
+    string GetLiquidType(string bottleName)
+    {
+        string name = bottleName.ToLower();
+        
+        if (name.Contains("midori")) return "Midori";
+        if (name.Contains("vodka")) return "Vodka";
+        if (name.Contains("bourbon")) return "Bourbon";
+        if (name.Contains("gin")) return "Gin";
+        if (name.Contains("scotch")) return "Scotch";
+        if (name.Contains("rum")) return "Rum";
+        if (name.Contains("whiskey")) return "Whiskey";
+        if (name.Contains("shaker")) return "Mixed";
+        
+        return "Unknown";
+    }
+
+    Transform GetSpoutTransform(GameObject bottle)
+    {
+        Transform spout = bottle.transform.Find("SpoutPosition");
+        
+        if (spout == null)
+        {
+            Debug.LogWarning($"⚠ No SpoutPosition found on {bottle.name}!");
+        }
+        
+        return spout;
+    }
 
     // ===== MQTT/FAKE INPUT - For future use =====
     
@@ -688,12 +740,65 @@ IEnumerator ReturnToUpright()
                 
             case "pour":
             case "pouring":
-                OnPourButtonDown();
+                OnPourButton();
                 break;
                 
             default:
                 if (showDebugLogs) Debug.Log($"⚠ Unknown action: {action}");
                 break;
+        }
+    }
+
+    //UI Console Messages
+    void ShowPourUI(bool show)
+    {
+        if (pourProgressPanel != null)
+        {
+            pourProgressPanel.SetActive(show);
+        }
+    }
+
+    void UpdatePourUI(PourReceiver target)
+    {
+        if (target == null)
+        {
+            ShowPourUI(false);
+            return;
+        }
+        
+        ShowPourUI(true);
+        
+        // Update status text
+        if (pourStatusText != null)
+        {
+            pourStatusText.text = $"Pouring into: {target.containerName}";
+        }
+        
+        // Update percentage text
+        if (pourPercentText != null)
+        {
+            int percent = Mathf.RoundToInt(target.fillAmount * 100);
+            pourPercentText.text = $"{percent}%";
+            
+            // Change color based on fill
+            if (target.fillAmount >= 1.0f)
+            {
+                pourPercentText.color = Color.red;  // Full!
+            }
+            else if (target.fillAmount >= 0.75f)
+            {
+                pourPercentText.color = new Color(1f, 0.6f, 0f);  // Orange
+            }
+            else
+            {
+                pourPercentText.color = Color.yellow;  // Normal
+            }
+        }
+        
+        // Update fill bar (optional)
+        if (fillBar != null)
+        {
+            fillBar.fillAmount = target.fillAmount;
         }
     }
 }

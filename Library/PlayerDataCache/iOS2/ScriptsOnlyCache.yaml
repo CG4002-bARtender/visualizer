@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - CocktailManager
+    - PourReceiver
     - QRCodeManager
     - RedCircleTracker
     - SimpleHandSimulator
@@ -51,6 +52,7 @@ ScriptsOnlyBuild:
     - UnityEngine.XR.Management.XRManagerSettings
     Unity.XR.Simulation.Editor.dll:
     - UnityEditor.XR.Simulation.SimulationEnvironmentAssetsManager
+    - UnityEditor.XR.Simulation.XREnvironmentViewManager
     - UnityEditor.XR.Simulation.XRSimulationSettings
     Unity.XR.Simulation.dll:
     - UnityEngine.XR.Simulation.SimulatedBoundedPlane
@@ -66,7 +68,6 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
-    - UnityEngine.EventSystems.EventTrigger
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
@@ -110,8 +111,6 @@ ScriptsOnlyBuild:
     - UnityEngine.TextCore.GlyphMetrics
     - UnityEngine.TextCore.GlyphRect
     UnityEngine.UI:
-    - UnityEngine.EventSystems.EventTrigger/Entry
-    - UnityEngine.EventSystems.EventTrigger/TriggerEvent
     - UnityEngine.UI.AnimationTriggers
     - UnityEngine.UI.Button/ButtonClickedEvent
     - UnityEngine.UI.ColorBlock
@@ -136,10 +135,7 @@ ScriptsOnlyBuild:
     methodName: SelectCocktail
   - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
-    methodName: OnPourButtonDown
-  - assembly: Assembly-CSharp
-    fullTypeName: SimpleHandSimulator
-    methodName: OnPourButtonUp
+    methodName: OnPourButton
   - assembly: Assembly-CSharp
     fullTypeName: QRCodeManager
     methodName: ResetAllBottlePositions
@@ -171,6 +167,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 49
       Script: {instanceID: 0}
+    - Class: 65
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
@@ -180,63 +178,63 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1594}
+      Script: {instanceID: 1596}
     - Class: 114
-      Script: {instanceID: 1674}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 1778}
+      Script: {instanceID: 1780}
     - Class: 114
-      Script: {instanceID: 2498}
+      Script: {instanceID: 2500}
     - Class: 114
-      Script: {instanceID: 3130}
+      Script: {instanceID: 3132}
     - Class: 114
-      Script: {instanceID: 3414}
+      Script: {instanceID: 3416}
     - Class: 114
-      Script: {instanceID: 3840}
+      Script: {instanceID: 3842}
     - Class: 114
-      Script: {instanceID: 4102}
+      Script: {instanceID: 4104}
     - Class: 114
-      Script: {instanceID: 4276}
+      Script: {instanceID: 4278}
     - Class: 114
-      Script: {instanceID: 4316}
+      Script: {instanceID: 4318}
     - Class: 114
-      Script: {instanceID: 4658}
+      Script: {instanceID: 4660}
     - Class: 114
-      Script: {instanceID: 4744}
+      Script: {instanceID: 4746}
     - Class: 114
-      Script: {instanceID: 4764}
+      Script: {instanceID: 4766}
     - Class: 114
-      Script: {instanceID: 4862}
+      Script: {instanceID: 4864}
     - Class: 114
-      Script: {instanceID: 5328}
+      Script: {instanceID: 5330}
     - Class: 114
-      Script: {instanceID: 5546}
+      Script: {instanceID: 5548}
     - Class: 114
-      Script: {instanceID: 5704}
+      Script: {instanceID: 5706}
     - Class: 114
-      Script: {instanceID: 6004}
+      Script: {instanceID: 6006}
     - Class: 114
-      Script: {instanceID: 6766}
+      Script: {instanceID: 6768}
     - Class: 114
-      Script: {instanceID: 7632}
+      Script: {instanceID: 7268}
     - Class: 114
-      Script: {instanceID: 7824}
+      Script: {instanceID: 7634}
     - Class: 114
-      Script: {instanceID: 8310}
+      Script: {instanceID: 7826}
     - Class: 114
-      Script: {instanceID: 8416}
+      Script: {instanceID: 8312}
     - Class: 114
-      Script: {instanceID: 8862}
+      Script: {instanceID: 8418}
     - Class: 114
-      Script: {instanceID: 8894}
+      Script: {instanceID: 8864}
     - Class: 114
-      Script: {instanceID: 9428}
+      Script: {instanceID: 8896}
     - Class: 114
-      Script: {instanceID: 9938}
+      Script: {instanceID: 9940}
     - Class: 114
-      Script: {instanceID: 10332}
+      Script: {instanceID: 10334}
     - Class: 114
-      Script: {instanceID: 10692}
+      Script: {instanceID: 10694}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1202,7 +1200,7 @@ ScriptsOnlyBuild:
     className: Text
   - hash:
       serializedVersion: 2
-      Hash: f79191b0a4127d4238a9aa20bdc06c8c
+      Hash: 7eae500ea2963b7c715da65032179869
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: PourReceiver
@@ -1298,7 +1296,7 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerStay2DMessageListener
   - hash:
       serializedVersion: 2
-      Hash: f2931655820a3f9f556847d8dbef7db4
+      Hash: c9e3310617c839719b3a1a2a6230a7cd
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: SimpleHandSimulator
@@ -1755,4 +1753,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/Scenes/bARtender_3d_nomqtt.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_cocktailreddot1
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_pourcutscene2
