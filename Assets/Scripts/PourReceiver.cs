@@ -4,13 +4,13 @@ public class PourReceiver : MonoBehaviour
 {
     [Header("Container Info")]
     public string containerName = "Cup";  // "Shaker", "Glass", etc.
-    public ContainerType type = ContainerType.Cup;
+    public ContainerType containerType = ContainerType.ServingGlass;  // ← Changed from 'type'
     
     [Header("Fill Settings")]
     [Range(0f, 1f)]
     public float fillAmount = 0f;
-    public float maxCapacity = 1.0f;  // 100%
-    
+    public float maxCapacity = 1.0f;
+
     [Header("Visual Feedback")]
     public Color emptyColor = Color.clear;
     public Color fullColor = new Color(1f, 0.8f, 0f, 0.5f);  // Amber liquid
@@ -21,10 +21,23 @@ public class PourReceiver : MonoBehaviour
     public enum ContainerType
     {
         Shaker,
-        Cup,
+        ServingGlass,  // ← Changed from 'Cup'
         Bottle
     }
     
+    void Start()
+{
+    // Auto-set capacity based on container type
+    if (containerType == ContainerType.Shaker)
+    {
+        maxCapacity = 2.0f;  // Shakers hold 2 bottles
+    }
+    else if (containerType == ContainerType.ServingGlass)
+    {
+        maxCapacity = 1.0f;  // Glasses hold 1 bottle (or mixed from shaker)
+    }
+}
+
     public bool CanReceiveLiquid()
     {
         return fillAmount < maxCapacity;
@@ -51,6 +64,7 @@ public class PourReceiver : MonoBehaviour
     {
         fillAmount = 0f;
         contents.Clear();
+        Debug.Log($"🧹 Emptied {containerName}");
         // UpdateVisual();
     }
     

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9024180303203262110}
   - component: {fileID: 8403660113167477490}
   - component: {fileID: 3275741615678786490}
+  - component: {fileID: 6658482635732315430}
   m_Layer: 6
   m_Name: EmptyGlass_OldFashioned
   m_TagString: PourReceiver
@@ -83,3 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6658482635732315430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405332144502335150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422646975e07c47608f365e8091759fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  containerName: Old Fashioned Glass
+  containerType: 1
+  fillAmount: 0
+  maxCapacity: 1
+  emptyColor: {r: 0, g: 0, b: 0, a: 0}
+  fullColor: {r: 1, g: 0.8, b: 0, a: 0.5}
