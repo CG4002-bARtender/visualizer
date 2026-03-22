@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4517532614214947944}
   - component: {fileID: 5532003672279734826}
   - component: {fileID: 222978432542592236}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_IrishCoffee
   m_TagString: Untagged
   m_Icon: {fileID: 0}

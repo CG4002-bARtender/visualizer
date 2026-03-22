@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7431088320585717248}
   - component: {fileID: 4115994329289086188}
   - component: {fileID: 1527976354726347286}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_Neat
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3472128530759030754}
   - component: {fileID: 5733933509307927833}
   - component: {fileID: 8048663036743080304}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_Vodka
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

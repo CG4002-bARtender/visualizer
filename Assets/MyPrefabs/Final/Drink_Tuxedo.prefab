@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 504305408264469794}
   - component: {fileID: 8174975853620807698}
   - component: {fileID: 2398856348504431173}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_Tuxedo
   m_TagString: Untagged
   m_Icon: {fileID: 0}

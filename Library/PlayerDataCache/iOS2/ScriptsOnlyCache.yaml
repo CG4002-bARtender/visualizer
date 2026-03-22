@@ -51,7 +51,6 @@ ScriptsOnlyBuild:
     - UnityEngine.XR.Management.XRManagerSettings
     Unity.XR.Simulation.Editor.dll:
     - UnityEditor.XR.Simulation.SimulationEnvironmentAssetsManager
-    - UnityEditor.XR.Simulation.XREnvironmentViewManager
     - UnityEditor.XR.Simulation.XRSimulationSettings
     Unity.XR.Simulation.dll:
     - UnityEngine.XR.Simulation.SimulatedBoundedPlane
@@ -145,6 +144,9 @@ ScriptsOnlyBuild:
     fullTypeName: QRCodeManager
     methodName: ResetAllBottlePositions
   - assembly: Assembly-CSharp
+    fullTypeName: CocktailManager
+    methodName: SelectCocktail
+  - assembly: Assembly-CSharp
     fullTypeName: SimpleHandSimulator
     methodName: OnReleaseCupButton
   sceneClasses:
@@ -178,43 +180,43 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1598}
+      Script: {instanceID: 1594}
     - Class: 114
-      Script: {instanceID: 1678}
+      Script: {instanceID: 1674}
     - Class: 114
-      Script: {instanceID: 1782}
+      Script: {instanceID: 1778}
     - Class: 114
-      Script: {instanceID: 2502}
+      Script: {instanceID: 2498}
     - Class: 114
-      Script: {instanceID: 3134}
+      Script: {instanceID: 3130}
     - Class: 114
-      Script: {instanceID: 3418}
+      Script: {instanceID: 3414}
     - Class: 114
-      Script: {instanceID: 3844}
+      Script: {instanceID: 3840}
     - Class: 114
-      Script: {instanceID: 4106}
+      Script: {instanceID: 4102}
     - Class: 114
-      Script: {instanceID: 4280}
+      Script: {instanceID: 4276}
     - Class: 114
-      Script: {instanceID: 4320}
+      Script: {instanceID: 4316}
     - Class: 114
-      Script: {instanceID: 4662}
+      Script: {instanceID: 4658}
     - Class: 114
-      Script: {instanceID: 4748}
+      Script: {instanceID: 4744}
     - Class: 114
-      Script: {instanceID: 4768}
+      Script: {instanceID: 4764}
     - Class: 114
-      Script: {instanceID: 4866}
+      Script: {instanceID: 4862}
     - Class: 114
-      Script: {instanceID: 5332}
+      Script: {instanceID: 5328}
     - Class: 114
-      Script: {instanceID: 5550}
+      Script: {instanceID: 5546}
     - Class: 114
-      Script: {instanceID: 5708}
+      Script: {instanceID: 5704}
     - Class: 114
-      Script: {instanceID: 6008}
+      Script: {instanceID: 6004}
     - Class: 114
-      Script: {instanceID: 6768}
+      Script: {instanceID: 6766}
     - Class: 114
       Script: {instanceID: 7632}
     - Class: 114
@@ -256,12 +258,6 @@ ScriptsOnlyBuild:
     - Class: 224
       Script: {instanceID: 0}
   scriptHashData:
-  - hash:
-      serializedVersion: 2
-      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MQTTManager
   - hash:
       serializedVersion: 2
       Hash: 67f2e533bbfe68206e21fd8cf233561c
@@ -1218,6 +1214,12 @@ ScriptsOnlyBuild:
     className: ARKitReferenceObjectEntry
   - hash:
       serializedVersion: 2
+      Hash: 43d846cc187b00d3afa41a27d9e2ee3e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MQTTManager
+  - hash:
+      serializedVersion: 2
       Hash: 2071f7ac454ae14eafecfd4041edae3a
     assemblyName: Unity.InputSystem
     namespaceName: UnityEngine.InputSystem.Editor
@@ -1753,4 +1755,4 @@ ScriptsOnlyBuild:
   platform: 9
   scenePathNames:
   - Assets/Scenes/bARtender_3d_nomqtt.unity
-  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_midori1
+  playerPath: /Users/zihui/CAPSTONE/bARtender_3d/build_cocktailreddot1

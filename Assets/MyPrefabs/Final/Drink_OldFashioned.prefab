@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7011040714137267263}
   - component: {fileID: 5759955206791690008}
   - component: {fileID: 3960166611182143096}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_OldFashioned
   m_TagString: Untagged
   m_Icon: {fileID: 0}

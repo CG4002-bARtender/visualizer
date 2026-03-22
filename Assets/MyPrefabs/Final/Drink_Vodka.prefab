@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8606023659639990167}
   - component: {fileID: 7063479482864665253}
   - component: {fileID: 7846363907865443891}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_Vodka
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5435069778324567146}
   - component: {fileID: 8295545560817432700}
   - component: {fileID: 4621132384326008673}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_Godfather
   m_TagString: Untagged
   m_Icon: {fileID: 0}
