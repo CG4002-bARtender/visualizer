@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1907852041085490470}
   - component: {fileID: 4488092499514202616}
   - component: {fileID: 4213427665059964655}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Midori
-  m_TagString: Untagged
+  m_TagString: Grabbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

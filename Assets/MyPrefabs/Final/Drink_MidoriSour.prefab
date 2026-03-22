@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1502814331164561154}
   - component: {fileID: 9122496790175225265}
   - component: {fileID: 3392123171429757682}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_MidoriSour
   m_TagString: Untagged
   m_Icon: {fileID: 0}

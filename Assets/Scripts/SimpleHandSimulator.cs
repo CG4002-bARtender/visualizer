@@ -205,7 +205,7 @@ public class SimpleHandSimulator : MonoBehaviour
         }
     }
     
-GameObject FindObjectAtCrosshair() //CHANGEDDDDD
+GameObject FindObjectAtCrosshair() 
 {
     if (handCrosshairRect == null || !redDotDetected) return null;
     
@@ -248,25 +248,52 @@ GameObject FindObjectAtCrosshair() //CHANGEDDDDD
     return nearest;  // Returns object closest to crosshair, ignoring camera distance
 }
     
-    bool IsGrabbableObject(GameObject obj)
+    bool IsGrabbableObject(GameObject obj) //NEW: changed to use Grabbable tag
     {
         if (obj == null) return false;
         
-        string name = obj.name;
-        return name.Contains("AlcoBottle") ||
-               name.Contains("EmptyGlass") ||
-               name.Contains("Shaker");
+        // Check if object has the "Grabbable" tag
+        return obj.CompareTag("Grabbable");
     }
     
     string GetFriendlyName(string objectName)
-    {
-        if (objectName.Contains("AlcoBottleV1")) return "Bottle 1";
-        if (objectName.Contains("AlcoBottleV7")) return "Bottle 2";
-        if (objectName.Contains("EmptyGlass")) return "Glass";
-        if (objectName.Contains("Shaker")) return "Shaker";
-        return objectName;
-    }
+{
+    string name = objectName.ToLower();
     
+    // Alcohol bottles
+    if (name.Contains("midori")) return "Midori";
+    if (name.Contains("vodka")) return "Vodka";
+    if (name.Contains("bourbon")) return "Bourbon";
+    if (name.Contains("gin")) return "Gin";
+    if (name.Contains("scotch")) return "Scotch";
+    if (name.Contains("darkrum") || name.Contains("dark rum")) return "Dark Rum";
+    if (name.Contains("rye") && name.Contains("whiskey")) return "Rye Whiskey";
+    if (name.Contains("whiskey")) return "Whiskey";
+    if (name.Contains("purple") && name.Contains("liqueur")) return "Purple Liqueur";
+    
+    // Legacy names (for backward compatibility)
+    if (name.Contains("alcobottlev1")) return "Vodka Bottle";
+    if (name.Contains("alcobottlev7")) return "Rum Bottle";
+    
+    // Containers
+    if (name.Contains("shaker")) return "Shaker";
+    
+    // Glasses
+    if (name.Contains("emptyglass_midorisour")) return "Midori Sour Glass";
+    if (name.Contains("emptyglass_godfather")) return "Godfather Glass";
+    if (name.Contains("emptyglass_irishcoffee")) return "Irish Coffee Glass";
+    if (name.Contains("emptyglass_martini")) return "Martini Glass";
+    if (name.Contains("emptyglass_oldfashioned")) return "Old Fashioned Glass";
+    if (name.Contains("emptyglass_tuxedo")) return "Tuxedo Glass";
+    if (name.Contains("emptyglass_vodka")) return "Vodka Glass";
+    if (name.Contains("emptyglass_neat")) return "Neat Glass";
+    if (name.Contains("emptyglass")) return "Empty Glass";
+    
+    // Fallback: clean up the name
+    string cleaned = objectName.Replace("(Clone)", "").Trim();
+    return cleaned;
+}
+
     // ===== PUBLIC METHODS - Called by Buttons =====
     
     public void OnGrabCupButton()

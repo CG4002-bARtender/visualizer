@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4671308659625416131}
   - component: {fileID: 2133408080039710395}
   - component: {fileID: 3290260709071982869}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Vodka
-  m_TagString: Untagged
+  m_TagString: Grabbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

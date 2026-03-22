@@ -208,21 +208,16 @@ public class CocktailManager : MonoBehaviour
         // Remove existing item at this QR
         qrCodeManager.RemoveBottleAtQR(qrName);
         
-        // NEW: Spawn at QR position first
-        GameObject newItem = Instantiate(prefab, qrTransform.position, Quaternion.identity);
+        GameObject newItem = Instantiate(prefab, qrTransform.position, Quaternion.identity); // NEW: Spawn at QR position first
+        newItem.transform.SetParent(qrTransform, false); // NEW: Parent FIRST with worldPositionStays = false
         
-        // NEW: Parent FIRST with worldPositionStays = false
-        newItem.transform.SetParent(qrTransform, false);
-        
-        // NEW: Then set LOCAL position (relative to QR)
-        newItem.transform.localPosition = Vector3.up * heightOffset;
+        newItem.transform.localPosition = Vector3.up * heightOffset; // NEW: Then set LOCAL position (relative to QR)
         newItem.transform.localRotation = Quaternion.identity;
         
-        // Track for cleanup
-        currentCocktailItems.Add(newItem);
-        
-        // Register with QRCodeManager
-        qrCodeManager.RegisterBottleAtQR(qrName, newItem);
+        newItem.tag = "Grabbable";  // NEW
+
+        currentCocktailItems.Add(newItem); // Track for cleanup    
+        qrCodeManager.RegisterBottleAtQR(qrName, newItem); // Register with QRCodeManager
         
         Debug.Log($"  ✓ Spawned {prefab.name} at {qrName}");
     }

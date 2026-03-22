@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7452335726414993066}
   - component: {fileID: 888732324475450573}
   - component: {fileID: 2535976656021001695}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_Tuxedo
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

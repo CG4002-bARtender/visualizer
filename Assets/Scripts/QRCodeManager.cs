@@ -72,6 +72,8 @@ public class QRCodeManager : MonoBehaviour
             bottle.transform.SetParent(trackedImage.transform, false);  // ← false is key!
             bottle.transform.localRotation = Quaternion.identity;    
 
+            bottle.tag = "Grabbable"; //NEW
+
             spawnedBottles.Add(imageName, bottle);
             trackedImages.Add(imageName, trackedImage);
             

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7133116276238345999}
   - component: {fileID: 3940001961923403975}
   - component: {fileID: 5179874768648473924}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_IrishCoffee
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

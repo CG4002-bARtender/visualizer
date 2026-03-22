@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4632353679654421984}
   - component: {fileID: 4102243301886868470}
   - component: {fileID: 7825701842454186923}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Drink_Martini
   m_TagString: Untagged
   m_Icon: {fileID: 0}

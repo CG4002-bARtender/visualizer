@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3475847551894912019}
   - component: {fileID: 5532292661773287674}
   - component: {fileID: 509242777292324494}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_Godfather
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

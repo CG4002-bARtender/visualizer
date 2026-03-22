@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 9024180303203262110}
   - component: {fileID: 8403660113167477490}
   - component: {fileID: 3275741615678786490}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EmptyGlass_OldFashioned
-  m_TagString: Untagged
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
