@@ -28,15 +28,14 @@ public class SimpleHandSimulator : MonoBehaviour
     
     [Header("Pour Settings")]
     public float pourAngle = 60f;
-    public float pourDuration = 0.5f;
     public GameObject liquidStreamPrefab;
     public float pourRayDistance = 0.5f;  // How far to check for containers below
     public LayerMask pourTargetLayer = -1;  // All layers
 
-    private bool isPouring = false;
-    private Coroutine pourCoroutine = null; 
+    private bool isInPourState = false;
+    private Coroutine pourEntryCoroutine = null;
     private GameObject activeLiquidStream;
-    private PourReceiver currentPourTarget = null;
+    private PourReceiver activePourTarget = null;
 
     [Header("Pickup Settings")]
     public float maxPickupDistance = 0.5f; // 50cm range
@@ -104,6 +103,22 @@ public class SimpleHandSimulator : MonoBehaviour
         
         // Update what we're targeting and UI
         UpdateTargeting();
+
+        // Continuous pour: track particle position and fill container
+        if (isInPourState && currentCup != null && activePourTarget != null)
+        {
+            if (activeLiquidStream != null)
+            {
+                Transform spout = GetSpoutTransform(currentCup);
+                if (spout != null)
+                    activeLiquidStream.transform.position = spout.position;
+            }
+
+            if (activePourTarget.CanReceiveLiquid())
+                activePourTarget.AddLiquid(GetLiquidType(currentCup.name), 0.5f * Time.deltaTime);
+
+            UpdatePourUI(activePourTarget);
+        }
     }
     
     void UpdateHeldObjectPosition()
@@ -333,6 +348,7 @@ GameObject FindObjectAtCrosshair()
     
     public void OnReleaseCupButton()
     {
+        ExitPourState();
         ClearHighlight();
 
         if (!isHoldingCup || currentCup == null)
@@ -382,52 +398,6 @@ GameObject FindObjectAtCrosshair()
         if (showDebugLogs) Debug.Log($"✓ Picked up {obj.name}!");
     }
     
-    System.Collections.IEnumerator PourAnimation()
-    {
-        if (showDebugLogs) Debug.Log("✓ Pouring...");
-        
-        Quaternion startRot = currentCup.transform.rotation;
-        Quaternion pourRot = startRot * Quaternion.Euler(pourAngle, 0, 0);
-        
-        // Tilt to pour
-        float elapsed = 0;
-        while (elapsed < pourDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / pourDuration;
-            
-            if (isHoldingCup && currentCup != null)
-            {
-                Quaternion baseRotation = arCamera.rotation;
-                currentCup.transform.rotation = Quaternion.Lerp(baseRotation, baseRotation * Quaternion.Euler(pourAngle, 0, 0), t);
-            }
-            
-            yield return null;
-        }
-        
-        // Hold pour position
-        yield return new WaitForSeconds(1.0f);
-        
-        // Tilt back
-        elapsed = 0;
-        while (elapsed < pourDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / pourDuration;
-            
-            if (isHoldingCup && currentCup != null)
-            {
-                Quaternion baseRotation = arCamera.rotation;
-                Quaternion pouredRotation = baseRotation * Quaternion.Euler(pourAngle, 0, 0);
-                currentCup.transform.rotation = Quaternion.Lerp(pouredRotation, baseRotation, t);
-            }
-            
-            yield return null;
-        }
-        
-        if (showDebugLogs) Debug.Log("✓ Pour complete!");
-    }
-    
     // ===== RED DOT TRACKING - Called by RedCircleTracker =====
     
     public void OnHandPositionReceived(float normalizedX, float normalizedY)
@@ -450,30 +420,25 @@ GameObject FindObjectAtCrosshair()
             Debug.Log("⚠ Not holding anything to pour");
             return;
         }
-        
-        if (isPouring)
-        {
-            Debug.Log("⚠ Already pouring!");
-            return;
-        }
-        
-        // Determine pour target based on what we're holding
+
+        if (isInPourState || pourEntryCoroutine != null) return;
+
         PourReceiver pourTarget = DeterminePourTarget();
-        
+
         if (pourTarget == null)
         {
             Debug.Log("⚠ No valid pour target found");
             return;
         }
-        
+
         if (!pourTarget.CanReceiveLiquid())
         {
             Debug.Log($"⚠ {pourTarget.containerName} is already full!");
             return;
         }
-        
-        // Start cutscene animation
-        StartCoroutine(PourCutsceneAnimation(pourTarget));
+
+        activePourTarget = pourTarget;
+        pourEntryCoroutine = StartCoroutine(PourEntryAnimation(pourTarget));
     }
 
     PourReceiver DeterminePourTarget()
@@ -521,180 +486,88 @@ GameObject FindObjectAtCrosshair()
         return null;
     }
 
-    IEnumerator PourCutsceneAnimation(PourReceiver pourTarget)
+    IEnumerator PourEntryAnimation(PourReceiver pourTarget)
     {
-        isPouring = true;
-        
-        Debug.Log($"🎬 Starting pour cutscene into {pourTarget.containerName}");
-        
-        ShowPourUI(true);
-        UpdatePourUI(pourTarget);
-
-        // Remember starting state (hand position)
         Vector3 startPosition = currentCup.transform.position;
         Quaternion startRotation = currentCup.transform.rotation;
-        
-        // Calculate pour position (above the target container)
         Vector3 pourPosition = pourTarget.transform.position + Vector3.up * 0.25f;
-        
-        // PHASE 1: Move bottle to pour position (1 second)
-        float moveTime = 1.0f;
+        Quaternion pouringRot = Quaternion.Euler(0, 0, pourAngle);
+
+        // Move to target and tilt simultaneously (0.4s)
         float elapsed = 0;
-        
+        float moveTime = 0.4f;
         while (elapsed < moveTime)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / moveTime;
-            
             if (currentCup != null)
             {
                 currentCup.transform.position = Vector3.Lerp(startPosition, pourPosition, t);
-                currentCup.transform.rotation = Quaternion.Lerp(startRotation, Quaternion.Euler(0, 0, 0), t);
+                currentCup.transform.rotation = Quaternion.Lerp(startRotation, pouringRot, t);
             }
-            
             yield return null;
         }
-        
-        // PHASE 2: Tilt to pour (0.5 seconds)
-        // Quaternion uprightRot = currentCup.transform.rotation;
-        // Quaternion pouringRot = uprightRot * Quaternion.Euler(0, 0, pourAngle);
-        Quaternion uprightRot = Quaternion.identity;
-        Quaternion pouringRot = Quaternion.Euler(0, 0, pourAngle);
-        
-        float tiltTime = 0.5f;
-        elapsed = 0;
-        
-        while (elapsed < tiltTime)
+
+        if (currentCup != null)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / tiltTime;
-            
-            if (currentCup != null)
-            {
-                currentCup.transform.rotation = Quaternion.Lerp(uprightRot, pouringRot, t);
-            }
-            
-            yield return null;
+            currentCup.transform.position = pourPosition;
+            currentCup.transform.rotation = pouringRot;
         }
-        
-        // PHASE 3: Spawn liquid particles and pour (2 seconds)
+
+        // Start particles
         if (liquidStreamPrefab != null && currentCup != null)
         {
-            Transform spoutTransform = GetSpoutTransform(currentCup);
-            Vector3 spoutWorldPos = spoutTransform != null ? spoutTransform.position : currentCup.transform.position + currentCup.transform.up * 0.15f;
-            
-            activeLiquidStream = Instantiate(liquidStreamPrefab, spoutWorldPos, Quaternion.Euler(90, 0, 0));
+            Transform spout = GetSpoutTransform(currentCup);
+            Vector3 spoutPos = spout != null ? spout.position : currentCup.transform.position + currentCup.transform.up * 0.15f;
+            activeLiquidStream = Instantiate(liquidStreamPrefab, spoutPos, Quaternion.Euler(90, 0, 0));
             activeLiquidStream.transform.parent = null;
-            
-            ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                ps.Play();
-            }
+            activeLiquidStream.GetComponent<ParticleSystem>()?.Play();
         }
-        
-        // Pour liquid into container
-        float pourTime = 2.0f;
-        float pourAmount = 1.0f; // Full pour
-        float pourRate = pourAmount / pourTime;
-        elapsed = 0;
-        
-        while (elapsed < pourTime)
+
+        isInPourState = true;
+        pourEntryCoroutine = null;
+        ShowPourUI(true);
+        UpdatePourUI(pourTarget);
+    }
+
+    public void ExitPourState()
+    {
+        if (!isInPourState && pourEntryCoroutine == null) return;
+
+        if (pourEntryCoroutine != null)
         {
-            elapsed += Time.deltaTime;
-            
-            // Update liquid stream position
-            if (activeLiquidStream != null && currentCup != null)
-            {
-                Transform spoutTransform = GetSpoutTransform(currentCup);
-                if (spoutTransform != null)
-                {
-                    activeLiquidStream.transform.position = spoutTransform.position;
-                }
-            }
-            
-            // Add liquid to receiver
-            if (pourTarget != null && pourTarget.CanReceiveLiquid())
-            {
-                string liquidType = GetLiquidType(currentCup.name);
-                pourTarget.AddLiquid(liquidType, pourRate * Time.deltaTime);
-            }
-            
-            yield return null;
+            StopCoroutine(pourEntryCoroutine);
+            pourEntryCoroutine = null;
         }
-        
-        // PHASE 4: Stop particles
+
+        isInPourState = false;
+
         if (activeLiquidStream != null)
         {
-            ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                ps.Stop();
-            }
-            
-            Destroy(activeLiquidStream, 1.0f); // Destroy after particles finish
+            activeLiquidStream.GetComponent<ParticleSystem>()?.Stop();
+            Destroy(activeLiquidStream, 1.0f);
             activeLiquidStream = null;
         }
-        
-        // PHASE 5: Tilt back upright (0.5 seconds)
-        elapsed = 0;
-        Quaternion currentRot = currentCup.transform.rotation;
 
+        if (currentCup != null)
+            StartCoroutine(UntiltAnimation());
+
+        activePourTarget = null;
+        ShowPourUI(false);
+    }
+
+    IEnumerator UntiltAnimation()
+    {
+        float elapsed = 0;
+        float tiltTime = 0.3f;
+        Quaternion startRot = currentCup.transform.rotation;
         while (elapsed < tiltTime)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / tiltTime;
-            
             if (currentCup != null)
-            {
-                currentCup.transform.rotation = Quaternion.Lerp(currentRot, uprightRot, t);
-            }
-            
+                currentCup.transform.rotation = Quaternion.Lerp(startRot, arCamera.rotation, elapsed / tiltTime);
             yield return null;
         }
-        
-        // PHASE 6: Return bottle to hand position (1 second)
-        elapsed = 0;
-        Vector3 currentPosition = currentCup.transform.position;
-        
-        // Calculate current hand position
-        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
-        Vector3 screenPoint = new Vector3(
-            targetScreenPos.x * Screen.width,
-            targetScreenPos.y * Screen.height,
-            holdDistanceFromCamera
-        );
-        Vector3 handPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
-        
-        while (elapsed < moveTime)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / moveTime;
-            
-            // Recalculate hand position each frame (in case hand moved)
-            targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
-            screenPoint = new Vector3(
-                targetScreenPos.x * Screen.width,
-                targetScreenPos.y * Screen.height,
-                holdDistanceFromCamera
-            );
-            handPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
-            
-            if (currentCup != null)
-            {
-                currentCup.transform.position = Vector3.Lerp(currentPosition, handPosition, t);
-                currentCup.transform.rotation = Quaternion.Lerp(currentCup.transform.rotation, arCamera.rotation, t);
-            }
-            
-            yield return null;
-        }
-        
-        ShowPourUI(false);
-
-        // Done - bottle is back in hand, still holding
-        isPouring = false;
-        
-        Debug.Log("✅ Pour cutscene complete! Bottle returned to hand.");
     }
 
     // Helper: determine which liquid is in this bottle
@@ -789,20 +662,21 @@ GameObject FindObjectAtCrosshair()
         }
     }
 
-    // Pour into a specific target type ("shaker" or "serving_glass")
-    public void OnMQTTPour(string pourTarget)
+    // Pour into a specific target type ("shaker" or "serving_glass") — called by MQTT state 3
+    public void OnMQTTPour(string pourTargetName)
     {
-        if (!isHoldingCup || currentCup == null || isPouring) return;
+        if (!isHoldingCup || currentCup == null) return;
+        if (isInPourState || pourEntryCoroutine != null) return;
 
         PourReceiver target = null;
-        if (pourTarget == "shaker")
+        if (pourTargetName == "shaker")
             target = FindPourReceiverByType("shaker");
-        else if (pourTarget == "serving_glass")
+        else if (pourTargetName == "serving_glass")
             target = FindPourReceiverByType("serving");
 
         if (target == null)
         {
-            if (showDebugLogs) Debug.LogWarning($"⚠ No PourReceiver found for target: {pourTarget}");
+            if (showDebugLogs) Debug.LogWarning($"⚠ No PourReceiver found for target: {pourTargetName}");
             return;
         }
 
@@ -812,7 +686,8 @@ GameObject FindObjectAtCrosshair()
             return;
         }
 
-        StartCoroutine(PourCutsceneAnimation(target));
+        activePourTarget = target;
+        pourEntryCoroutine = StartCoroutine(PourEntryAnimation(target));
     }
 
     // Shake the held shaker

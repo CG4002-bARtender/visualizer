@@ -102,6 +102,7 @@ public class MQTTManager : MonoBehaviour
     // state 0: round ended OR idle
     void HandleIdle(MQTTMessage msg)
     {
+        handSimulator?.ExitPourState();
         handSimulator?.OnReleaseCupButton(); // also calls ClearHighlight internally
         Debug.Log($"🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
     }
@@ -116,9 +117,10 @@ public class MQTTManager : MonoBehaviour
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
             Debug.Log($"🍹 New order: drink {msg.drink}");
         }
-        else if (currentState == 2)
+        else if (currentState == 2 || currentState == 3)
         {
-            // Transitioning GRAB → HOVER = bottle released
+            // Transitioning GRAB/POUR → HOVER = bottle released
+            handSimulator?.ExitPourState();
             handSimulator?.OnReleaseCupButton();
         }
 
@@ -133,11 +135,12 @@ public class MQTTManager : MonoBehaviour
     // state 2: bottle grabbed (or returned to grab after pour/shake)
     void HandleGrab(MQTTMessage msg)
     {
+        if (currentState == 3)
+            handSimulator?.ExitPourState();
+
         // Only grab if this is a fresh GRAB transition (not returning from POUR/SHAKE)
         if (currentState != 3 && currentState != 4)
-        {
             handSimulator?.GrabObjectAtSlot(msg.picked_up);
-        }
     }
 
     // state 3: pouring
