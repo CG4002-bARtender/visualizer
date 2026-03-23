@@ -203,15 +203,25 @@ public class HandTrackingManager : MonoBehaviour
         Ray indexRay = mainCam.ViewportPointToRay(new Vector3(vIndex.x, vIndex.y, 0));
         Vector3 indexWorld = indexRay.GetPoint(estimatedDepth);
 
-        // Derive palm orientation
-        Vector3 palmUp = (middleWorld - targetPos).normalized;
-        Vector3 palmRight = (indexWorld - middleWorld).normalized;
-        Vector3 palmNormal = Vector3.Cross(palmUp, palmRight).normalized;
+        // Derive bottle orientation from hand landmarks.
+        // The wrist→middleMCP vector points "up the hand" — use this as the bottle's
+        // up axis so the bottle stands upright when held naturally.
+        // For the forward axis, use the camera's forward (we can't reliably get
+        // palm normal from 2D landmarks projected at the same depth).
+        Vector3 handUp = (middleWorld - targetPos).normalized;
 
-        if (palmUp.sqrMagnitude > 0.001f && palmNormal.sqrMagnitude > 0.001f)
+        if (handUp.sqrMagnitude > 0.001f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(palmNormal, palmUp);
-            smoothedRotation = Quaternion.Slerp(smoothedRotation, targetRot, Time.deltaTime * rotationSmoothSpeed);
+            // Build rotation: bottle's local Y = handUp, forward = best fit from camera
+            Vector3 camForward = mainCam.transform.forward;
+            // Remove any component of camForward along handUp to make them orthogonal
+            Vector3 forward = (camForward - Vector3.Dot(camForward, handUp) * handUp).normalized;
+
+            if (forward.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(forward, handUp);
+                smoothedRotation = Quaternion.Slerp(smoothedRotation, targetRot, Time.deltaTime * rotationSmoothSpeed);
+            }
         }
 
         smoothedPosition = Vector3.Lerp(smoothedPosition, targetPos, Time.deltaTime * positionSmoothSpeed);

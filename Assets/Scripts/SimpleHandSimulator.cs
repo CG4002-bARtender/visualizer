@@ -137,7 +137,20 @@ public class SimpleHandSimulator : MonoBehaviour
             handWorldPosition,
             Time.deltaTime * 10f
         );
-        currentCup.transform.rotation = arCamera.rotation;
+
+        // Use wrist rotation from hand tracking if available, fall back to camera
+        if (handTrackingManager != null && handTrackingManager.IsTracking)
+        {
+            currentCup.transform.rotation = Quaternion.Slerp(
+                currentCup.transform.rotation,
+                handTrackingManager.WristWorldRotation,
+                Time.deltaTime * 10f
+            );
+        }
+        else
+        {
+            currentCup.transform.rotation = arCamera.rotation;
+        }
     }
     
     void UpdateCrosshairPosition()
