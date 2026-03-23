@@ -2,7 +2,8 @@
 # Unity
 # ============================================================
 .utmp/
-/[Ll]ibrary/
+/[Ll]ibrary/*
+!/Library/LastSceneManagerSetup.txt
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
