@@ -169,7 +169,7 @@ public class RedCircleTracker : MonoBehaviour
         // 0 = bottom, 1 = top
         redPosition.y = 1.0f - (centerY / height);
         
-        if (Time.frameCount % 60 == 0)
+        if (Time.frameCount % 600 == 0)
         {
             Debug.Log($"Red at ({redPosition.x:F2}, {redPosition.y:F2}) | Pixels: {redPixelCount}");
         }

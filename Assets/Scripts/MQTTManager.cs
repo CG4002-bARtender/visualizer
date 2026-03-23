@@ -1,69 +1,56 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using System.Text;
 
 public class MQTTManager : MonoBehaviour
 {
     [Header("MQTT Broker Settings")]
     public string brokerAddress = "172.20.10.2";
-    public int brokerPort = 1883;  // ← Changed from 8883 to 1883 (no TLS)
+    public int brokerPort = 1883;
     public string subscribeTopic = "game/state";
-    
+
     [Header("Authentication")]
     public string mqttUsername = "";
     public string mqttPassword = "";
-    
+
     [Header("References")]
     public SimpleHandSimulator handSimulator;
-    
+    public CocktailManager cocktailManager;
+
     [Header("Debug")]
     public bool showDebugLogs = true;
-    
+
     private MqttClient client;
-    private bool isConnected = false;
-    
+    private int currentState = -1; // -1 = unknown/startup
+
     void Start()
     {
         ConnectToBroker();
     }
-    
+
     void ConnectToBroker()
     {
         try
         {
             Debug.Log($"🔄 Connecting to MQTT broker at {brokerAddress}:{brokerPort}...");
-            
-            // Create MQTT client WITHOUT TLS (simple and works!)
             client = new MqttClient(brokerAddress, brokerPort, false, null, null, MqttSslProtocols.None);
-            
-            // Register callback for received messages
             client.MqttMsgPublishReceived += OnMessageReceived;
-            
-            // Generate unique client ID
+
             string clientId = "Unity_iPhone_" + Guid.NewGuid().ToString().Substring(0, 8);
-            
-            Debug.Log($"📱 Client ID: {clientId}");
-            
-            // Connect
+
             if (string.IsNullOrEmpty(mqttUsername))
-            {
                 client.Connect(clientId);
-            }
             else
-            {
                 client.Connect(clientId, mqttUsername, mqttPassword);
-            }
-            
+
             if (client.IsConnected)
             {
-                isConnected = true;
-                Debug.Log($"✓ Connected to MQTT broker!");
-                
-                // Subscribe to topic
                 client.Subscribe(new string[] { subscribeTopic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
-                Debug.Log($"✓ Subscribed to topic: {subscribeTopic}");
+                Debug.Log($"✓ Connected and subscribed to {subscribeTopic}");
             }
             else
             {
@@ -73,116 +60,150 @@ public class MQTTManager : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError($"❌ MQTT Connection Error: {e.Message}");
-            Debug.LogError($"   Stack: {e.StackTrace}");
-            Debug.LogError($"   Make sure:");
-            Debug.LogError($"   1. Broker is running on {brokerAddress}:{brokerPort}");
-            Debug.LogError($"   2. Both devices on WiFi: IphoneAlam");
-            Debug.LogError($"   3. Firewall allows port {brokerPort}");
+            Debug.LogError($"   Ensure broker is running at {brokerAddress}:{brokerPort}");
         }
     }
-    
+
     void OnMessageReceived(object sender, MqttMsgPublishEventArgs e)
     {
-        // This runs on MQTT thread, need to process on main thread
         string message = Encoding.UTF8.GetString(e.Message);
-        
-        // Queue for main thread processing
         UnityMainThreadDispatcher.Instance().Enqueue(() => ProcessMessage(message));
     }
-    
-    void ProcessMessage(string jsonMessage)
+
+    void ProcessMessage(string json)
     {
-        if (showDebugLogs)
-        {
-            Debug.Log($"📩 MQTT: {jsonMessage}");
-        }
-        
+        if (showDebugLogs) Debug.Log($"📩 MQTT: {json}");
+
         try
         {
-            // Parse JSON
-            GameStateData data = JsonUtility.FromJson<GameStateData>(jsonMessage);
-            
-            if (data == null)
+            MQTTMessage msg = JsonUtility.FromJson<MQTTMessage>(json);
+            if (msg == null) return;
+
+            switch (msg.state)
             {
-                Debug.LogWarning($"⚠ Failed to parse JSON: {jsonMessage}");
-                return;
-            }
-            
-            // Process based on message type
-            switch (data.type)
-            {
-                case "hand_position":
-                    HandleHandPosition(data);
-                    break;
-                    
-                case "action":
-                    HandleAction(data);
-                    break;
-                    
+                case 0: HandleIdle(msg);          break;
+                case 1: HandleHover(msg, json);   break;
+                case 2: HandleGrab(msg);           break;
+                case 3: HandlePour(msg);           break;
+                case 4: HandleShake(msg);          break;
                 default:
-                    if (showDebugLogs)
-                        Debug.Log($"⚠ Unknown message type: {data.type}");
+                    if (showDebugLogs) Debug.LogWarning($"⚠ Unknown state: {msg.state}");
                     break;
             }
+
+            currentState = msg.state;
         }
         catch (Exception ex)
         {
-            Debug.LogError($"❌ Error parsing JSON: {ex.Message}");
+            Debug.LogError($"❌ Error parsing MQTT message: {ex.Message}");
         }
     }
-    
-    void HandleHandPosition(GameStateData data)
+
+    // state 0: round ended OR idle
+    void HandleIdle(MQTTMessage msg)
     {
-        if (handSimulator != null)
-        {
-            // Send hand position to simulator
-            handSimulator.OnHandPositionReceived(data.handX, data.handY);
-            
-            if (showDebugLogs)
-            {
-                Debug.Log($"👋 Hand: ({data.handX:F2}, {data.handY:F2})");
-            }
-        }
+        handSimulator?.OnReleaseCupButton(); // also calls ClearHighlight internally
+        Debug.Log($"🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
     }
-    
-    void HandleAction(GameStateData data)
+
+    // state 1: new order (has bottle_map) OR hand hover position update OR release from GRAB
+    void HandleHover(MQTTMessage msg, string rawJson)
     {
-        if (handSimulator != null)
+        if (rawJson.Contains("\"bottle_map\""))
         {
-            // Trigger action (grab, pour, release)
-            handSimulator.SimulateFakeInput(data.action);
-            
-            if (showDebugLogs)
-            {
-                Debug.Log($"🎮 Action: {data.action}");
-            }
+            // New order arriving — set up the bar layout
+            Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
+            cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
+            Debug.Log($"🍹 New order: drink {msg.drink}");
+        }
+        else if (currentState == 2)
+        {
+            // Transitioning GRAB → HOVER = bottle released
+            handSimulator?.OnReleaseCupButton();
+        }
+
+        // Parse hall_id manually — JsonUtility converts null to 0 which would wrongly highlight slot 0
+        int hallId = ParseHallId(rawJson);
+        if (hallId >= 0)
+            handSimulator?.HighlightSlot(hallId);
+        else
+            handSimulator?.ClearHighlight();
+    }
+
+    // state 2: bottle grabbed (or returned to grab after pour/shake)
+    void HandleGrab(MQTTMessage msg)
+    {
+        // Only grab if this is a fresh GRAB transition (not returning from POUR/SHAKE)
+        if (currentState != 3 && currentState != 4)
+        {
+            handSimulator?.GrabObjectAtSlot(msg.picked_up);
         }
     }
-    
+
+    // state 3: pouring
+    void HandlePour(MQTTMessage msg)
+    {
+        handSimulator?.OnMQTTPour(msg.pour_target);
+    }
+
+    // state 4: shaking
+    void HandleShake(MQTTMessage msg)
+    {
+        handSimulator?.OnMQTTShake();
+    }
+
+    // Returns hall_id as int, or -1 if the field is null or missing
+    int ParseHallId(string rawJson)
+    {
+        var match = Regex.Match(rawJson, "\"hall_id\"\\s*:\\s*(\\d+|null)");
+        if (!match.Success) return -1;
+        string val = match.Groups[1].Value;
+        if (val == "null") return -1;
+        return int.Parse(val);
+    }
+
+    // Extracts { "0": "Gin", "1": "Vodka", "3": "Scotch" } into Dictionary<int, string>
+    Dictionary<int, string> ParseBottleMap(string rawJson)
+    {
+        var result = new Dictionary<int, string>();
+
+        int keyStart = rawJson.IndexOf("\"bottle_map\"");
+        if (keyStart < 0) return result;
+
+        int braceOpen = rawJson.IndexOf('{', keyStart);
+        int braceClose = rawJson.IndexOf('}', braceOpen);
+        if (braceOpen < 0 || braceClose < 0) return result;
+
+        string section = rawJson.Substring(braceOpen + 1, braceClose - braceOpen - 1);
+        var matches = Regex.Matches(section, "\"(\\d+)\"\\s*:\\s*\"([^\"]+)\"");
+
+        foreach (Match m in matches)
+            result[int.Parse(m.Groups[1].Value)] = m.Groups[2].Value;
+
+        return result;
+    }
+
     void OnApplicationQuit()
     {
-        if (client != null && client.IsConnected)
-        {
-            client.Disconnect();
-            Debug.Log("✓ Disconnected from MQTT");
-        }
+        if (client != null && client.IsConnected) client.Disconnect();
     }
-    
+
     void OnDestroy()
     {
-        if (client != null && client.IsConnected)
-        {
-            client.Disconnect();
-        }
+        if (client != null && client.IsConnected) client.Disconnect();
     }
 }
 
-// JSON data structure matching your glove's messages
 [System.Serializable]
-public class GameStateData
+public class MQTTMessage
 {
-    public string type;      // "hand_position" or "action"
-    public float handX;      // 0.0 to 1.0
-    public float handY;      // 0.0 to 1.0
-    public string action;    // "grab", "release", "pour"
+    public int state;
+    public int hall_id;
+    public int picked_up;
+    public int drink;
+    public string pour_target;
+    public string pour_result;
+    public int round_score;
+    public int round;
+    public int score;
 }

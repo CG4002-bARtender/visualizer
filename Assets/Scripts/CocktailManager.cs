@@ -236,6 +236,92 @@ public class CocktailManager : MonoBehaviour
         Debug.Log("🧹 Cleared previous cocktail items");
     }
     
+    // ===== MQTT-DRIVEN SETUP =====
+
+    // Called by MQTTManager when a new order arrives.
+    // drinkInt maps to the drink enum (0=Aviation, 1=Godfather, ...).
+    // bottleMap keys are slot IDs (0,1,3); values are ingredient name strings.
+    public void SetupFromMQTT(int drinkInt, Dictionary<int, string> bottleMap)
+    {
+        Debug.Log($"🍹 SetupFromMQTT: drink={drinkInt}, slots={string.Join(", ", bottleMap)}");
+        ClearCurrentCocktail();
+
+        // Place bottles at slots 0, 1, 3 from the bottle_map
+        int[] slots = { 0, 1, 3 };
+        string[] qrNames = { "qr0", "qr1", "qr3" };
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (bottleMap.ContainsKey(slots[i]))
+            {
+                string ingredient = bottleMap[slots[i]];
+                GameObject prefab = GetBottlePrefabByIngredient(ingredient);
+                if (prefab != null)
+                    ReplaceItemAtQR(qrNames[i], prefab, bottleHeight);
+                else
+                    Debug.LogWarning($"⚠ No prefab found for ingredient '{ingredient}' at slot {slots[i]}");
+            }
+            else
+            {
+                Debug.Log($"  slot {slots[i]} not in bottle_map, skipping");
+            }
+        }
+
+        // Shaker always at qr2
+        if (shakerPrefab != null)
+            ReplaceItemAtQR("qr2", shakerPrefab, shakerHeight);
+        else
+            Debug.LogWarning("⚠ shakerPrefab not assigned in CocktailManager!");
+
+        // Serving glass at qr4 based on drink type
+        GameObject glassPrefab = GetGlassPrefabByDrink(drinkInt);
+        if (glassPrefab != null)
+            ReplaceItemAtQR("qr4", glassPrefab, glassHeight);
+        else
+            Debug.LogWarning($"⚠ No glass prefab for drink {drinkInt}");
+
+        Debug.Log($"✓ MQTT setup complete for drink {drinkInt}");
+    }
+
+    GameObject GetBottlePrefabByIngredient(string ingredient)
+    {
+        switch (ingredient.ToLower().Replace(" ", ""))
+        {
+            case "gin":            return ginPrefab;
+            case "purpleliqueur":  return purpleLiqueurPrefab;
+            case "bourbon":        return bourbonPrefab;
+            case "scotch":         return scotchPrefab;
+            case "darkrum":        return darkRumPrefab;
+            case "midori":         return midoriPrefab;
+            case "ryewhiskey":     return ryeWhiskeyPrefab;
+            case "vodka":          return vodkaPrefab;
+            case "whiskey":        return whiskeyPrefab;
+            default:
+                Debug.LogWarning($"⚠ No prefab mapped for ingredient: {ingredient}");
+                return null;
+        }
+    }
+
+    GameObject GetGlassPrefabByDrink(int drinkInt)
+    {
+        switch (drinkInt)
+        {
+            case 0: return emptyGlassMartiniPrefab;      // Aviation (uses coupe/martini style)
+            case 1: return emptyGlassGodfatherPrefab;    // Godfather
+            case 2: return emptyGlassIrishCoffeePrefab;  // IrishCoffee
+            case 3: return emptyGlassMartiniPrefab;      // Martini
+            case 4: return emptyGlassMidoriSourPrefab;   // MidoriSour
+            case 5: return emptyGlassOldFashionedPrefab; // OldFashioned
+            case 6: return emptyGlassNeatPrefab;         // ScotchNeat
+            case 7: return emptyGlassTuxedoPrefab;       // Tuxedo
+            case 8: return emptyGlassVodkaPrefab;        // VodkaNeat
+            case 9: return emptyGlassNeatPrefab;         // WhiskeyNeat
+            default:
+                Debug.LogWarning($"⚠ No glass mapped for drink int: {drinkInt}");
+                return emptyGlassMartiniPrefab;
+        }
+    }
+
     [System.Serializable]
     public class CocktailRecipe
     {

@@ -66,11 +66,10 @@ public class QRCodeManager : MonoBehaviour
         GameObject bottlePrefab = GetBottlePrefabByName(imageName);
         if (bottlePrefab != null)
         {
-            Vector3 spawnPos = trackedImage.transform.position + Vector3.up * bottleHeightOffset;
-            // Spawn bottle above QR code
-            GameObject bottle = Instantiate(bottlePrefab, spawnPos, Quaternion.identity);
-            bottle.transform.SetParent(trackedImage.transform, false);  // ← false is key!
-            bottle.transform.localRotation = Quaternion.identity;    
+            GameObject bottle = Instantiate(bottlePrefab, trackedImage.transform.position, Quaternion.identity);
+            bottle.transform.SetParent(trackedImage.transform, false);
+            bottle.transform.localPosition = Vector3.up * GetBottleHeightOffset(imageName);
+            bottle.transform.localRotation = Quaternion.identity;
 
             bottle.tag = "Grabbable"; //NEW
 
@@ -119,27 +118,26 @@ public class QRCodeManager : MonoBehaviour
     
     GameObject GetBottlePrefabByName(string qrCodeName)
     {
+        int index = -1;
         switch (qrCodeName)
         {
-            case "qr0":  // Was "QR 1"
-                return bottlePrefabs[0];  // AlcoBottleV1
-                
-            case "qr1":  // Was "QR 2"
-                return bottlePrefabs[1];  // AlcoBottleV7
-                
-            case "qr2":  // Was "QR 3"
-                return bottlePrefabs[2];  // EmptyGlassV4
-                
-            case "qr3":  // Was "QR 4"
-                return bottlePrefabs[3];  // Shaker
-                
-            case "qr4":  // Was "QRserve"
-                return bottlePrefabs[4];  // ServingCup
-                
+            case "qr0": index = 0; break;
+            case "qr1": index = 1; break;
+            case "qr2": index = 2; break;
+            case "qr3": index = 3; break;
+            case "qr4": index = 4; break;
             default:
                 Debug.LogWarning($"⚠ No prefab mapped for QR code: {qrCodeName}");
                 return null;
         }
+
+        if (index >= bottlePrefabs.Length)
+        {
+            Debug.LogWarning($"⚠ bottlePrefabs array too short — index {index} requested but only {bottlePrefabs.Length} entries assigned in Inspector");
+            return null;
+        }
+
+        return bottlePrefabs[index];
     }
         
     // Public method to get nearest QR code position (for cup snapping)
@@ -235,9 +233,17 @@ public class QRCodeManager : MonoBehaviour
     {
         // Remove old if exists
         RemoveBottleAtQR(qrName);
-        
+
         // Add new
         spawnedBottles[qrName] = bottle;
+    }
+
+    // Get the spawned object at a QR slot (for MQTT slot-based grab)
+    public GameObject GetBottleAtQR(string qrName)
+    {
+        if (spawnedBottles.ContainsKey(qrName))
+            return spawnedBottles[qrName];
+        return null;
     }
 
 }

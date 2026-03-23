@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SimpleHandSimulator : MonoBehaviour
 {
@@ -63,6 +64,12 @@ public class SimpleHandSimulator : MonoBehaviour
     
     // Current target
     private GameObject currentTarget = null;
+
+    // Highlight state
+    [Header("Highlight Settings")]
+    public Color highlightColor = new Color(1f, 0.85f, 0f, 1f); // Gold tint
+    private GameObject currentHighlightedObject = null;
+    private Dictionary<Renderer, Color> originalColors = new Dictionary<Renderer, Color>();
     
     void Start()
     {
@@ -326,6 +333,8 @@ GameObject FindObjectAtCrosshair()
     
     public void OnReleaseCupButton()
     {
+        ClearHighlight();
+
         if (!isHoldingCup || currentCup == null)
         {
             if (showDebugLogs) Debug.Log("⚠ Not holding anything!");
@@ -717,8 +726,104 @@ GameObject FindObjectAtCrosshair()
         return spout;
     }
 
-    // ===== MQTT/FAKE INPUT - For future use =====
-    
+    // ===== MQTT SLOT-BASED INPUT =====
+
+    // Highlight the object at a given QR slot, clearing any previous highlight
+    public void HighlightSlot(int slotId)
+    {
+        string qrName = "qr" + slotId;
+        GameObject obj = qrCodeManager?.GetBottleAtQR(qrName);
+
+        // Nothing changed
+        if (obj == currentHighlightedObject) return;
+
+        ClearHighlight();
+
+        if (obj == null) return;
+
+        // Save original colors and apply tint to all renderers
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            // renderer.material creates a per-instance copy, safe to modify
+            originalColors[r] = r.material.color;
+            r.material.color = highlightColor;
+        }
+
+        currentHighlightedObject = obj;
+        if (showDebugLogs) Debug.Log($"✨ Highlighted slot {slotId}: {obj.name}");
+    }
+
+    public void ClearHighlight()
+    {
+        if (currentHighlightedObject == null) return;
+
+        Renderer[] renderers = currentHighlightedObject.GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            if (r != null && originalColors.ContainsKey(r))
+                r.material.color = originalColors[r];
+        }
+
+        originalColors.Clear();
+        currentHighlightedObject = null;
+    }
+
+    // Grab the object physically at QR slot N (0,1,2,3,4)
+    public void GrabObjectAtSlot(int slotId)
+    {
+        if (isHoldingCup) return;
+
+        string qrName = "qr" + slotId;
+        GameObject obj = qrCodeManager?.GetBottleAtQR(qrName);
+
+        if (obj != null)
+        {
+            ClearHighlight();
+            PickUpObject(obj);
+            if (showDebugLogs) Debug.Log($"🤖 MQTT grabbed slot {slotId}: {obj.name}");
+        }
+        else
+        {
+            if (showDebugLogs) Debug.LogWarning($"⚠ Nothing at slot {slotId} ({qrName})");
+        }
+    }
+
+    // Pour into a specific target type ("shaker" or "serving_glass")
+    public void OnMQTTPour(string pourTarget)
+    {
+        if (!isHoldingCup || currentCup == null || isPouring) return;
+
+        PourReceiver target = null;
+        if (pourTarget == "shaker")
+            target = FindPourReceiverByType("shaker");
+        else if (pourTarget == "serving_glass")
+            target = FindPourReceiverByType("serving");
+
+        if (target == null)
+        {
+            if (showDebugLogs) Debug.LogWarning($"⚠ No PourReceiver found for target: {pourTarget}");
+            return;
+        }
+
+        if (!target.CanReceiveLiquid())
+        {
+            if (showDebugLogs) Debug.Log($"⚠ {target.containerName} is already full");
+            return;
+        }
+
+        StartCoroutine(PourCutsceneAnimation(target));
+    }
+
+    // Shake the held shaker
+    public void OnMQTTShake()
+    {
+        if (showDebugLogs) Debug.Log("🍸 Shaking!");
+        // Shake animation can be added here
+    }
+
+    // ===== MQTT/FAKE INPUT - Legacy string-based =====
+
     public void SimulateFakeInput(string action)
     {
         if (showDebugLogs) Debug.Log($"📥 Received action: {action}");
