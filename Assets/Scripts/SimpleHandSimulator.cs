@@ -19,11 +19,9 @@ public class SimpleHandSimulator : MonoBehaviour
     public Color holdingColor = Color.yellow;
     public Color noTargetColor = new Color(1, 1, 1, 0.5f); // White semi-transparent
     
-    [Header("Red Dot Tracking")]
-    public float crosshairSmoothSpeed = 25f; // How fast crosshair follows red dot
-    
-    [Header("Hand Position Settings")]
-    public float holdDistanceFromCamera = 0.3f;
+    [Header("Hand Tracking")]
+    public HandTrackingManager handTrackingManager;
+    public float crosshairSmoothSpeed = 25f;
     public Vector3 handOffset = new Vector3(0.1f, -0.1f, 0);
     
     [Header("Pour Settings")]
@@ -57,9 +55,9 @@ public class SimpleHandSimulator : MonoBehaviour
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     
-    // Red dot tracking state
-    private Vector2 redDotScreenPos = new Vector2(0.5f, 0.5f); // Normalized 0-1
-    private bool redDotDetected = false;
+    // Hand tracking state (driven by HandTrackingManager)
+    private bool handTracked = false;
+    private Vector3 handWorldPosition;
     
     // Current target
     private GameObject currentTarget = null;
@@ -85,18 +83,26 @@ public class SimpleHandSimulator : MonoBehaviour
         }
         ShowPourUI(false);
 
+        // Auto-find HandTrackingManager if not assigned
+        if (handTrackingManager == null)
+            handTrackingManager = FindObjectOfType<HandTrackingManager>();
+
+        if (handTrackingManager == null)
+            Debug.LogWarning("[SimpleHandSimulator] No HandTrackingManager found in scene");
     }
     
     void Update()
     {
+        UpdateHandTracking();
+
         // Update held object position
         if (isHoldingCup && currentCup != null)
         {
             UpdateHeldObjectPosition();
         }
-        
-        // Update crosshair position from red dot
-        if (redDotDetected && handCrosshairRect != null)
+
+        // Update crosshair position from hand
+        if (handTracked && handCrosshairRect != null)
         {
             UpdateCrosshairPosition();
         }
@@ -122,48 +128,35 @@ public class SimpleHandSimulator : MonoBehaviour
     }
     
     void UpdateHeldObjectPosition()
-{
-    if (currentCup == null || arCamera == null) return;
+    {
+        if (currentCup == null || arCamera == null) return;
+        if (!handTracked) return;
 
-    // NEW: Use red dot position if available, otherwise use center
-    Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
-    
-    // Convert normalized screen position (0-1) to actual screen coordinates
-    Vector3 screenPoint = new Vector3(
-        targetScreenPos.x * Screen.width,
-        targetScreenPos.y * Screen.height,
-        holdDistanceFromCamera  // Distance from camera
-    );
-    
-    // Convert screen point to world position
-    Vector3 worldPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
-    
-    // Smooth movement
-    currentCup.transform.position = Vector3.Lerp(
-        currentCup.transform.position,
-        worldPosition,
-        Time.deltaTime * 10f
-    );
-    
-    // Match camera rotation
-    currentCup.transform.rotation = arCamera.rotation;
-}
+        currentCup.transform.position = Vector3.Lerp(
+            currentCup.transform.position,
+            handWorldPosition,
+            Time.deltaTime * 10f
+        );
+        currentCup.transform.rotation = arCamera.rotation;
+    }
     
     void UpdateCrosshairPosition()
     {
+        Camera cam = arCamera.GetComponent<Camera>();
+        Vector3 screenPos = cam.WorldToScreenPoint(handWorldPosition);
+        if (screenPos.z <= 0) return; // behind camera
+
         Canvas canvas = handCrosshair.canvas;
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        
-        // Convert normalized (0-1) red dot position to canvas coordinates
-        float targetX = (redDotScreenPos.x - 0.5f) * canvasRect.sizeDelta.x;
-        float targetY = (redDotScreenPos.y - 0.5f) * canvasRect.sizeDelta.y;
-        
-        Vector2 targetPos = new Vector2(targetX, targetY);
-        
-        // Smooth movement to target position
-        Vector2 currentPos = handCrosshairRect.anchoredPosition;
-        Vector2 newPos = Vector2.Lerp(currentPos, targetPos, Time.deltaTime * crosshairSmoothSpeed);
-        handCrosshairRect.anchoredPosition = newPos;
+
+        float targetX = (screenPos.x / Screen.width - 0.5f) * canvasRect.sizeDelta.x;
+        float targetY = (screenPos.y / Screen.height - 0.5f) * canvasRect.sizeDelta.y;
+
+        handCrosshairRect.anchoredPosition = Vector2.Lerp(
+            handCrosshairRect.anchoredPosition,
+            new Vector2(targetX, targetY),
+            Time.deltaTime * crosshairSmoothSpeed
+        );
     }
     
     void UpdateTargeting()
@@ -197,8 +190,7 @@ public class SimpleHandSimulator : MonoBehaviour
                 if (targetInfoText != null)
                 {
                     targetInfoText.text = $"CAN GRAB: {GetFriendlyName(target.name)}\n" +
-                                         $"Distance: {distance:F2}m\n" +
-                                         $"Red dot: ({redDotScreenPos.x:F2}, {redDotScreenPos.y:F2})";
+                                         $"Distance: {distance:F2}m";
                     targetInfoText.color = canGrabColor;
                 }
             }
@@ -220,16 +212,7 @@ public class SimpleHandSimulator : MonoBehaviour
             handCrosshair.color = noTargetColor;
             if (targetInfoText != null)
             {
-                if (redDotDetected)
-                {
-                    targetInfoText.text = $"No target in range\n" +
-                                         $"Red dot: ({redDotScreenPos.x:F2}, {redDotScreenPos.y:F2})";
-                }
-                else
-                {
-                    targetInfoText.text = "No red circle detected\n" +
-                                         "Show red marker to camera";
-                }
+                targetInfoText.text = handTracked ? "No target in range" : "Hand not detected";
                 targetInfoText.color = Color.white;
             }
         }
@@ -237,7 +220,7 @@ public class SimpleHandSimulator : MonoBehaviour
     
 GameObject FindObjectAtCrosshair() 
 {
-    if (handCrosshairRect == null || !redDotDetected) return null;
+    if (handCrosshairRect == null || !handTracked) return null;
     
     Camera cam = arCamera.GetComponent<Camera>();
     if (cam == null) return null;
@@ -398,17 +381,21 @@ GameObject FindObjectAtCrosshair()
         if (showDebugLogs) Debug.Log($"✓ Picked up {obj.name}!");
     }
     
-    // ===== RED DOT TRACKING - Called by RedCircleTracker =====
-    
-    public void OnHandPositionReceived(float normalizedX, float normalizedY)
+    // ===== HAND TRACKING (via Vision-based HandTrackingManager) =====
+
+    void UpdateHandTracking()
     {
-        redDotScreenPos = new Vector2(normalizedX, normalizedY);
-        redDotDetected = true;
-    }
-    
-    public void OnRedDotLost()
-    {
-        redDotDetected = false;
+        if (handTrackingManager == null)
+        {
+            handTracked = false;
+            return;
+        }
+
+        handTracked = handTrackingManager.IsTracking;
+        if (handTracked)
+        {
+            handWorldPosition = handTrackingManager.WristWorldPosition;
+        }
     }
     
     // ===== NEW POUR BUTTON - CUTSCENE STYLE =====

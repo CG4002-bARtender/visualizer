@@ -389,6 +389,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 80469452}
   m_CullTransparentMesh: 1
+--- !u!1 &167196273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 167196275}
+  - component: {fileID: 167196274}
+  m_Layer: 0
+  m_Name: HandTrackingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &167196274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 167196273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5f765f56c844570a8eb82ce7317e2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseDepth: 0.4
+  referenceJointSpan: 0.12
+  confidenceThreshold: 0.3
+  positionSmoothSpeed: 15
+  rotationSmoothSpeed: 10
+--- !u!4 &167196275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 167196273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &215324649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,60 +1491,6 @@ MonoBehaviour:
   bottleHeight: 0.08
   shakerHeight: 0.06
   glassHeight: 0.03
---- !u!1 &902897943
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 902897945}
-  - component: {fileID: 902897944}
-  m_Layer: 0
-  m_Name: RedCircleTracker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &902897944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902897943}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b355557f9b1945cc82268302241a609, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arCameraManager: {fileID: 380555782}
-  handSimulator: {fileID: 1826203818}
-  handCrosshair: {fileID: 628271654}
-  handCrosshairRect: {fileID: 0}
-  redThreshold: 0.652
-  saturationThreshold: 0.562
-  sampleStep: 6
-  debugText: {fileID: 80469454}
-  showDebugInfo: 1
-  debugRedDot: {fileID: 0}
---- !u!4 &902897945
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902897943}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1249337456
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,11 +2274,10 @@ MonoBehaviour:
   tooFarColor: {r: 1, g: 0, b: 0, a: 1}
   holdingColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   noTargetColor: {r: 1, g: 1, b: 1, a: 0.5}
+  handTrackingManager: {fileID: 167196274}
   crosshairSmoothSpeed: 25
-  holdDistanceFromCamera: 0.3
   handOffset: {x: 0.1, y: -0.1, z: 0}
   pourAngle: 90
-  pourDuration: 0.5
   liquidStreamPrefab: {fileID: 8379989405798344799, guid: b1ffcc721e5f34fd78899a215f606b46, type: 3}
   pourRayDistance: 0.5
   pourTargetLayer:
@@ -2669,6 +2663,6 @@ SceneRoots:
   - {fileID: 1826203819}
   - {fileID: 1634641282}
   - {fileID: 630197943}
-  - {fileID: 902897945}
   - {fileID: 1960285626939625643}
   - {fileID: 215324652}
+  - {fileID: 167196275}
