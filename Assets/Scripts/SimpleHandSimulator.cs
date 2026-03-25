@@ -19,10 +19,8 @@ public class SimpleHandSimulator : MonoBehaviour
     public Color holdingColor = Color.yellow;
     public Color noTargetColor = new Color(1, 1, 1, 0.5f); // White semi-transparent
     
-    [Header("Hand Tracking")]
-    public HandTrackingManager handTrackingManager;
-    public float crosshairSmoothSpeed = 25f;
-    public Vector3 handOffset = new Vector3(0.1f, -0.1f, 0);
+    [Header("Held Object Settings")]
+    public float holdDistance = 0.4f; // Distance in front of camera when holding
     
     [Header("Pour Settings")]
     public float pourAngle = 60f;
@@ -54,11 +52,7 @@ public class SimpleHandSimulator : MonoBehaviour
     private Transform originalParent;
     private Vector3 originalPosition;
     private Quaternion originalRotation;
-    
-    // Hand tracking state (driven by HandTrackingManager)
-    private bool handTracked = false;
-    private Vector3 handWorldPosition;
-    
+
     // Current target
     private GameObject currentTarget = null;
 
@@ -83,30 +77,21 @@ public class SimpleHandSimulator : MonoBehaviour
         }
         ShowPourUI(false);
 
-        // Auto-find HandTrackingManager if not assigned
-        if (handTrackingManager == null)
-            handTrackingManager = FindObjectOfType<HandTrackingManager>();
-
-        if (handTrackingManager == null)
-            Debug.LogWarning("[SimpleHandSimulator] No HandTrackingManager found in scene");
+        // Pin crosshair to screen center
+        if (handCrosshairRect != null)
+        {
+            handCrosshairRect.anchoredPosition = Vector2.zero;
+        }
     }
     
     void Update()
     {
-        UpdateHandTracking();
-
         // Update held object position
         if (isHoldingCup && currentCup != null)
         {
             UpdateHeldObjectPosition();
         }
 
-        // Update crosshair position from hand
-        if (handTracked && handCrosshairRect != null)
-        {
-            UpdateCrosshairPosition();
-        }
-        
         // Update what we're targeting and UI
         UpdateTargeting();
 
@@ -130,45 +115,20 @@ public class SimpleHandSimulator : MonoBehaviour
     void UpdateHeldObjectPosition()
     {
         if (currentCup == null || arCamera == null) return;
-        if (!handTracked) return;
+
+        // Pin bottle to screen center, holdDistance in front of camera
+        Vector3 targetPos = arCamera.position + arCamera.forward * holdDistance;
 
         currentCup.transform.position = Vector3.Lerp(
             currentCup.transform.position,
-            handWorldPosition,
+            targetPos,
             Time.deltaTime * 10f
         );
 
-        // Use wrist rotation from hand tracking if available, fall back to camera
-        if (handTrackingManager != null && handTrackingManager.IsTracking)
-        {
-            currentCup.transform.rotation = Quaternion.Slerp(
-                currentCup.transform.rotation,
-                handTrackingManager.WristWorldRotation,
-                Time.deltaTime * 10f
-            );
-        }
-        else
-        {
-            currentCup.transform.rotation = arCamera.rotation;
-        }
-    }
-    
-    void UpdateCrosshairPosition()
-    {
-        Camera cam = arCamera.GetComponent<Camera>();
-        Vector3 screenPos = cam.WorldToScreenPoint(handWorldPosition);
-        if (screenPos.z <= 0) return; // behind camera
-
-        Canvas canvas = handCrosshair.canvas;
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-
-        float targetX = (screenPos.x / Screen.width - 0.5f) * canvasRect.sizeDelta.x;
-        float targetY = (screenPos.y / Screen.height - 0.5f) * canvasRect.sizeDelta.y;
-
-        handCrosshairRect.anchoredPosition = Vector2.Lerp(
-            handCrosshairRect.anchoredPosition,
-            new Vector2(targetX, targetY),
-            Time.deltaTime * crosshairSmoothSpeed
+        currentCup.transform.rotation = Quaternion.Slerp(
+            currentCup.transform.rotation,
+            arCamera.rotation,
+            Time.deltaTime * 10f
         );
     }
     
@@ -225,21 +185,19 @@ public class SimpleHandSimulator : MonoBehaviour
             handCrosshair.color = noTargetColor;
             if (targetInfoText != null)
             {
-                targetInfoText.text = handTracked ? "No target in range" : "Hand not detected";
+                targetInfoText.text = "No target in range";
                 targetInfoText.color = Color.white;
             }
         }
     }
     
-GameObject FindObjectAtCrosshair() 
+GameObject FindObjectAtCrosshair()
 {
-    if (handCrosshairRect == null || !handTracked) return null;
-    
     Camera cam = arCamera.GetComponent<Camera>();
     if (cam == null) return null;
-    
-    // Cast ray from camera through crosshair
-    Ray ray = cam.ScreenPointToRay(handCrosshairRect.position);
+
+    // Cast ray from camera through screen center
+    Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
     
     GameObject[] allObjects = FindObjectsOfType<GameObject>();
     
@@ -392,23 +350,6 @@ GameObject FindObjectAtCrosshair()
         isHoldingCup = true;
         
         if (showDebugLogs) Debug.Log($"✓ Picked up {obj.name}!");
-    }
-    
-    // ===== HAND TRACKING (via Vision-based HandTrackingManager) =====
-
-    void UpdateHandTracking()
-    {
-        if (handTrackingManager == null)
-        {
-            handTracked = false;
-            return;
-        }
-
-        handTracked = handTrackingManager.IsTracking;
-        if (handTracked)
-        {
-            handWorldPosition = handTrackingManager.WristWorldPosition;
-        }
     }
     
     // ===== NEW POUR BUTTON - CUTSCENE STYLE =====
