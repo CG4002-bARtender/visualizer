@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bARtender_3d_debug.unity
     guid: 8306aced05a9f4b9e9c9cee244bf5ed1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/bARtender_3d_nomqtt.unity
     guid: a2f13702a34fc4315930e4175064b1ef
   m_configObjects:

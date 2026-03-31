@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/zihui/CAPSTONE/bARtender_3d/**)",
+      "Read(//opt/homebrew/etc/mosquitto/**)",
+      "Read(//opt/homebrew/**)",
+      "Read(//usr/local/etc/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/zihui/CAPSTONE/bARtender_3d"
+    ]
+  }
+}
