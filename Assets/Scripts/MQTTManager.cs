@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -10,12 +12,17 @@ public class MQTTManager : MonoBehaviour
 {
     [Header("MQTT Broker Settings")]
     public string brokerAddress = "172.20.10.2";
-    public int brokerPort = 1883;
+    public int brokerPort = 8883;
     public string subscribeTopic = "game/state";
 
     [Header("Authentication")]
     public string mqttUsername = "";
     public string mqttPassword = "";
+
+    [Header("mTLS Certificates")]
+    public string caCertFileName = "ca.crt";
+    public string clientCertFileName = "unity.pfx";
+    public string clientCertPassword = "bartender";
 
     [Header("References")]
     public SimpleHandSimulator handSimulator;
@@ -37,7 +44,15 @@ public class MQTTManager : MonoBehaviour
         try
         {
             Debug.Log($"🔄 Connecting to MQTT broker at {brokerAddress}:{brokerPort}...");
-            client = new MqttClient(brokerAddress, brokerPort, false, null, null, MqttSslProtocols.None);
+            string caCertPath = Path.Combine(Application.streamingAssetsPath, caCertFileName);
+            string clientCertPath = Path.Combine(Application.streamingAssetsPath, clientCertFileName);
+
+            X509Certificate caCert = new X509Certificate(caCertPath);
+            X509Certificate2 clientCert = new X509Certificate2(
+                File.ReadAllBytes(clientCertPath), clientCertPassword
+            );
+
+            client = new MqttClient(brokerAddress, brokerPort, true, caCert, clientCert, MqttSslProtocols.TLSv1_2);
             client.MqttMsgPublishReceived += OnMessageReceived;
 
             string clientId = "Unity_iPhone_" + Guid.NewGuid().ToString().Substring(0, 8);
