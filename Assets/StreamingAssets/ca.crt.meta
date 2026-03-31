@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/StreamingAssets/ca.crt.meta
 guid: d2ef4e4a83b9d4e03a467cf1901f6636
 DefaultImporter:
+========
+guid: 222cea4a786934b49a6b33aa77661cb1
+PrefabImporter:
+>>>>>>>> demo:Assets/StepRowPrefab.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

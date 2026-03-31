@@ -15,7 +15,7 @@ public class MQTTManager : MonoBehaviour
     public string brokerAddress = "172.20.10.2";
     public int securePort = 8883;
     public int insecurePort = 1883;
-    public string subscribeTopic = "game/state";
+    public string subscribeTopic = "game";
     public bool useTLS = true;
 
     [Header("Authentication")]
@@ -30,6 +30,8 @@ public class MQTTManager : MonoBehaviour
     [Header("References")]
     public SimpleHandSimulator handSimulator;
     public CocktailManager cocktailManager;
+    public GameUIManager gameUIManager;
+    public RecipeOverlay recipeOverlay;
 
     [Header("Debug")]
     public bool showDebugLogs = true;
@@ -43,7 +45,20 @@ public class MQTTManager : MonoBehaviour
 
     void Start()
     {
+#if !UNITY_EDITOR
+        Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+#endif
         ConnectToBroker();
+        InvokeRepeating(nameof(CheckConnection), 5f, 5f);
+    }
+
+    void CheckConnection()
+    {
+        if (client == null || !client.IsConnected)
+        {
+            Debug.Log("🔄 Reconnecting to MQTT...");
+            ConnectToBroker();
+        }
     }
 
     void Update()
@@ -154,6 +169,8 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.ExitPourState();
         handSimulator?.OnReleaseCupButton(); // also calls ClearHighlight internally
         Debug.Log($"🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
+        gameUIManager?.OnRoundEnd(msg.round, msg.round_score, msg.score);
+        recipeOverlay?.Hide();
     }
 
     // state 1: new order (has bottle_map) OR hand hover position update OR release from GRAB
@@ -165,6 +182,9 @@ public class MQTTManager : MonoBehaviour
             Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
             Debug.Log($"🍹 New order: drink {msg.drink}");
+            gameUIManager?.OnNewOrder();
+            var recipe = ParseRecipe(rawJson);
+            recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
         }
         else if (currentState == 2 || currentState == 3)
         {
@@ -196,12 +216,39 @@ public class MQTTManager : MonoBehaviour
     void HandlePour(MQTTMessage msg)
     {
         handSimulator?.OnMQTTPour(msg.pour_target);
+
+        if (!string.IsNullOrEmpty(msg.pour_result))
+            recipeOverlay?.MarkIngredientStep(msg.pour_result);   // ingredient pour
+        else if (msg.pour_target == "serving_glass" && msg.picked_up == 2)
+            recipeOverlay?.MarkFinishingPour();                   // shaker → glass
     }
 
     // state 4: shaking
     void HandleShake(MQTTMessage msg)
     {
         handSimulator?.OnMQTTShake();
+    }
+
+    struct RecipeData { public string[] ingredients; public bool shake; }
+
+    RecipeData ParseRecipe(string rawJson)
+    {
+        var result = new RecipeData();
+        var ingredientMatches = Regex.Matches(rawJson, "\"ingredients\"\\s*:\\s*\\[([^\\]]*)\\]");
+        if (ingredientMatches.Count > 0)
+        {
+            var items = Regex.Matches(ingredientMatches[0].Groups[1].Value, "\"([^\"]+)\"");
+            result.ingredients = new string[items.Count];
+            for (int i = 0; i < items.Count; i++)
+                result.ingredients[i] = items[i].Groups[1].Value;
+        }
+        else
+        {
+            result.ingredients = new string[0];
+        }
+        result.shake = rawJson.Contains("\"shake\"\\s*:\\s*true") ||
+                       Regex.IsMatch(rawJson, "\"shake\"\\s*:\\s*true");
+        return result;
     }
 
     // Returns hall_id as int, or -1 if the field is null or missing
