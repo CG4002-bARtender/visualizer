@@ -350,16 +350,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brokerAddress: 172.20.10.2
-  brokerPort: 8883
+  securePort: 8883
+  insecurePort: 1883
   subscribeTopic: game
-  mqttUsername: 
-  mqttPassword: 
+  useTLS: 0
+  mqttUsername: test
+  mqttPassword: test
   caCertFileName: ca.crt
   clientCertFileName: unity.pfx
   clientCertPassword: bartender
   handSimulator: {fileID: 1826203818}
   cocktailManager: {fileID: 789331964}
   showDebugLogs: 1
+  reconnectInterval: 5
 --- !u!4 &215324652
 Transform:
   m_ObjectHideFlags: 0
