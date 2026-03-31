@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,11 +32,31 @@ public class MQTTManager : MonoBehaviour
     [Header("Debug")]
     public bool showDebugLogs = true;
 
+    [Header("Reconnection")]
+    public float reconnectInterval = 5f;
+
     private MqttClient client;
     private int currentState = -1; // -1 = unknown/startup
+    private bool isReconnecting = false;
 
     void Start()
     {
+        ConnectToBroker();
+    }
+
+    void Update()
+    {
+        if (!isReconnecting && (client == null || !client.IsConnected))
+        {
+            isReconnecting = true;
+            Invoke(nameof(Reconnect), reconnectInterval);
+        }
+    }
+
+    void Reconnect()
+    {
+        isReconnecting = false;
+        Debug.Log("🔁 Attempting to reconnect...");
         ConnectToBroker();
     }
 
@@ -47,12 +68,13 @@ public class MQTTManager : MonoBehaviour
             string caCertPath = Path.Combine(Application.streamingAssetsPath, caCertFileName);
             string clientCertPath = Path.Combine(Application.streamingAssetsPath, clientCertFileName);
 
-            X509Certificate caCert = new X509Certificate(caCertPath);
+            byte[] caCertBytes = File.ReadAllBytes(caCertPath);
             X509Certificate2 clientCert = new X509Certificate2(
                 File.ReadAllBytes(clientCertPath), clientCertPassword
             );
 
-            client = new MqttClient(brokerAddress, brokerPort, true, caCert, clientCert, MqttSslProtocols.TLSv1_2);
+            client = new MqttClient(brokerAddress, brokerPort, true, null, clientCert, MqttSslProtocols.TLSv1_2,
+                (sender, serverCert, chain, errors) => ValidateServerCert(serverCert, caCertBytes));
             client.MqttMsgPublishReceived += OnMessageReceived;
 
             string clientId = "Unity_iPhone_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -74,7 +96,7 @@ public class MQTTManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"❌ MQTT Connection Error: {e.Message}");
+            Debug.LogError($"❌ MQTT Connection Error: {e.Message}\n{e}");
             Debug.LogError($"   Ensure broker is running at {brokerAddress}:{brokerPort}");
         }
     }
@@ -199,6 +221,27 @@ public class MQTTManager : MonoBehaviour
             result[int.Parse(m.Groups[1].Value)] = m.Groups[2].Value;
 
         return result;
+    }
+
+    bool ValidateServerCert(X509Certificate serverCert, byte[] caCertBytes)
+    {
+        try
+        {
+            X509Certificate2 ca = new X509Certificate2(caCertBytes);
+            X509Certificate2 server = new X509Certificate2(serverCert);
+            // Accept if server cert was issued by our CA
+            if (server.Issuer != ca.Subject)
+            {
+                Debug.LogError($"❌ Server cert issuer mismatch. Got: {server.Issuer}, expected: {ca.Subject}");
+                return false;
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"❌ Cert validation error: {e.Message}");
+            return false;
+        }
     }
 
     void OnApplicationQuit()

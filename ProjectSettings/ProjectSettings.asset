@@ -142,7 +142,11 @@ PlayerSettings:
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
   bundleVersion: 0.1
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 2568092609768164073, guid: b39ac95f20b3547788cfccfaacb4bd22, type: 2}
+  - {fileID: 11400000, guid: 95582c4c311ee4538a4ad067613ee4fb, type: 2}
+  - {fileID: 4800000, guid: e7c77f6eaab324a819efdc13b8125a39, type: 3}
+  - {fileID: 4800000, guid: 6743a50a812740be8c0aa3fccc46fae9, type: 3}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -749,7 +753,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    iPhone: UNITY_XR_ARKIT_LOADER_ENABLED
+    iPhone: UNITY_XR_ARKIT_LOADER_ENABLED;SSL
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

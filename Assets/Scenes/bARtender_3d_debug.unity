@@ -350,10 +350,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brokerAddress: 172.20.10.2
-  brokerPort: 1883
+  brokerPort: 8883
   subscribeTopic: game
   mqttUsername: 
   mqttPassword: 
+  caCertFileName: ca.crt
+  clientCertFileName: unity.pfx
+  clientCertPassword: bartender
   handSimulator: {fileID: 1826203818}
   cocktailManager: {fileID: 789331964}
   showDebugLogs: 1
@@ -1431,9 +1434,7 @@ MonoBehaviour:
   tooFarColor: {r: 1, g: 0, b: 0, a: 1}
   holdingColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   noTargetColor: {r: 1, g: 1, b: 1, a: 0.5}
-  handTrackingManager: {fileID: 167196274}
-  crosshairSmoothSpeed: 25
-  handOffset: {x: 0.1, y: -0.1, z: 0}
+  holdDistance: 0.4
   pourAngle: 90
   liquidStreamPrefab: {fileID: 8379989405798344799, guid: b1ffcc721e5f34fd78899a215f606b46, type: 3}
   pourRayDistance: 0.5

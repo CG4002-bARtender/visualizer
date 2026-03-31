@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/zihui/CAPSTONE/bARtender_3d/Assets/StreamingAssets/**)",
+      "Bash(openssl pkcs12:*)",
+      "Read(//Users/zihui/CAPSTONE/bARtender_3d/Assets/M2Mqtt/Net/**)",
+      "Read(//Users/zihui/CAPSTONE/bARtender_3d/ProjectSettings/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/zihui/CAPSTONE/bARtender_3d/Assets/StreamingAssets",
+      "/Users/zihui/CAPSTONE/bARtender_3d/ProjectSettings"
+    ]
+  }
+}
