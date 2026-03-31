@@ -109,16 +109,16 @@ public class CocktailManager : MonoBehaviour
     {
         if (!recipes.ContainsKey(cocktailName))
         {
-            Debug.LogError($"❌ Recipe not found: {cocktailName}");
+            Debug.LogError($"[DEBUG] ❌ Recipe not found: {cocktailName}");
             return;
         }
         
-        Debug.Log($"🍹 Selected cocktail: {cocktailName}");
+        Debug.Log($"[DEBUG] 🍹 Selected cocktail: {cocktailName}");
         
         // Check if QRs are ready
         if (!AreQRsReady())
         {
-            Debug.LogWarning("⚠ Please scan all QR codes first!");
+            Debug.LogWarning("[DEBUG] ⚠ Please scan all QR codes first!");
             return;
         }
         
@@ -137,14 +137,14 @@ public class CocktailManager : MonoBehaviour
         // Replace serving cup at qr4
         ReplaceItemAtQR("qr4", recipe.servingCup, glassHeight);
         
-        Debug.Log($"✓ {cocktailName} setup complete!");
+        Debug.Log($"[DEBUG] ✓ {cocktailName} setup complete!");
     }
     
     bool AreQRsReady()
     {
         if (qrCodeManager == null)
         {
-            Debug.LogError("❌ QRCodeManager not assigned!");
+            Debug.LogError("[DEBUG] ❌ QRCodeManager not assigned!");
             return false;
         }
         
@@ -154,7 +154,7 @@ public class CocktailManager : MonoBehaviour
         {
             if (qrCodeManager.GetQRTransform(qr) == null)
             {
-                Debug.LogWarning($"⚠ QR '{qr}' not detected yet. Scan all QR codes first!");
+                Debug.LogWarning($"[DEBUG] ⚠ QR '{qr}' not detected yet. Scan all QR codes first!");
                 return false;
             }
         }
@@ -193,7 +193,7 @@ public class CocktailManager : MonoBehaviour
     {
         if (prefab == null || qrCodeManager == null)
         {
-            Debug.LogWarning($"⚠ Cannot replace at {qrName}: prefab or QRCodeManager is null");
+            Debug.LogWarning($"[DEBUG] ⚠ Cannot replace at {qrName}: prefab or QRCodeManager is null");
             return;
         }
         
@@ -201,7 +201,7 @@ public class CocktailManager : MonoBehaviour
         
         if (qrTransform == null)
         {
-            Debug.LogWarning($"⚠ QR code '{qrName}' not found!");
+            Debug.LogWarning($"[DEBUG] ⚠ QR code '{qrName}' not found!");
             return;
         }
         
@@ -219,7 +219,7 @@ public class CocktailManager : MonoBehaviour
         currentCocktailItems.Add(newItem); // Track for cleanup    
         qrCodeManager.RegisterBottleAtQR(qrName, newItem); // Register with QRCodeManager
         
-        Debug.Log($"  ✓ Spawned {prefab.name} at {qrName}");
+        Debug.Log($"[DEBUG]   ✓ Spawned {prefab.name} at {qrName}");
     }
     
     void ClearCurrentCocktail()
@@ -233,7 +233,7 @@ public class CocktailManager : MonoBehaviour
         }
         
         currentCocktailItems.Clear();
-        Debug.Log("🧹 Cleared previous cocktail items");
+        Debug.Log("[DEBUG] 🧹 Cleared previous cocktail items");
     }
     
     // ===== MQTT-DRIVEN SETUP =====
@@ -243,7 +243,7 @@ public class CocktailManager : MonoBehaviour
     // bottleMap keys are slot IDs (0,1,3); values are ingredient name strings.
     public void SetupFromMQTT(int drinkInt, Dictionary<int, string> bottleMap)
     {
-        Debug.Log($"🍹 SetupFromMQTT: drink={drinkInt}, slots={string.Join(", ", bottleMap)}");
+        Debug.Log($"[DEBUG] 🍹 SetupFromMQTT: drink={drinkInt}, slots={string.Join(", ", bottleMap)}");
         ClearCurrentCocktail();
 
         // Place bottles at slots 0, 1, 3 from the bottle_map
@@ -259,11 +259,11 @@ public class CocktailManager : MonoBehaviour
                 if (prefab != null)
                     ReplaceItemAtQR(qrNames[i], prefab, bottleHeight);
                 else
-                    Debug.LogWarning($"⚠ No prefab found for ingredient '{ingredient}' at slot {slots[i]}");
+                    Debug.LogWarning($"[DEBUG] ⚠ No prefab found for ingredient '{ingredient}' at slot {slots[i]}");
             }
             else
             {
-                Debug.Log($"  slot {slots[i]} not in bottle_map, skipping");
+                Debug.Log($"[DEBUG]   slot {slots[i]} not in bottle_map, skipping");
             }
         }
 
@@ -271,16 +271,16 @@ public class CocktailManager : MonoBehaviour
         if (shakerPrefab != null)
             ReplaceItemAtQR("qr2", shakerPrefab, shakerHeight);
         else
-            Debug.LogWarning("⚠ shakerPrefab not assigned in CocktailManager!");
+            Debug.LogWarning("[DEBUG] ⚠ shakerPrefab not assigned in CocktailManager!");
 
         // Serving glass at qr4 based on drink type
         GameObject glassPrefab = GetGlassPrefabByDrink(drinkInt);
         if (glassPrefab != null)
             ReplaceItemAtQR("qr4", glassPrefab, glassHeight);
         else
-            Debug.LogWarning($"⚠ No glass prefab for drink {drinkInt}");
+            Debug.LogWarning($"[DEBUG] ⚠ No glass prefab for drink {drinkInt}");
 
-        Debug.Log($"✓ MQTT setup complete for drink {drinkInt}");
+        Debug.Log($"[DEBUG] ✓ MQTT setup complete for drink {drinkInt}");
     }
 
     GameObject GetBottlePrefabByIngredient(string ingredient)
@@ -297,7 +297,7 @@ public class CocktailManager : MonoBehaviour
             case "vodka":          return vodkaPrefab;
             case "whiskey":        return whiskeyPrefab;
             default:
-                Debug.LogWarning($"⚠ No prefab mapped for ingredient: {ingredient}");
+                Debug.LogWarning($"[DEBUG] ⚠ No prefab mapped for ingredient: {ingredient}");
                 return null;
         }
     }
@@ -317,7 +317,7 @@ public class CocktailManager : MonoBehaviour
             case 8: return emptyGlassVodkaPrefab;        // VodkaNeat
             case 9: return emptyGlassNeatPrefab;         // WhiskeyNeat
             default:
-                Debug.LogWarning($"⚠ No glass mapped for drink int: {drinkInt}");
+                Debug.LogWarning($"[DEBUG] ⚠ No glass mapped for drink int: {drinkInt}");
                 return emptyGlassMartiniPrefab;
         }
     }

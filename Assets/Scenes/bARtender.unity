@@ -975,7 +975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc6dc1bfc1864563b2b8cba7b8f816c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: 172.20.10.13
+  brokerAddress: 172.20.10.2
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
@@ -2083,17 +2083,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb01ba731ece24008a3f252dfc04f245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startScreen: {fileID: 1594038672}
-  roundEndScreen: {fileID: 572787717}
-  gameEndScreen: {fileID: 1864784655}
-  roundEndTitleText: {fileID: 2139606747}
-  roundEndResultText: {fileID: 1362458158}
-  roundEndScoreText: {fileID: 931978097}
-  gameEndScoreText: {fileID: 1948997359}
-  gameEndMessageText: {fileID: 142459976}
-  totalRounds: 3
-  roundEndDisplaySeconds: 4
-  gameStarted: 0
 --- !u!114 &789331966
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -76,7 +76,7 @@ public class QRCodeManager : MonoBehaviour
             spawnedBottles.Add(imageName, bottle);
             trackedImages.Add(imageName, trackedImage);
             
-            Debug.Log($"✓ Spawned {bottlePrefab.name} for QR: {imageName}");
+            Debug.Log($"[DEBUG] ✓ Spawned {bottlePrefab.name} for QR: {imageName}");
         }
     }
     
@@ -112,7 +112,7 @@ public class QRCodeManager : MonoBehaviour
             Destroy(spawnedBottles[imageName]);
             spawnedBottles.Remove(imageName);
             trackedImages.Remove(imageName);
-            Debug.Log($"✗ Removed bottle: {imageName}");
+            Debug.Log($"[DEBUG] ✗ Removed bottle: {imageName}");
         }
     }
     
@@ -127,13 +127,13 @@ public class QRCodeManager : MonoBehaviour
             case "qr3": index = 3; break;
             case "qr4": index = 4; break;
             default:
-                Debug.LogWarning($"⚠ No prefab mapped for QR code: {qrCodeName}");
+                Debug.LogWarning($"[DEBUG] ⚠ No prefab mapped for QR code: {qrCodeName}");
                 return null;
         }
 
         if (index >= bottlePrefabs.Length)
         {
-            Debug.LogWarning($"⚠ bottlePrefabs array too short — index {index} requested but only {bottlePrefabs.Length} entries assigned in Inspector");
+            Debug.LogWarning($"[DEBUG] ⚠ bottlePrefabs array too short — index {index} requested but only {bottlePrefabs.Length} entries assigned in Inspector");
             return null;
         }
 
@@ -185,11 +185,11 @@ public class QRCodeManager : MonoBehaviour
                 bottle.transform.localPosition = Vector3.up * bottleHeightOffset;
                 bottle.transform.localRotation = Quaternion.identity;
                 
-                Debug.Log($"✓ Reset {bottle.name} to QR anchor");
+                Debug.Log($"[DEBUG] ✓ Reset {bottle.name} to QR anchor");
             }
         }
         
-        Debug.Log("✓ All bottles reset!");
+        Debug.Log("[DEBUG] ✓ All bottles reset!");
     }
 
     float GetBottleHeightOffset(string qrCodeName)

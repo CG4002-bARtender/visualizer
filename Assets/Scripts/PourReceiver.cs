@@ -54,7 +54,7 @@ public class PourReceiver : MonoBehaviour
             contents.Add(liquidType);
         }
         
-        Debug.Log($"✓ Added {liquidType} to {containerName}. Fill: {fillAmount * 100:F0}%");
+        Debug.Log($"[DEBUG] ✓ Added {liquidType} to {containerName}. Fill: {fillAmount * 100:F0}%");
         
         // Update visual if needed
         // UpdateVisual();
@@ -64,7 +64,7 @@ public class PourReceiver : MonoBehaviour
     {
         fillAmount = 0f;
         contents.Clear();
-        Debug.Log($"🧹 Emptied {containerName}");
+        Debug.Log($"[DEBUG] 🧹 Emptied {containerName}");
         // UpdateVisual();
     }
     

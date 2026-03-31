@@ -56,7 +56,7 @@ public class MQTTManager : MonoBehaviour
     {
         if (client == null || !client.IsConnected)
         {
-            Debug.Log("🔄 Reconnecting to MQTT...");
+            Debug.Log("[DEBUG] 🔄 Reconnecting to MQTT...");
             ConnectToBroker();
         }
     }
@@ -73,7 +73,7 @@ public class MQTTManager : MonoBehaviour
     void Reconnect()
     {
         isReconnecting = false;
-        Debug.Log("🔁 Attempting to reconnect...");
+        Debug.Log("[DEBUG] 🔁 Attempting to reconnect...");
         ConnectToBroker();
     }
 
@@ -82,7 +82,7 @@ public class MQTTManager : MonoBehaviour
         try
         {
             int port = useTLS ? securePort : insecurePort;
-            Debug.Log($"🔄 Connecting to MQTT broker at {brokerAddress}:{port} (TLS: {useTLS})...");
+            Debug.Log($"[DEBUG] 🔄 Connecting to MQTT broker at {brokerAddress}:{port} (TLS: {useTLS})...");
 
             if (useTLS)
             {
@@ -114,17 +114,17 @@ public class MQTTManager : MonoBehaviour
             if (client.IsConnected)
             {
                 client.Subscribe(new string[] { subscribeTopic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
-                Debug.Log($"✓ Connected and subscribed to {subscribeTopic}");
+                Debug.Log($"[DEBUG] ✓ Connected and subscribed to {subscribeTopic}");
             }
             else
             {
-                Debug.LogError("❌ Failed to connect to MQTT broker");
+                Debug.LogError("[DEBUG] ❌ Failed to connect to MQTT broker");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"❌ MQTT Connection Error: {e.Message}\n{e}");
-            Debug.LogError($"   Ensure broker is running at {brokerAddress}:{(useTLS ? securePort : insecurePort)}");
+            Debug.LogError($"[DEBUG] ❌ MQTT Connection Error: {e.Message}\n{e}");
+            Debug.LogError($"[DEBUG]    Ensure broker is running at {brokerAddress}:{(useTLS ? securePort : insecurePort)}");
         }
     }
 
@@ -136,7 +136,7 @@ public class MQTTManager : MonoBehaviour
 
     void ProcessMessage(string json)
     {
-        if (showDebugLogs) Debug.Log($"📩 MQTT: {json}");
+        if (showDebugLogs) Debug.Log($"[DEBUG] 📩 MQTT: {json}");
 
         try
         {
@@ -151,7 +151,7 @@ public class MQTTManager : MonoBehaviour
                 case 3: HandlePour(msg);           break;
                 case 4: HandleShake(msg);          break;
                 default:
-                    if (showDebugLogs) Debug.LogWarning($"⚠ Unknown state: {msg.state}");
+                    if (showDebugLogs) Debug.LogWarning($"[DEBUG] ⚠ Unknown state: {msg.state}");
                     break;
             }
 
@@ -159,7 +159,7 @@ public class MQTTManager : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"❌ Error parsing MQTT message: {ex.Message}");
+            Debug.LogError($"[DEBUG] ❌ Error parsing MQTT message: {ex.Message}");
         }
     }
 
@@ -168,7 +168,7 @@ public class MQTTManager : MonoBehaviour
     {
         handSimulator?.ExitPourState();
         handSimulator?.OnReleaseCupButton(); // also calls ClearHighlight internally
-        Debug.Log($"🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
+        Debug.Log($"[DEBUG] 🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
         gameUIManager?.OnRoundEnd(msg.round, msg.round_score, msg.score);
         recipeOverlay?.Hide();
     }
@@ -181,7 +181,7 @@ public class MQTTManager : MonoBehaviour
             // New order arriving — set up the bar layout
             Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
-            Debug.Log($"🍹 New order: drink {msg.drink}");
+            Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}");
             gameUIManager?.OnNewOrder();
             var recipe = ParseRecipe(rawJson);
             recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
@@ -291,14 +291,14 @@ public class MQTTManager : MonoBehaviour
             // Accept if server cert was issued by our CA
             if (server.Issuer != ca.Subject)
             {
-                Debug.LogError($"❌ Server cert issuer mismatch. Got: {server.Issuer}, expected: {ca.Subject}");
+                Debug.LogError($"[DEBUG] ❌ Server cert issuer mismatch. Got: {server.Issuer}, expected: {ca.Subject}");
                 return false;
             }
             return true;
         }
         catch (Exception e)
         {
-            Debug.LogError($"❌ Cert validation error: {e.Message}");
+            Debug.LogError($"[DEBUG] ❌ Cert validation error: {e.Message}");
             return false;
         }
     }

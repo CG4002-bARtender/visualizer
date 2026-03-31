@@ -284,7 +284,7 @@ GameObject FindObjectAtCrosshair()
     {
         if (isHoldingCup)
         {
-            if (showDebugLogs) Debug.Log("⚠ Already holding something!");
+            if (showDebugLogs) Debug.Log("[DEBUG] ⚠ Already holding something!");
             return;
         }
         
@@ -292,11 +292,11 @@ GameObject FindObjectAtCrosshair()
         if (currentTarget != null)
         {
             PickUpObject(currentTarget);
-            if (showDebugLogs) Debug.Log($"🎯 Grabbed: {currentTarget.name}");
+            if (showDebugLogs) Debug.Log($"[DEBUG] 🎯 Grabbed: {currentTarget.name}");
         }
         else
         {
-            if (showDebugLogs) Debug.Log("⚠ No object targeted! Point red dot at an object.");
+            if (showDebugLogs) Debug.Log("[DEBUG] ⚠ No object targeted! Point red dot at an object.");
         }
     }
     
@@ -307,7 +307,7 @@ GameObject FindObjectAtCrosshair()
 
         if (!isHoldingCup || currentCup == null)
         {
-            if (showDebugLogs) Debug.Log("⚠ Not holding anything!");
+            if (showDebugLogs) Debug.Log("[DEBUG] ⚠ Not holding anything!");
             return;
         }
         
@@ -318,7 +318,7 @@ GameObject FindObjectAtCrosshair()
             currentCup.transform.localPosition = originalPosition;
             currentCup.transform.localRotation = originalRotation;
             
-            if (showDebugLogs) Debug.Log($"✓ Returned {currentCup.name} to original QR code");
+            if (showDebugLogs) Debug.Log($"[DEBUG] ✓ Returned {currentCup.name} to original QR code");
         }
         else
         {
@@ -327,7 +327,7 @@ GameObject FindObjectAtCrosshair()
             currentCup.transform.position = nearestTable;
             currentCup.transform.rotation = Quaternion.identity;
             
-            if (showDebugLogs) Debug.Log($"✓ Dropped {currentCup.name} at nearest QR");
+            if (showDebugLogs) Debug.Log($"[DEBUG] ✓ Dropped {currentCup.name} at nearest QR");
         }
         
         isHoldingCup = false;
@@ -349,7 +349,7 @@ GameObject FindObjectAtCrosshair()
         
         isHoldingCup = true;
         
-        if (showDebugLogs) Debug.Log($"✓ Picked up {obj.name}!");
+        if (showDebugLogs) Debug.Log($"[DEBUG] ✓ Picked up {obj.name}!");
     }
     
     // ===== NEW POUR BUTTON - CUTSCENE STYLE =====
@@ -358,7 +358,7 @@ GameObject FindObjectAtCrosshair()
     {
         if (!isHoldingCup || currentCup == null)
         {
-            Debug.Log("⚠ Not holding anything to pour");
+            Debug.Log("[DEBUG] ⚠ Not holding anything to pour");
             return;
         }
 
@@ -368,13 +368,13 @@ GameObject FindObjectAtCrosshair()
 
         if (pourTarget == null)
         {
-            Debug.Log("⚠ No valid pour target found");
+            Debug.Log("[DEBUG] ⚠ No valid pour target found");
             return;
         }
 
         if (!pourTarget.CanReceiveLiquid())
         {
-            Debug.Log($"⚠ {pourTarget.containerName} is already full!");
+            Debug.Log($"[DEBUG] ⚠ {pourTarget.containerName} is already full!");
             return;
         }
 
@@ -401,7 +401,7 @@ GameObject FindObjectAtCrosshair()
             
             if (shaker == null)
             {
-                Debug.LogWarning("⚠ No shaker found!");
+                Debug.LogWarning("[DEBUG] ⚠ No shaker found!");
             }
             
             return shaker;
@@ -534,7 +534,7 @@ GameObject FindObjectAtCrosshair()
         
         if (spout == null)
         {
-            Debug.LogWarning($"⚠ No SpoutPosition found on {bottle.name}!");
+            Debug.LogWarning($"[DEBUG] ⚠ No SpoutPosition found on {bottle.name}!");
         }
         
         return spout;
@@ -565,7 +565,7 @@ GameObject FindObjectAtCrosshair()
         }
 
         currentHighlightedObject = obj;
-        if (showDebugLogs) Debug.Log($"✨ Highlighted slot {slotId}: {obj.name}");
+        if (showDebugLogs) Debug.Log($"[DEBUG] ✨ Highlighted slot {slotId}: {obj.name}");
     }
 
     public void ClearHighlight()
@@ -595,11 +595,11 @@ GameObject FindObjectAtCrosshair()
         {
             ClearHighlight();
             PickUpObject(obj);
-            if (showDebugLogs) Debug.Log($"🤖 MQTT grabbed slot {slotId}: {obj.name}");
+            if (showDebugLogs) Debug.Log($"[DEBUG] 🤖 MQTT grabbed slot {slotId}: {obj.name}");
         }
         else
         {
-            if (showDebugLogs) Debug.LogWarning($"⚠ Nothing at slot {slotId} ({qrName})");
+            if (showDebugLogs) Debug.LogWarning($"[DEBUG] ⚠ Nothing at slot {slotId} ({qrName})");
         }
     }
 
@@ -617,13 +617,13 @@ GameObject FindObjectAtCrosshair()
 
         if (target == null)
         {
-            if (showDebugLogs) Debug.LogWarning($"⚠ No PourReceiver found for target: {pourTargetName}");
+            if (showDebugLogs) Debug.LogWarning($"[DEBUG] ⚠ No PourReceiver found for target: {pourTargetName}");
             return;
         }
 
         if (!target.CanReceiveLiquid())
         {
-            if (showDebugLogs) Debug.Log($"⚠ {target.containerName} is already full");
+            if (showDebugLogs) Debug.Log($"[DEBUG] ⚠ {target.containerName} is already full");
             return;
         }
 
@@ -634,7 +634,7 @@ GameObject FindObjectAtCrosshair()
     // Shake the held shaker
     public void OnMQTTShake()
     {
-        if (showDebugLogs) Debug.Log("🍸 Shaking!");
+        if (showDebugLogs) Debug.Log("[DEBUG] 🍸 Shaking!");
         // Shake animation can be added here
     }
 
@@ -642,7 +642,7 @@ GameObject FindObjectAtCrosshair()
 
     public void SimulateFakeInput(string action)
     {
-        if (showDebugLogs) Debug.Log($"📥 Received action: {action}");
+        if (showDebugLogs) Debug.Log($"[DEBUG] 📥 Received action: {action}");
         
         switch (action.ToLower())
         {
@@ -665,7 +665,7 @@ GameObject FindObjectAtCrosshair()
                 break;
                 
             default:
-                if (showDebugLogs) Debug.Log($"⚠ Unknown action: {action}");
+                if (showDebugLogs) Debug.Log($"[DEBUG] ⚠ Unknown action: {action}");
                 break;
         }
     }
