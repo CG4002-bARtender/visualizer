@@ -13,14 +13,16 @@ public class MQTTManager : MonoBehaviour
 {
     [Header("MQTT Broker Settings")]
     public string brokerAddress = "172.20.10.2";
-    public int brokerPort = 8883;
+    public int securePort = 8883;
+    public int insecurePort = 1883;
     public string subscribeTopic = "game/state";
+    public bool useTLS = true;
 
     [Header("Authentication")]
     public string mqttUsername = "";
     public string mqttPassword = "";
 
-    [Header("mTLS Certificates")]
+    [Header("mTLS Certificates (only used when useTLS = true)")]
     public string caCertFileName = "ca.crt";
     public string clientCertFileName = "unity.pfx";
     public string clientCertPassword = "bartender";
@@ -64,17 +66,27 @@ public class MQTTManager : MonoBehaviour
     {
         try
         {
-            Debug.Log($"🔄 Connecting to MQTT broker at {brokerAddress}:{brokerPort}...");
-            string caCertPath = Path.Combine(Application.streamingAssetsPath, caCertFileName);
-            string clientCertPath = Path.Combine(Application.streamingAssetsPath, clientCertFileName);
+            int port = useTLS ? securePort : insecurePort;
+            Debug.Log($"🔄 Connecting to MQTT broker at {brokerAddress}:{port} (TLS: {useTLS})...");
 
-            byte[] caCertBytes = File.ReadAllBytes(caCertPath);
-            X509Certificate2 clientCert = new X509Certificate2(
-                File.ReadAllBytes(clientCertPath), clientCertPassword
-            );
+            if (useTLS)
+            {
+                string caCertPath = Path.Combine(Application.streamingAssetsPath, caCertFileName);
+                string clientCertPath = Path.Combine(Application.streamingAssetsPath, clientCertFileName);
 
-            client = new MqttClient(brokerAddress, brokerPort, true, null, clientCert, MqttSslProtocols.TLSv1_2,
-                (sender, serverCert, chain, errors) => ValidateServerCert(serverCert, caCertBytes));
+                byte[] caCertBytes = File.ReadAllBytes(caCertPath);
+                X509Certificate2 clientCert = new X509Certificate2(
+                    File.ReadAllBytes(clientCertPath), clientCertPassword
+                );
+
+                client = new MqttClient(brokerAddress, port, true, null, clientCert, MqttSslProtocols.TLSv1_2,
+                    (sender, serverCert, chain, errors) => ValidateServerCert(serverCert, caCertBytes));
+            }
+            else
+            {
+                client = new MqttClient(brokerAddress, port, false, null, null, MqttSslProtocols.None, null);
+            }
+
             client.MqttMsgPublishReceived += OnMessageReceived;
 
             string clientId = "Unity_iPhone_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -97,7 +109,7 @@ public class MQTTManager : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError($"❌ MQTT Connection Error: {e.Message}\n{e}");
-            Debug.LogError($"   Ensure broker is running at {brokerAddress}:{brokerPort}");
+            Debug.LogError($"   Ensure broker is running at {brokerAddress}:{(useTLS ? securePort : insecurePort)}");
         }
     }
 
