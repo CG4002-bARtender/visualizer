@@ -38,6 +38,12 @@ public class QRCodeManager : MonoBehaviour
         // Handle newly detected QR codes
         foreach (ARTrackedImage trackedImage in eventArgs.added)
         {
+            // Strip any mesh/colliders from the anchor so it can't occlude or block held objects
+            foreach (Collider col in trackedImage.GetComponentsInChildren<Collider>())
+                col.enabled = false;
+            var mr = trackedImage.GetComponent<MeshRenderer>();
+            if (mr != null) mr.enabled = false;
+
             SpawnBottleForQRCode(trackedImage);
         }
         

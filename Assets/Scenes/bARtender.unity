@@ -1091,6 +1091,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &778291819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 778291821}
+  - component: {fileID: 778291820}
+  m_Layer: 0
+  m_Name: RedTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &778291820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778291819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36243b2eef80f438089fb3cb2fefd700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arCameraManager: {fileID: 0}
+  handSimulator: {fileID: 1826203818}
+  handCrosshair: {fileID: 0}
+  handCrosshairRect: {fileID: 0}
+  redThreshold: 0.6
+  saturationThreshold: 0.4
+  sampleStep: 6
+  debugText: {fileID: 0}
+  showDebugInfo: 1
+  debugRedDot: {fileID: 0}
+--- !u!4 &778291821
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778291819}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 891.88293, y: 440.35376, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &789331961
 GameObject:
   m_ObjectHideFlags: 0
@@ -1972,6 +2026,7 @@ MonoBehaviour:
   pourAngle: 90
   liquidStreamPrefab: {fileID: 8379989405798344799, guid: b1ffcc721e5f34fd78899a215f606b46, type: 3}
   showDebugLogs: 1
+  autoGrabOnStart: 1
   highlightColor: {r: 1, g: 0.85, b: 0, a: 1}
 --- !u!4 &1826203819
 Transform:
@@ -2289,3 +2344,4 @@ SceneRoots:
   - {fileID: 630197943}
   - {fileID: 1960285626939625643}
   - {fileID: 215324652}
+  - {fileID: 778291821}

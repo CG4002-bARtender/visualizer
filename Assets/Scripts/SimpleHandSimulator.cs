@@ -30,6 +30,10 @@ public class SimpleHandSimulator : MonoBehaviour
     private Vector3 originalPosition;
     private Quaternion originalRotation;
 
+    // Red dot tracking state
+    private Vector2 redDotScreenPos = new Vector2(0.5f, 0.5f); // Normalized 0-1, defaults to center
+    private bool redDotDetected = false;
+
     // Highlight state
     [Header("Highlight Settings")]
     public Color highlightColor = new Color(1f, 0.85f, 0f, 1f); // Gold tint
@@ -42,6 +46,7 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             arCamera = Camera.main.transform;
         }
+
     }
 
     void Update()
@@ -70,17 +75,26 @@ public class SimpleHandSimulator : MonoBehaviour
     {
         if (currentCup == null || arCamera == null) return;
 
-        Vector3 targetPos = arCamera.position + arCamera.forward * holdDistance;
+        // Use red dot screen position when detected, otherwise fall back to screen center
+        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+
+        Vector3 screenPoint = new Vector3(
+            targetScreenPos.x * Screen.width,
+            targetScreenPos.y * Screen.height,
+            holdDistance
+        );
+
+        Vector3 worldPosition = arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
 
         currentCup.transform.position = Vector3.Lerp(
             currentCup.transform.position,
-            targetPos,
+            worldPosition,
             Time.deltaTime * 10f
         );
 
         currentCup.transform.rotation = Quaternion.Slerp(
             currentCup.transform.rotation,
-            arCamera.rotation,
+            Quaternion.identity,
             Time.deltaTime * 10f
         );
     }
@@ -346,6 +360,19 @@ public class SimpleHandSimulator : MonoBehaviour
             Debug.LogWarning($"[DEBUG] No SpoutPosition found on {bottle.name}");
 
         return spout;
+    }
+
+    // ===== RED DOT TRACKING - Called by RedCircleTracker =====
+
+    public void OnHandPositionReceived(float normalizedX, float normalizedY)
+    {
+        redDotScreenPos = new Vector2(normalizedX, normalizedY);
+        redDotDetected = true;
+    }
+
+    public void OnRedDotLost()
+    {
+        redDotDetected = false;
     }
 
 }
