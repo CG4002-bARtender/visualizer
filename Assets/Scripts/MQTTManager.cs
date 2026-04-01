@@ -40,7 +40,7 @@ public class MQTTManager : MonoBehaviour
     public float reconnectInterval = 5f;
 
     private MqttClient client;
-    private int currentState = -1; // -1 = unknown/startup
+    private int currentState = 5; // 5 = start screen
     private bool isReconnecting = false;
 
     void Start()
@@ -150,8 +150,9 @@ public class MQTTManager : MonoBehaviour
                 case 2: HandleGrab(msg);           break;
                 case 3: HandlePour(msg);           break;
                 case 4: HandleShake(msg);          break;
+                case 6: HandleGameEnd(msg);        break;
                 default:
-                    if (showDebugLogs) Debug.LogWarning($"[DEBUG] ⚠ Unknown state: {msg.state}");
+                    if (showDebugLogs) Debug.LogWarning($"[DEBUG] Unknown state: {msg.state}");
                     break;
             }
 
@@ -163,14 +164,29 @@ public class MQTTManager : MonoBehaviour
         }
     }
 
-    // state 0: round ended OR idle
+    // state 0: idle — dismisses start/end screens, or shows round end mid-game
     void HandleIdle(MQTTMessage msg)
     {
         handSimulator?.ExitPourState();
-        handSimulator?.OnReleaseCupButton(); // also calls ClearHighlight internally
-        Debug.Log($"[DEBUG] 🏁 Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
-        gameUIManager?.OnRoundEnd(msg.round, msg.round_score, msg.score);
+        handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
+
+        gameUIManager?.OnIdle();
+
+        if (currentState == 5 || currentState == 6)
+            Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
+        else
+            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
+    }
+
+    // state 6: game end
+    void HandleGameEnd(MQTTMessage msg)
+    {
+        handSimulator?.ExitPourState();
+        handSimulator?.OnReleaseCupButton();
+        recipeOverlay?.Hide();
+        gameUIManager?.OnGameEnd(msg.score);
+        Debug.Log($"[DEBUG] Game ended — total score: {msg.score}");
     }
 
     // state 1: new order (has bottle_map) OR hand hover position update OR release from GRAB

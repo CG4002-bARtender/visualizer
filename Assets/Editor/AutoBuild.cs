@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AutoBuild
 {
-    [MenuItem("Auto Build")]
+    [MenuItem("Build/iOS Auto Build")]
     public static void BuildiOS()
     {
         BuildPlayerOptions options = new BuildPlayerOptions
