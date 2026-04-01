@@ -11,8 +11,7 @@ public class QRCodeManager : MonoBehaviour
     [Header("Bottle Prefabs (4 items)")]
     public GameObject[] bottlePrefabs; // AlcoBottleV1, AlcoBottleV7, EmptyGlassV4, Shaker
     
-    [Header("Bottle Positioning")] // How high above QR code (adjust to taste)
-    public float bottleHeightOffset = 0.08f;  // Default (not used anymore)
+    [Header("Bottle Positioning")]
     public float bottle1Offset = 0.08f;  // AlcoBottleV1
     public float bottle2Offset = 0.05f;  // AlcoBottleV7
     public float bottle3Offset = 0.03f;  // EmptyGlassV4
@@ -70,8 +69,6 @@ public class QRCodeManager : MonoBehaviour
             bottle.transform.SetParent(trackedImage.transform, false);
             bottle.transform.localPosition = Vector3.up * GetBottleHeightOffset(imageName);
             bottle.transform.localRotation = Quaternion.identity;
-
-            bottle.tag = "Grabbable"; //NEW
 
             spawnedBottles.Add(imageName, bottle);
             trackedImages.Add(imageName, trackedImage);
@@ -163,35 +160,6 @@ public class QRCodeManager : MonoBehaviour
         return nearestPos + Vector3.up * 0.1f;
     }
     
-    // Helper method to check if any QR codes are being tracked
-    public bool HasTrackedQRCodes()
-    {
-        return trackedImages.Count > 0;
-    }
-
-    public void ResetAllBottlePositions()
-    {
-        foreach (var kvp in spawnedBottles)
-        {
-            string imageName = kvp.Key;
-            GameObject bottle = kvp.Value;
-            
-            if (trackedImages.ContainsKey(imageName))
-            {
-                ARTrackedImage trackedImage = trackedImages[imageName];
-                
-                // Re-parent with clean transform
-                bottle.transform.SetParent(trackedImage.transform, false);
-                bottle.transform.localPosition = Vector3.up * bottleHeightOffset;
-                bottle.transform.localRotation = Quaternion.identity;
-                
-                Debug.Log($"[DEBUG] ✓ Reset {bottle.name} to QR anchor");
-            }
-        }
-        
-        Debug.Log("[DEBUG] ✓ All bottles reset!");
-    }
-
     float GetBottleHeightOffset(string qrCodeName)
     {
         switch (qrCodeName)
@@ -201,7 +169,7 @@ public class QRCodeManager : MonoBehaviour
             case "qr2": return bottle3Offset;
             case "qr3": return bottle4Offset;
             case "qr4": return bottle5Offset;
-            default: return bottleHeightOffset;
+            default: return bottle1Offset;
         }
     }
 

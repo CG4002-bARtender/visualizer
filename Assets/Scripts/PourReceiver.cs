@@ -11,13 +11,9 @@ public class PourReceiver : MonoBehaviour
     public float fillAmount = 0f;
     public float maxCapacity = 1.0f;
 
-    [Header("Visual Feedback")]
-    public Color emptyColor = Color.clear;
-    public Color fullColor = new Color(1f, 0.8f, 0f, 0.5f);  // Amber liquid
-    
     // What liquids are in this container
     private System.Collections.Generic.List<string> contents = new System.Collections.Generic.List<string>();
-    
+
     public enum ContainerType
     {
         Shaker,
@@ -60,16 +56,4 @@ public class PourReceiver : MonoBehaviour
         // UpdateVisual();
     }
     
-    public void Empty()
-    {
-        fillAmount = 0f;
-        contents.Clear();
-        Debug.Log($"[DEBUG] 🧹 Emptied {containerName}");
-        // UpdateVisual();
-    }
-    
-    public string GetContents()
-    {
-        return string.Join(", ", contents);
-    }
 }

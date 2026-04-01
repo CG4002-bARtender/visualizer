@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
 using System.Collections.Generic;
 
 public class CocktailManager : MonoBehaviour
@@ -39,156 +38,6 @@ public class CocktailManager : MonoBehaviour
     // Track currently spawned items for cleanup
     private List<GameObject> currentCocktailItems = new List<GameObject>();
     
-    // Recipe definitions
-    private Dictionary<string, CocktailRecipe> recipes = new Dictionary<string, CocktailRecipe>();
-    
-    void Start()
-    {
-        InitializeRecipes();
-    }
-    
-    void InitializeRecipes()
-    {
-        // Godfather: Scotch + Bourbon
-        recipes["Godfather"] = new CocktailRecipe(
-            new GameObject[] { scotchPrefab, bourbonPrefab },
-            emptyGlassGodfatherPrefab
-        );
-        
-        // Irish Coffee: Bourbon + Dark Rum
-        recipes["IrishCoffee"] = new CocktailRecipe(
-            new GameObject[] { bourbonPrefab, darkRumPrefab },
-            emptyGlassIrishCoffeePrefab
-        );
-        
-        // Martini: Gin + Vodka
-        recipes["Martini"] = new CocktailRecipe(
-            new GameObject[] { ginPrefab, vodkaPrefab },
-            emptyGlassMartiniPrefab
-        );
-        
-        // Midori Sour: Midori + Vodka
-        recipes["MidoriSour"] = new CocktailRecipe(
-            new GameObject[] { midoriPrefab, vodkaPrefab },
-            emptyGlassMidoriSourPrefab
-        );
-        
-        // Old Fashioned: Bourbon + Rye Whiskey
-        recipes["OldFashioned"] = new CocktailRecipe(
-            new GameObject[] { bourbonPrefab, ryeWhiskeyPrefab },
-            emptyGlassOldFashionedPrefab
-        );
-        
-        // Tuxedo: Gin + Scotch
-        recipes["Tuxedo"] = new CocktailRecipe(
-            new GameObject[] { ginPrefab, scotchPrefab },
-            emptyGlassTuxedoPrefab
-        );
-        
-        // Scotch Neat
-        recipes["ScotchNeat"] = new CocktailRecipe(
-            new GameObject[] { scotchPrefab },
-            emptyGlassNeatPrefab
-        );
-        
-        // Vodka Neat
-        recipes["VodkaNeat"] = new CocktailRecipe(
-            new GameObject[] { vodkaPrefab },
-            emptyGlassVodkaPrefab
-        );
-        
-        // Whiskey Neat
-        recipes["WhiskeyNeat"] = new CocktailRecipe(
-            new GameObject[] { whiskeyPrefab },
-            emptyGlassNeatPrefab
-        );
-    }
-    
-    // PUBLIC: Called by UI buttons
-    public void SelectCocktail(string cocktailName)
-    {
-        if (!recipes.ContainsKey(cocktailName))
-        {
-            Debug.LogError($"[DEBUG] ❌ Recipe not found: {cocktailName}");
-            return;
-        }
-        
-        Debug.Log($"[DEBUG] 🍹 Selected cocktail: {cocktailName}");
-        
-        // Check if QRs are ready
-        if (!AreQRsReady())
-        {
-            Debug.LogWarning("[DEBUG] ⚠ Please scan all QR codes first!");
-            return;
-        }
-        
-        // Clear previous cocktail (destroy old spawned items)
-        ClearCurrentCocktail();
-        
-        // Get recipe
-        CocktailRecipe recipe = recipes[cocktailName];
-        
-        // Replace bottles at QR codes
-        ReplaceBottlesAtQR(recipe.bottles);
-        
-        // Replace shaker at qr2
-        ReplaceItemAtQR("qr2", shakerPrefab, shakerHeight);
-        
-        // Replace serving cup at qr4
-        ReplaceItemAtQR("qr4", recipe.servingCup, glassHeight);
-        
-        Debug.Log($"[DEBUG] ✓ {cocktailName} setup complete!");
-    }
-    
-    bool AreQRsReady()
-    {
-        if (qrCodeManager == null)
-        {
-            Debug.LogError("[DEBUG] ❌ QRCodeManager not assigned!");
-            return false;
-        }
-        
-        string[] requiredQRs = { "qr0", "qr1", "qr2", "qr3", "qr4" };
-        
-        foreach (string qr in requiredQRs)
-        {
-            if (qrCodeManager.GetQRTransform(qr) == null)
-            {
-                Debug.LogWarning($"[DEBUG] ⚠ QR '{qr}' not detected yet. Scan all QR codes first!");
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-    void ReplaceBottlesAtQR(GameObject[] bottles)
-    {
-        string[] bottleQRs = { "qr0", "qr1", "qr3" };
-        GameObject[] randomBottles = { bourbonPrefab, vodkaPrefab, ginPrefab };
-        
-        for (int i = 0; i < 3; i++)
-        {
-            GameObject bottlePrefab;
-            
-            if (i < bottles.Length && bottles[i] != null)
-            {
-                // Use recipe bottle
-                bottlePrefab = bottles[i];
-            }
-            else
-            {
-                // Fill with random bottle
-                bottlePrefab = randomBottles[Random.Range(0, randomBottles.Length)];
-            }
-            
-            if (bottlePrefab != null)
-            {
-                ReplaceItemAtQR(bottleQRs[i], bottlePrefab, bottleHeight);
-            }
-        }
-    }
-    
     void ReplaceItemAtQR(string qrName, GameObject prefab, float heightOffset)
     {
         if (prefab == null || qrCodeManager == null)
@@ -214,8 +63,6 @@ public class CocktailManager : MonoBehaviour
         newItem.transform.localPosition = Vector3.up * heightOffset; // NEW: Then set LOCAL position (relative to QR)
         newItem.transform.localRotation = Quaternion.identity;
         
-        newItem.tag = "Grabbable";  // NEW
-
         currentCocktailItems.Add(newItem); // Track for cleanup    
         qrCodeManager.RegisterBottleAtQR(qrName, newItem); // Register with QRCodeManager
         
@@ -319,19 +166,6 @@ public class CocktailManager : MonoBehaviour
             default:
                 Debug.LogWarning($"[DEBUG] ⚠ No glass mapped for drink int: {drinkInt}");
                 return emptyGlassMartiniPrefab;
-        }
-    }
-
-    [System.Serializable]
-    public class CocktailRecipe
-    {
-        public GameObject[] bottles;
-        public GameObject servingCup;
-        
-        public CocktailRecipe(GameObject[] bottles, GameObject servingCup)
-        {
-            this.bottles = bottles;
-            this.servingCup = servingCup;
         }
     }
 }
