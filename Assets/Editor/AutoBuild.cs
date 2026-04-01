@@ -1,0 +1,25 @@
+using UnityEditor;
+using UnityEditor.Build.Reporting;
+using UnityEngine;
+
+public class AutoBuild
+{
+    [MenuItem("Auto Build")]
+    public static void BuildiOS()
+    {
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes = new[] { "Assets/Scenes/bARtender.unity" }, 
+            locationPathName = "Build",
+            target = BuildTarget.iOS,
+            options = BuildOptions.AcceptExternalModificationsToPlayer
+        };
+
+        BuildReport report = BuildPipeline.BuildPlayer(options);
+
+        if (report.summary.result == BuildResult.Succeeded)
+            Debug.Log("iOS build succeeded!");
+        else
+            Debug.LogError("iOS build failed");
+    }
+}

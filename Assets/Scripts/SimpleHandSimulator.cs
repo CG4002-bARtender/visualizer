@@ -1,5 +1,4 @@
 using UnityEngine;
-using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -24,10 +23,6 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("Debug")]
     public bool showDebugLogs = true;
 
-    [Header("UI References")]
-    public GameObject pourProgressPanel;
-    public TextMeshProUGUI pourStatusText;
-
     // Object holding state
     private GameObject currentCup;
     private bool isHoldingCup = false;
@@ -47,7 +42,6 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             arCamera = Camera.main.transform;
         }
-        ShowPourUI(false);
     }
 
     void Update()
@@ -69,8 +63,6 @@ public class SimpleHandSimulator : MonoBehaviour
 
             if (activePourTarget.CanReceiveLiquid())
                 activePourTarget.AddLiquid(GetLiquidType(currentCup.name), 0.5f * Time.deltaTime);
-
-            UpdatePourUI(activePourTarget);
         }
     }
 
@@ -287,8 +279,6 @@ public class SimpleHandSimulator : MonoBehaviour
 
         isInPourState = true;
         pourEntryCoroutine = null;
-        ShowPourUI(true);
-        UpdatePourUI(pourTarget);
     }
 
     public void ExitPourState()
@@ -314,7 +304,6 @@ public class SimpleHandSimulator : MonoBehaviour
             StartCoroutine(UntiltAnimation());
 
         activePourTarget = null;
-        ShowPourUI(false);
     }
 
     IEnumerator UntiltAnimation()
@@ -359,25 +348,4 @@ public class SimpleHandSimulator : MonoBehaviour
         return spout;
     }
 
-    // ===== POUR UI =====
-
-    void ShowPourUI(bool show)
-    {
-        if (pourProgressPanel != null)
-            pourProgressPanel.SetActive(show);
-    }
-
-    void UpdatePourUI(PourReceiver target)
-    {
-        if (target == null)
-        {
-            ShowPourUI(false);
-            return;
-        }
-
-        ShowPourUI(true);
-
-        if (pourStatusText != null)
-            pourStatusText.text = $"Pouring into: {target.containerName}";
-    }
 }
