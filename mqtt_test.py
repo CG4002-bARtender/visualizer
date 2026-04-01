@@ -72,6 +72,12 @@ def bottle_at(slot: int) -> str:
 
 # ── Commands ──────────────────────────────────────────────────────────────────
 
+def cmd_start():
+    """Dismiss start screen → idle/ready state."""
+    pub({"state": 0, "round": 0, "score": 0})
+    print("  Start screen dismissed — ready for orders.")
+
+
 def cmd_new_order():
     print("\nDrinks:")
     for d in DRINKS:
@@ -190,6 +196,7 @@ def cmd_serve():
 
 MENU = """
 ── bARtender MQTT Test Publisher ──────────────────────
+  0   Start (dismiss start screen)
   1   New order — choose drink
   2   Hover move
   3   Grab (current hover target)
@@ -203,10 +210,12 @@ MENU = """
 
 def interactive():
     print(MENU)
+    print("  Send '0' first to dismiss the start screen before starting an order.\n")
     while True:
         status()
         cmd = input("cmd> ").strip().lower()
         if   cmd == "q": break
+        elif cmd == "0": cmd_start()
         elif cmd == "1": cmd_new_order()
         elif cmd == "2": cmd_hover()
         elif cmd == "3": cmd_grab()

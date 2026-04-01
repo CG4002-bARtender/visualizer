@@ -168,6 +168,7 @@ public class MQTTManager : MonoBehaviour
     void HandleIdle(MQTTMessage msg)
     {
         handSimulator?.ExitPourState();
+        handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
 
@@ -183,6 +184,7 @@ public class MQTTManager : MonoBehaviour
     void HandleGameEnd(MQTTMessage msg)
     {
         handSimulator?.ExitPourState();
+        handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
         gameUIManager?.OnGameEnd(msg.score);
@@ -202,10 +204,9 @@ public class MQTTManager : MonoBehaviour
             var recipe = ParseRecipe(rawJson);
             recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
         }
-        else if (currentState == 2 || currentState == 3)
+        else if (currentState == 2)
         {
-            // Transitioning GRAB/POUR → HOVER = bottle released
-            handSimulator?.ExitPourState();
+            // Transitioning GRAB → HOVER = bottle released
             handSimulator?.OnReleaseCupButton();
         }
 
@@ -217,21 +218,18 @@ public class MQTTManager : MonoBehaviour
             handSimulator?.ClearHighlight();
     }
 
-    // state 2: bottle grabbed (or returned to grab after pour/shake)
+    // state 2: bottle grabbed (or returned to grab after shake)
     void HandleGrab(MQTTMessage msg)
     {
-        if (currentState == 3)
-            handSimulator?.ExitPourState();
-
-        // Only grab if this is a fresh GRAB transition (not returning from POUR/SHAKE)
-        if (currentState != 3 && currentState != 4)
+        // Only grab if this is a fresh GRAB transition (not returning from SHAKE)
+        if (currentState != 4)
             handSimulator?.GrabObjectAtSlot(msg.picked_up);
     }
 
     // state 3: pouring
     void HandlePour(MQTTMessage msg)
     {
-        handSimulator?.OnMQTTPour(msg.pour_target);
+        handSimulator?.OnMQTTPour(msg.pour_target, PublishAnimationComplete);
 
         if (!string.IsNullOrEmpty(msg.pour_result))
             recipeOverlay?.MarkIngredientStep(msg.pour_result);   // ingredient pour
@@ -239,10 +237,17 @@ public class MQTTManager : MonoBehaviour
             recipeOverlay?.MarkFinishingPour();                   // shaker → glass
     }
 
+    void PublishAnimationComplete()
+    {
+        if (client == null || !client.IsConnected) return;
+        client.Publish("animation", new byte[] { 0x01 }, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+        if (showDebugLogs) Debug.Log("[DEBUG] Published animation complete to 'animation' topic");
+    }
+
     // state 4: shaking
     void HandleShake(MQTTMessage msg)
     {
-        handSimulator?.OnMQTTShake();
+        handSimulator?.OnMQTTShake(PublishAnimationComplete);
     }
 
     struct RecipeData { public string[] ingredients; public bool shake; }

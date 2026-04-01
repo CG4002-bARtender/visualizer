@@ -13,12 +13,27 @@ public class SimpleHandSimulator : MonoBehaviour
 
     [Header("Pour Settings")]
     public float pourAngle = 60f;
+    public float pourActiveDuration = 2f;
     public GameObject liquidStreamPrefab;
 
     private bool isInPourState = false;
     private Coroutine pourEntryCoroutine = null;
+    private Coroutine pourSequenceCoroutine = null;
     private GameObject activeLiquidStream;
     private PourReceiver activePourTarget = null;
+    private System.Action pourCompleteCallback = null;
+
+    [Header("Shake Settings")]
+    public float shakeMoveTime = 0.5f;
+    public float shakeActiveDuration = 2f;
+    public float shakeReturnTime = 0.4f;
+    public float shakeFrequency = 3f;
+    public float shakeAmplitude = 0.08f;
+    public float shakeTiltAngle = 25f;
+
+    private bool isInShakeState = false;
+    private Coroutine shakeSequenceCoroutine = null;
+    private System.Action shakeCompleteCallback = null;
 
     [Header("Debug")]
     public bool showDebugLogs = true;
@@ -51,7 +66,7 @@ public class SimpleHandSimulator : MonoBehaviour
 
     void Update()
     {
-        if (isHoldingCup && currentCup != null)
+        if (isHoldingCup && currentCup != null && !isInShakeState && pourSequenceCoroutine == null)
         {
             UpdateHeldObjectPosition();
         }
@@ -206,10 +221,10 @@ public class SimpleHandSimulator : MonoBehaviour
         }
     }
 
-    public void OnMQTTPour(string pourTargetName)
+    public void OnMQTTPour(string pourTargetName, System.Action onComplete = null)
     {
         if (!isHoldingCup || currentCup == null) return;
-        if (isInPourState || pourEntryCoroutine != null) return;
+        if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) return;
 
         PourReceiver target = null;
         if (pourTargetName == "shaker")
@@ -230,12 +245,110 @@ public class SimpleHandSimulator : MonoBehaviour
         }
 
         activePourTarget = target;
-        pourEntryCoroutine = StartCoroutine(PourEntryAnimation(target));
+        pourCompleteCallback = onComplete;
+        pourSequenceCoroutine = StartCoroutine(PourSequence(target));
     }
 
-    public void OnMQTTShake()
+    public void OnMQTTShake(System.Action onComplete = null)
     {
-        if (showDebugLogs) Debug.Log("[DEBUG] Shaking!");
+        if (!isHoldingCup || currentCup == null) return;
+        if (isInShakeState || shakeSequenceCoroutine != null) return;
+
+        shakeCompleteCallback = onComplete;
+        shakeSequenceCoroutine = StartCoroutine(ShakeSequence());
+    }
+
+    public void ExitShakeState()
+    {
+        if (!isInShakeState && shakeSequenceCoroutine == null) return;
+
+        if (shakeSequenceCoroutine != null)
+        {
+            StopCoroutine(shakeSequenceCoroutine);
+            shakeSequenceCoroutine = null;
+        }
+
+        shakeCompleteCallback = null;
+        isInShakeState = false;
+    }
+
+    IEnumerator ShakeSequence()
+    {
+        isInShakeState = true;
+
+        // Phase 1: smoothly move to center screen
+        Vector3 startPos = currentCup.transform.position;
+        Quaternion startRot = currentCup.transform.rotation;
+        float elapsed = 0f;
+
+        while (elapsed < shakeMoveTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / shakeMoveTime);
+            Vector3 centerPos = GetCenterScreenPosition();
+            if (currentCup != null)
+            {
+                currentCup.transform.position = Vector3.Lerp(startPos, centerPos, t);
+                currentCup.transform.rotation = Quaternion.Lerp(startRot, Quaternion.identity, t);
+            }
+            yield return null;
+        }
+
+        // Phase 2: arc shake (up/down arc with forward/back tilt)
+        elapsed = 0f;
+        while (elapsed < shakeActiveDuration)
+        {
+            elapsed += Time.deltaTime;
+            float wave = Mathf.Sin(elapsed * shakeFrequency * Mathf.PI * 2f);
+            Vector3 center = GetCenterScreenPosition();
+            if (currentCup != null)
+            {
+                currentCup.transform.position = center
+                    + arCamera.up      * (shakeAmplitude * wave)
+                    + arCamera.forward * (shakeAmplitude * 0.4f * -wave); // arc: forward on down-stroke
+                currentCup.transform.rotation = Quaternion.Euler(shakeTiltAngle * wave, 0f, 0f);
+            }
+            yield return null;
+        }
+
+        // Phase 3: smoothly return to hand
+        if (currentCup != null)
+        {
+            Vector3 shakeEndPos = currentCup.transform.position;
+            Quaternion shakeEndRot = currentCup.transform.rotation;
+            elapsed = 0f;
+            while (elapsed < shakeReturnTime)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.SmoothStep(0f, 1f, elapsed / shakeReturnTime);
+                if (currentCup != null)
+                {
+                    currentCup.transform.position = Vector3.Lerp(shakeEndPos, GetCurrentHandPosition(), t);
+                    currentCup.transform.rotation = Quaternion.Lerp(shakeEndRot, arCamera.rotation, t);
+                }
+                yield return null;
+            }
+        }
+
+        isInShakeState = false;
+        shakeSequenceCoroutine = null;
+
+        System.Action callback = shakeCompleteCallback;
+        shakeCompleteCallback = null;
+        callback?.Invoke();
+    }
+
+    Vector3 GetCenterScreenPosition()
+    {
+        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.45f, holdDistance);
+        return arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenCenter);
+    }
+
+    Vector3 GetCurrentHandPosition()
+    {
+        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+        Vector3 screenPoint = new Vector3(targetScreenPos.x * Screen.width, targetScreenPos.y * Screen.height, holdDistance);
+        return arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
     }
 
     // ===== POUR MECHANICS =====
@@ -255,12 +368,44 @@ public class SimpleHandSimulator : MonoBehaviour
         return null;
     }
 
+    IEnumerator PourSequence(PourReceiver pourTarget)
+    {
+        // Phase 1: tilt and move to pour position
+        yield return StartCoroutine(PourEntryAnimation(pourTarget));
+
+        // Phase 2: active pour for fixed duration
+        yield return new WaitForSeconds(pourActiveDuration);
+
+        // Phase 3: stop particles and untilt
+        isInPourState = false;
+
+        if (activeLiquidStream != null)
+        {
+            activeLiquidStream.GetComponent<ParticleSystem>()?.Stop();
+            Destroy(activeLiquidStream, 1.0f);
+            activeLiquidStream = null;
+        }
+
+        activePourTarget = null;
+
+        if (currentCup != null)
+            yield return StartCoroutine(UntiltAnimation());
+
+        pourSequenceCoroutine = null;
+
+        // Signal completion to server
+        System.Action callback = pourCompleteCallback;
+        pourCompleteCallback = null;
+        callback?.Invoke();
+    }
+
     IEnumerator PourEntryAnimation(PourReceiver pourTarget)
     {
         Vector3 startPosition = currentCup.transform.position;
         Quaternion startRotation = currentCup.transform.rotation;
         Vector3 pourPosition = pourTarget.transform.position + Vector3.up * 0.25f;
-        Quaternion pouringRot = Quaternion.Euler(0, 0, pourAngle);
+        // Tilt around the camera's right axis so the pour always faces toward the target
+        Quaternion pouringRot = Quaternion.AngleAxis(pourAngle, arCamera.right);
 
         float elapsed = 0;
         float moveTime = 0.4f;
@@ -297,7 +442,13 @@ public class SimpleHandSimulator : MonoBehaviour
 
     public void ExitPourState()
     {
-        if (!isInPourState && pourEntryCoroutine == null) return;
+        if (!isInPourState && pourEntryCoroutine == null && pourSequenceCoroutine == null) return;
+
+        if (pourSequenceCoroutine != null)
+        {
+            StopCoroutine(pourSequenceCoroutine);
+            pourSequenceCoroutine = null;
+        }
 
         if (pourEntryCoroutine != null)
         {
@@ -305,6 +456,7 @@ public class SimpleHandSimulator : MonoBehaviour
             pourEntryCoroutine = null;
         }
 
+        pourCompleteCallback = null;
         isInPourState = false;
 
         if (activeLiquidStream != null)
