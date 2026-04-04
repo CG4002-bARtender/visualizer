@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5133948806980927908
+--- !u!1 &5720844995751464437
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 504305408264469794}
-  - component: {fileID: 8174975853620807698}
-  - component: {fileID: 2398856348504431173}
-  m_Layer: 0
-  m_Name: DrinkV6
-  m_TagString: Untagged
+  - component: {fileID: 7452335726414993066}
+  - component: {fileID: 888732324475450573}
+  - component: {fileID: 2535976656021001695}
+  - component: {fileID: 1234567890123456789}
+  m_Layer: 6
+  m_Name: EmptyGlass_Aviation
+  m_TagString: PourReceiver
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &504305408264469794
+--- !u!4 &7452335726414993066
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5133948806980927908}
+  m_GameObject: {fileID: 5720844995751464437}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,21 +34,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8174975853620807698
+--- !u!33 &888732324475450573
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5133948806980927908}
-  m_Mesh: {fileID: 4271043259675871519, guid: c6c6ddb6ddc3d6a4686030677d8c8057, type: 3}
---- !u!23 &2398856348504431173
+  m_GameObject: {fileID: 5720844995751464437}
+  m_Mesh: {fileID: 946666300114946955, guid: 4250e74e6b674b24abde227d0d3a0d6b, type: 3}
+--- !u!23 &2535976656021001695
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5133948806980927908}
+  m_GameObject: {fileID: 5720844995751464437}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -61,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ecba42e17a3504d49a018664c4d7f8e1, type: 2}
+  - {fileID: 2100000, guid: 1dd5b76fd5f3a8b4f8d4f7f29a1a2595, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,3 +84,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1234567890123456789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5720844995751464437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422646975e07c47608f365e8091759fe, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  containerName: Aviation Glass
+  containerType: 1
+  fillAmount: 0
+  maxCapacity: 1

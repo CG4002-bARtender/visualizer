@@ -664,7 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc6dc1bfc1864563b2b8cba7b8f816c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: 172.20.10.2
+  brokerAddress: 192.168.0.22
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
@@ -1221,6 +1221,7 @@ MonoBehaviour:
   vodkaPrefab: {fileID: 3740369041242573948, guid: 4586150fd931f15448f1ef4d95e3d875, type: 3}
   scotchPrefab: {fileID: 3207803841501195979, guid: 306c8431279bdc748869ee6940d0c11f, type: 3}
   whiskeyPrefab: {fileID: 6269587150276878201, guid: ef870d14343535640812ce7cca38eb06, type: 3}
+  emptyGlassAviationPrefab: {fileID: 5720844995751464437, guid: 8786d391d8db1449d8b8268463cfbb65, type: 3}
   emptyGlassGodfatherPrefab: {fileID: 8345139180269264999, guid: ca2e3152771895147af38734a48b88fa, type: 3}
   emptyGlassIrishCoffeePrefab: {fileID: 5888378454767430694, guid: 80eebc887ec4f3a4eb86ccd57767bc0c, type: 3}
   emptyGlassMartiniPrefab: {fileID: 4847311845941964572, guid: 357698f0d0f06d64e8825934927d8441, type: 3}
@@ -1229,7 +1230,19 @@ MonoBehaviour:
   emptyGlassOldFashionedPrefab: {fileID: 405332144502335150, guid: 0ccdec9e315495041a3eb821f4abec2c, type: 3}
   emptyGlassTuxedoPrefab: {fileID: 5720844995751464437, guid: efd047dda2bf47f47bb278a04a132b9d, type: 3}
   emptyGlassVodkaPrefab: {fileID: 5973741906373363894, guid: 818facca8da77a543bac021c1a6b8293, type: 3}
+  drinkAviationPrefab: {fileID: 5133948806980927908, guid: 856025d73e4304eb4bf7e4094d2a9078, type: 3}
+  drinkGodfatherPrefab: {fileID: 4913355586239114750, guid: af5e91f4ba137dd44bcffd8f8be671ab, type: 3}
+  drinkIrishCoffeePrefab: {fileID: 6416444088054251418, guid: a14d5c39f56c09e4987d3ba79d5ae082, type: 3}
+  drinkMartiniPrefab: {fileID: 7516986750324358339, guid: a21cba8fb78c3984693526e2cd7e41d4, type: 3}
+  drinkMidoriSourPrefab: {fileID: 1004017310165481860, guid: 94440f60b64a6af4485e352524ceadcc, type: 3}
+  drinkOldFashionedPrefab: {fileID: 7606646410040664753, guid: 09a021bfd0325444ebfce51ba618cf02, type: 3}
+  drinkNeatPrefab: {fileID: 7292896836730036026, guid: f5428484152dc7741af412a40f45dfa0, type: 3}
+  drinkTuxedoPrefab: {fileID: 5133948806980927908, guid: 8b102506dd2bbbf49baeee50452943eb, type: 3}
+  drinkVodkaPrefab: {fileID: 4880523766140717366, guid: b0d924b10f4ee394da20d993a682bef3, type: 3}
   shakerPrefab: {fileID: 4719518006706772081, guid: 202053d64c6efc2438a26f01871802e9, type: 3}
+  failMarkerPrefab: {fileID: 8145271320891733466, guid: 804c0fe25802942809921571dd5c7681, type: 3}
+  successMarkerPrefab: {fileID: 0}
+  markerHeight: 0.08
   bottleHeight: 0.08
   shakerHeight: 0.06
   glassHeight: 0.03

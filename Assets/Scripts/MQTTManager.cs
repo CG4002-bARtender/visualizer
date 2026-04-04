@@ -41,6 +41,8 @@ public class MQTTManager : MonoBehaviour
 
     private MqttClient client;
     private int currentState = 5; // 5 = start screen
+    private int currentDrinkInt = -1;
+    private Dictionary<int, string> currentBottleMap = new Dictionary<int, string>();
     private bool isReconnecting = false;
 
     void Start()
@@ -150,6 +152,7 @@ public class MQTTManager : MonoBehaviour
                 case 2: HandleGrab(msg);           break;
                 case 3: HandlePour(msg);           break;
                 case 4: HandleShake(msg);          break;
+                case 5: HandleStartScreen();       break;
                 case 6: HandleGameEnd(msg);        break;
                 default:
                     if (showDebugLogs) Debug.LogWarning($"[DEBUG] Unknown state: {msg.state}");
@@ -172,12 +175,34 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
 
+        if (msg.round > 0)
+        {
+            if (msg.round_score == 1 && currentDrinkInt >= 0)
+            {
+                cocktailManager?.ShowFinalDrink(currentDrinkInt);
+                cocktailManager?.ShowSuccessMarker();
+            }
+            else if (msg.round_score == 0)
+                cocktailManager?.ShowFailMarker();
+        }
+
         gameUIManager?.OnIdle();
 
         if (currentState == 5 || currentState == 6)
             Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
         else
             Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
+    }
+
+    // state 5: start screen
+    void HandleStartScreen()
+    {
+        handSimulator?.ExitPourState();
+        handSimulator?.ExitShakeState();
+        handSimulator?.OnReleaseCupButton();
+        recipeOverlay?.Hide();
+        gameUIManager?.OnStartScreen();
+        Debug.Log("[DEBUG] START_SCREEN received");
     }
 
     // state 6: game end
@@ -187,6 +212,15 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
+
+        if (msg.round_score == 1 && currentDrinkInt >= 0)
+        {
+            cocktailManager?.ShowFinalDrink(currentDrinkInt);
+            cocktailManager?.ShowSuccessMarker();
+        }
+        else if (msg.round_score == 0)
+            cocktailManager?.ShowFailMarker();
+
         gameUIManager?.OnGameEnd(msg.score);
         Debug.Log($"[DEBUG] Game ended — total score: {msg.score}");
     }
@@ -199,6 +233,8 @@ public class MQTTManager : MonoBehaviour
             // New order arriving — set up the bar layout
             Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
+            currentDrinkInt = msg.drink;
+            currentBottleMap = bottleMap;
             Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}");
             gameUIManager?.OnNewOrder();
             var recipe = ParseRecipe(rawJson);
@@ -229,7 +265,19 @@ public class MQTTManager : MonoBehaviour
     // state 3: pouring
     void HandlePour(MQTTMessage msg)
     {
-        handSimulator?.OnMQTTPour(msg.pour_target, PublishAnimationComplete);
+        Color pourColor;
+        if (msg.picked_up == 2)
+        {
+            // Shaker → glass: use the drink's color
+            pourColor = SimpleHandSimulator.GetIngredientColorByName(GetDrinkMixedColorKey(currentDrinkInt));
+        }
+        else
+        {
+            // Bottle → shaker/glass: look up the ingredient at this slot
+            string ingredient = currentBottleMap.ContainsKey(msg.picked_up) ? currentBottleMap[msg.picked_up] : "";
+            pourColor = SimpleHandSimulator.GetIngredientColorByName(ingredient);
+        }
+        handSimulator?.OnMQTTPour(msg.pour_target, pourColor, PublishAnimationComplete);
 
         if (!string.IsNullOrEmpty(msg.pour_result))
             recipeOverlay?.MarkIngredientStep(msg.pour_result);   // ingredient pour
@@ -270,6 +318,25 @@ public class MQTTManager : MonoBehaviour
         result.shake = rawJson.Contains("\"shake\"\\s*:\\s*true") ||
                        Regex.IsMatch(rawJson, "\"shake\"\\s*:\\s*true");
         return result;
+    }
+
+    // Returns ingredient key representing the dominant/mixed color when pouring from shaker
+    string GetDrinkMixedColorKey(int drinkInt)
+    {
+        switch (drinkInt)
+        {
+            case 0: return "Purple Liqueur"; // Aviation — purple
+            case 1: return "Scotch";         // Godfather — amber
+            case 2: return "Dark Rum";       // Irish Coffee — dark
+            case 3: return "Gin";            // Martini — clear
+            case 4: return "Midori";         // Midori Sour — green
+            case 5: return "Bourbon";        // Old Fashioned — amber
+            case 6: return "Scotch";         // Scotch Neat
+            case 7: return "Gin";            // Tuxedo — clear
+            case 8: return "Vodka";          // Vodka Neat
+            case 9: return "Rye Whiskey";    // Whiskey Neat
+            default: return "mixed";
+        }
     }
 
     // Returns hall_id as int, or -1 if the field is null or missing

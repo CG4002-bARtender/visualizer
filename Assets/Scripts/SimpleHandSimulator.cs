@@ -22,6 +22,7 @@ public class SimpleHandSimulator : MonoBehaviour
     private GameObject activeLiquidStream;
     private PourReceiver activePourTarget = null;
     private System.Action pourCompleteCallback = null;
+    private Color pendingLiquidColor = Color.white;
 
     [Header("Shake Settings")]
     public float shakeMoveTime = 0.5f;
@@ -221,7 +222,7 @@ public class SimpleHandSimulator : MonoBehaviour
         }
     }
 
-    public void OnMQTTPour(string pourTargetName, System.Action onComplete = null)
+    public void OnMQTTPour(string pourTargetName, Color liquidColor, System.Action onComplete = null)
     {
         if (!isHoldingCup || currentCup == null) return;
         if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) return;
@@ -246,8 +247,29 @@ public class SimpleHandSimulator : MonoBehaviour
 
         activePourTarget = target;
         pourCompleteCallback = onComplete;
+        pendingLiquidColor = liquidColor;
         pourSequenceCoroutine = StartCoroutine(PourSequence(target));
     }
+
+    static Color GetIngredientColor(string ingredient)
+    {
+        switch (ingredient?.ToLower().Replace(" ", ""))
+        {
+            case "gin":           return new Color(0.85f, 0.95f, 1.00f, 0.8f);  // clear/pale blue
+            case "purpleliqueur": return new Color(0.55f, 0.10f, 0.80f, 0.8f);  // purple
+            case "scotch":        return new Color(0.75f, 0.45f, 0.10f, 0.8f);  // amber
+            case "bourbon":       return new Color(0.70f, 0.35f, 0.05f, 0.8f);  // dark amber
+            case "darkrum":       return new Color(0.45f, 0.20f, 0.05f, 0.8f);  // dark brown
+            case "midori":        return new Color(0.10f, 0.75f, 0.20f, 0.8f);  // bright green
+            case "ryewhiskey":    return new Color(0.80f, 0.50f, 0.10f, 0.8f);  // golden
+            case "vodka":         return new Color(0.90f, 0.95f, 1.00f, 0.8f);  // clear/white
+            case "whiskey":       return new Color(0.75f, 0.45f, 0.10f, 0.8f);  // amber
+            case "mixed":         return new Color(0.70f, 0.60f, 0.50f, 0.8f);  // blended
+            default:              return new Color(0.80f, 0.80f, 0.90f, 0.8f);  // fallback
+        }
+    }
+
+    public static Color GetIngredientColorByName(string ingredient) => GetIngredientColor(ingredient);
 
     public void OnMQTTShake(System.Action onComplete = null)
     {
@@ -433,7 +455,14 @@ public class SimpleHandSimulator : MonoBehaviour
             Vector3 spoutPos = spout != null ? spout.position : currentCup.transform.position + currentCup.transform.up * 0.15f;
             activeLiquidStream = Instantiate(liquidStreamPrefab, spoutPos, Quaternion.Euler(90, 0, 0));
             activeLiquidStream.transform.parent = null;
-            activeLiquidStream.GetComponent<ParticleSystem>()?.Play();
+
+            ParticleSystem ps = activeLiquidStream.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var main = ps.main;
+                main.startColor = pendingLiquidColor;
+                ps.Play();
+            }
         }
 
         isInPourState = true;

@@ -16,6 +16,12 @@ public class GameUIManager : MonoBehaviour
         gameEndScreen?.SetActive(false);
     }
 
+    public void OnStartScreen()
+    {
+        startScreen?.SetActive(true);
+        gameEndScreen?.SetActive(false);
+    }
+
     public void OnIdle()
     {
         startScreen?.SetActive(false);
