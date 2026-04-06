@@ -204,9 +204,9 @@ public class MQTTManager : MonoBehaviour
             var recipe = ParseRecipe(rawJson);
             recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
         }
-        else if (currentState == 2)
+        else if (currentState == 2 || currentState == 3)
         {
-            // Transitioning GRAB → HOVER = bottle released
+            // Transitioning GRAB/POUR → HOVER = bottle released
             handSimulator?.OnReleaseCupButton();
         }
 

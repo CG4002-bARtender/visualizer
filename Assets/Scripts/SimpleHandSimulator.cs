@@ -223,8 +223,8 @@ public class SimpleHandSimulator : MonoBehaviour
 
     public void OnMQTTPour(string pourTargetName, System.Action onComplete = null)
     {
-        if (!isHoldingCup || currentCup == null) return;
-        if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) return;
+        if (!isHoldingCup || currentCup == null) { onComplete?.Invoke(); return; }
+        if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) { onComplete?.Invoke(); return; }
 
         PourReceiver target = null;
         if (pourTargetName == "shaker")
@@ -235,12 +235,7 @@ public class SimpleHandSimulator : MonoBehaviour
         if (target == null)
         {
             if (showDebugLogs) Debug.LogWarning($"[DEBUG] No PourReceiver found for target: {pourTargetName}");
-            return;
-        }
-
-        if (!target.CanReceiveLiquid())
-        {
-            if (showDebugLogs) Debug.Log($"[DEBUG] {target.containerName} is already full");
+            onComplete?.Invoke();
             return;
         }
 

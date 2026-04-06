@@ -664,7 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc6dc1bfc1864563b2b8cba7b8f816c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: 172.20.10.2
+  brokerAddress: 172.17.88.199
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
@@ -1122,14 +1122,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arCameraManager: {fileID: 0}
   handSimulator: {fileID: 1826203818}
-  handCrosshair: {fileID: 0}
-  handCrosshairRect: {fileID: 0}
   redThreshold: 0.6
   saturationThreshold: 0.4
   sampleStep: 6
-  debugText: {fileID: 0}
-  showDebugInfo: 1
-  debugRedDot: {fileID: 0}
+  showDebugLogs: 0
 --- !u!4 &778291821
 Transform:
   m_ObjectHideFlags: 0
@@ -1251,11 +1247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startScreen: {fileID: 1594038672}
   gameEndScreen: {fileID: 1864784655}
-  startPromptText: {fileID: 0}
   gameEndScoreText: {fileID: 1948997359}
-  gameEndMessageText: {fileID: 142459976}
-  gameEndPromptText: {fileID: 0}
-  totalRounds: 3
 --- !u!1 &1115962905
 GameObject:
   m_ObjectHideFlags: 0
@@ -2024,9 +2016,15 @@ MonoBehaviour:
   arCamera: {fileID: 1249337457}
   holdDistance: 0.4
   pourAngle: 90
+  pourActiveDuration: 2
   liquidStreamPrefab: {fileID: 8379989405798344799, guid: b1ffcc721e5f34fd78899a215f606b46, type: 3}
+  shakeMoveTime: 0.5
+  shakeActiveDuration: 2
+  shakeReturnTime: 0.4
+  shakeFrequency: 3
+  shakeAmplitude: 0.08
+  shakeTiltAngle: 25
   showDebugLogs: 1
-  autoGrabOnStart: 1
   highlightColor: {r: 1, g: 0.85, b: 0, a: 1}
 --- !u!4 &1826203819
 Transform:
