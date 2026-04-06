@@ -23,7 +23,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 167
+  controlID: 38826
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -45,7 +45,7 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 485
+    x: 672
     y: -992
     width: 588
     height: 427
@@ -407,9 +407,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 588, y: 406, z: 0}
+    m_Target: {x: 588, y: 406, z: -0.00000011920929}
     speed: 2
-    m_Value: {x: 0.020357981, y: 0.12777635, z: 0.118091375}
+    m_Value: {x: 8.731149e-10, y: -0.0008171967, z: 0}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -447,7 +447,7 @@ MonoBehaviour:
       m_Fade:
         m_Target: 0
         speed: 2
-        m_Value: 1
+        m_Value: 0
       m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
       m_Pivot: {x: 0, y: 0, z: 0}
       m_Size: {x: 1, y: 1}
@@ -455,13 +455,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.037186, y: 0.12736028, z: 0.0047800597, w: 0.9911565}
+    m_Target: {x: -0.028447462, y: 0.05873916, z: 0.0016762384, w: 0.99787545}
     speed: 2
-    m_Value: {x: 0, y: 1, z: 0, w: 0}
+    m_Value: {x: -0.02844721, y: 0.05873864, z: 0.0016762236, w: 0.99786663}
   m_Size:
-    m_Target: 753.67
+    m_Target: 1.6583124
     speed: 2
-    m_Value: 730.4206
+    m_Value: 0.0011915119
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -510,7 +510,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 168
+  controlID: 38827
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -537,7 +537,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 169
+  controlID: 38828
   draggingID: 0
 --- !u!114 &5
 MonoBehaviour:
@@ -585,7 +585,7 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 79
+    x: 266
     y: -992
     width: 405
     height: 427
@@ -602,23 +602,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 22820000
-      m_LastClickedID: 33314
-      m_ExpandedIDs: de7affff267bffff9c7dffffd099ffff1a9affff8c9cffff529dffff24a9ffff7cb6ffffc6b6ffff00b9ffffa2beffffeabeffff58c1ffffa4d0ffff54dfffff8cf3ffffd6f3ffff44f6ffff22fbffff8c690000a6740000dc740000bc7c00002c7d00002a82000060820000
+      m_SelectedIDs: 68ccfeff
+      m_LastClickedID: -78744
+      m_ExpandedIDs: 746cffffbe6cfffff86effffde7affff267bffff9c7dffffd099ffff1a9affff8c9cffff529dffff24a9ffff7cb6ffffc6b6ffff00b9ffffa2beffffeabeffff58c1ffffa4d0ffff54dfffff8cf3ffffd6f3ffff44f6ffff22fbffff8c690000a6740000dc740000bc7c00002c7d00002a820000608200008a860000c086000018870000308700003e870000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: Cylinder
+        m_OriginalName: Cylinder
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: -76370
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 5}
       m_SearchString: 
@@ -675,8 +675,8 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 485
-    y: -992
+    x: 576
+    y: -938
     width: 588
     height: 427
   m_SerializedDataModeController:
@@ -800,7 +800,7 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1075
+    x: 1262
     y: -992
     width: 473
     height: 427
@@ -821,7 +821,7 @@ MonoBehaviour:
     m_ControlHash: 1412526313
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 192
+  m_LastVerticalScrollValue: 192.09595
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -874,7 +874,7 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 79
+    x: 266
     y: -544
     width: 1470
     height: 316
@@ -899,7 +899,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/MyPrefabs/Final
+    - Assets/MyPrefabs
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -907,30 +907,30 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/MyPrefabs/Final
+  - Assets/MyPrefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: /Users/zihui/CAPSTONE/bARtender_clone
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 79}
-    m_SelectedIDs: 6e6a0000
-    m_LastClickedID: 27246
-    m_ExpandedIDs: 00000000a8650000aa650000ac650000ae650000b06500003a6a000000ca9a3b
+    scrollPos: {x: 0, y: 50.044678}
+    m_SelectedIDs: 3a6a0000
+    m_LastClickedID: 27194
+    m_ExpandedIDs: 00000000a8650000aa650000ac650000ae650000b06500003a6a0000406a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Materials
+      m_OriginalName: Materials
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 27190
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 11}
     m_SearchString: 
@@ -944,7 +944,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a8650000aa650000ac650000ae650000b0650000
+    m_ExpandedIDs: 00000000a8650000aa650000ac650000ae650000b065000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -969,21 +969,21 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 22820000
-    m_LastClickedInstanceID: 33314
+    m_SelectedInstanceIDs: 68ccfeff
+    m_LastClickedInstanceID: -78744
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c6230000d6370000c26e0000b06e0000c66e0000b06d000000000000
+    m_ExpandedInstanceIDs: c6230000d6370000c26e0000b06e0000c66e0000b06d0000b66c0000726c0000000000005893000014940000b86c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: FailMarker
-      m_OriginalName: FailMarker
+      m_Name: Shaker
+      m_OriginalName: Shaker
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 28006
+      m_UserData: 25700
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -996,7 +996,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 227}
+    m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 16
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 207
