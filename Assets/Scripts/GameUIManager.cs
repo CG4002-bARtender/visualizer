@@ -10,10 +10,23 @@ public class GameUIManager : MonoBehaviour
     [Header("Game End UI")]
     public TextMeshProUGUI gameEndScoreText;
 
+    [Header("HUD (always visible during game)")]
+    public GameObject hudPanel;
+    public TextMeshProUGUI roundText;
+    public TextMeshProUGUI scoreText;
+
     void Awake()
     {
         startScreen?.SetActive(true);
         gameEndScreen?.SetActive(false);
+        hudPanel?.SetActive(false);
+    }
+
+    public void OnStartScreen()
+    {
+        startScreen?.SetActive(true);
+        gameEndScreen?.SetActive(false);
+        hudPanel?.SetActive(false);
     }
 
     public void OnIdle()
@@ -22,16 +35,26 @@ public class GameUIManager : MonoBehaviour
         gameEndScreen?.SetActive(false);
     }
 
-    public void OnNewOrder()
+    public void OnNewOrder(int round, int score)
     {
         gameEndScreen?.SetActive(false);
+        if (hudPanel != null && !hudPanel.activeSelf)
+            hudPanel.SetActive(true);
+        UpdateHUD(round, score);
+    }
+
+    public void UpdateHUD(int round, int score)
+    {
+        if (roundText != null) roundText.text = $"Round {round}";
+        if (scoreText != null) scoreText.text = $"Score: {score}";
     }
 
     public void OnGameEnd(int totalScore)
     {
         if (gameEndScoreText != null)
-            gameEndScoreText.text = totalScore.ToString();
+            gameEndScoreText.text = $"Total Score: {totalScore}/3";
 
+        hudPanel?.SetActive(false);
         gameEndScreen?.SetActive(true);
     }
 }

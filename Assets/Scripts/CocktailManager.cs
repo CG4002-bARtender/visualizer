@@ -18,6 +18,7 @@ public class CocktailManager : MonoBehaviour
     public GameObject whiskeyPrefab;
     
     [Header("Empty Serving Glasses")]
+    public GameObject emptyGlassAviationPrefab;
     public GameObject emptyGlassGodfatherPrefab;
     public GameObject emptyGlassIrishCoffeePrefab;
     public GameObject emptyGlassMartiniPrefab;
@@ -27,16 +28,33 @@ public class CocktailManager : MonoBehaviour
     public GameObject emptyGlassTuxedoPrefab;
     public GameObject emptyGlassVodkaPrefab;
     
+    [Header("Final Drink Prefabs")]
+    public GameObject drinkAviationPrefab;
+    public GameObject drinkGodfatherPrefab;
+    public GameObject drinkIrishCoffeePrefab;
+    public GameObject drinkMartiniPrefab;
+    public GameObject drinkMidoriSourPrefab;
+    public GameObject drinkOldFashionedPrefab;
+    public GameObject drinkNeatPrefab;
+    public GameObject drinkTuxedoPrefab;
+    public GameObject drinkVodkaPrefab;
+
     [Header("Shaker")]
     public GameObject shakerPrefab;
-    
+
+    [Header("Result Markers")]
+    public GameObject failMarkerPrefab;
+    public GameObject successMarkerPrefab;
+    public float markerHeight = 0.08f;
+
     [Header("Settings")]
     public float bottleHeight = 0.08f;
     public float shakerHeight = 0.06f;
     public float glassHeight = 0.03f;
-    
+
     // Track currently spawned items for cleanup
     private List<GameObject> currentCocktailItems = new List<GameObject>();
+    private GameObject currentResultMarker;
     
     void ReplaceItemAtQR(string qrName, GameObject prefab, float heightOffset)
     {
@@ -69,17 +87,21 @@ public class CocktailManager : MonoBehaviour
         Debug.Log($"[DEBUG]   ✓ Spawned {prefab.name} at {qrName}");
     }
     
-    void ClearCurrentCocktail()
+    public void ClearCurrentCocktail()
     {
         foreach (GameObject item in currentCocktailItems)
         {
             if (item != null)
-            {
                 Destroy(item);
-            }
         }
-        
         currentCocktailItems.Clear();
+
+        if (currentResultMarker != null)
+        {
+            Destroy(currentResultMarker);
+            currentResultMarker = null;
+        }
+
         Debug.Log("[DEBUG] 🧹 Cleared previous cocktail items");
     }
     
@@ -130,6 +152,70 @@ public class CocktailManager : MonoBehaviour
         Debug.Log($"[DEBUG] ✓ MQTT setup complete for drink {drinkInt}");
     }
 
+    public void ShowFailMarker()
+    {
+        SpawnResultMarker(failMarkerPrefab, "Fail");
+    }
+
+    public void ShowSuccessMarker()
+    {
+        SpawnResultMarker(successMarkerPrefab, "Success");
+    }
+
+    void SpawnResultMarker(GameObject prefab, string label)
+    {
+        if (prefab == null)
+        {
+            Debug.LogWarning($"[DEBUG] ⚠ {label} marker prefab not assigned in CocktailManager!");
+            return;
+        }
+
+        Transform qrTransform = qrCodeManager.GetQRTransform("qr4");
+        if (qrTransform == null)
+        {
+            Debug.LogWarning("[DEBUG] ⚠ qr4 not found for result marker");
+            return;
+        }
+
+        if (currentResultMarker != null)
+            Destroy(currentResultMarker);
+
+        currentResultMarker = Instantiate(prefab, qrTransform.position, Quaternion.identity);
+        currentResultMarker.transform.SetParent(qrTransform, false);
+        currentResultMarker.transform.localPosition = Vector3.up * markerHeight;
+        currentResultMarker.transform.localRotation = Quaternion.identity;
+        Debug.Log($"[DEBUG] {label} marker shown at qr4");
+    }
+
+    public void ShowFinalDrink(int drinkInt)
+    {
+        GameObject prefab = GetFinalDrinkPrefab(drinkInt);
+        if (prefab != null)
+            ReplaceItemAtQR("qr4", prefab, glassHeight);
+        else
+            Debug.LogWarning($"[DEBUG] ⚠ No final drink prefab for drink {drinkInt}");
+    }
+
+    GameObject GetFinalDrinkPrefab(int drinkInt)
+    {
+        switch (drinkInt)
+        {
+            case 0: return drinkAviationPrefab;
+            case 1: return drinkGodfatherPrefab;
+            case 2: return drinkIrishCoffeePrefab;
+            case 3: return drinkMartiniPrefab;
+            case 4: return drinkMidoriSourPrefab;
+            case 5: return drinkOldFashionedPrefab;
+            case 6: return drinkNeatPrefab;
+            case 7: return drinkTuxedoPrefab;
+            case 8: return drinkVodkaPrefab;
+            case 9: return drinkNeatPrefab;
+            default:
+                Debug.LogWarning($"[DEBUG] ⚠ No final drink prefab mapped for drink int: {drinkInt}");
+                return null;
+        }
+    }
+
     GameObject GetBottlePrefabByIngredient(string ingredient)
     {
         switch (ingredient.ToLower().Replace(" ", ""))
@@ -153,7 +239,7 @@ public class CocktailManager : MonoBehaviour
     {
         switch (drinkInt)
         {
-            case 0: return emptyGlassMartiniPrefab;      // Aviation (uses coupe/martini style)
+            case 0: return emptyGlassAviationPrefab;      // Aviation
             case 1: return emptyGlassGodfatherPrefab;    // Godfather
             case 2: return emptyGlassIrishCoffeePrefab;  // IrishCoffee
             case 3: return emptyGlassMartiniPrefab;      // Martini
