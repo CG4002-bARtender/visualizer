@@ -87,7 +87,7 @@ public class CocktailManager : MonoBehaviour
         Debug.Log($"[DEBUG]   ✓ Spawned {prefab.name} at {qrName}");
     }
     
-    void ClearCurrentCocktail()
+    public void ClearCurrentCocktail()
     {
         foreach (GameObject item in currentCocktailItems)
         {

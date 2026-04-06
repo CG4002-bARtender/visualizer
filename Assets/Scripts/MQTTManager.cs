@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Security;
@@ -39,9 +40,14 @@ public class MQTTManager : MonoBehaviour
     [Header("Reconnection")]
     public float reconnectInterval = 5f;
 
+    [Header("Round Reset")]
+    public float roundResetDelay = 5f;
+
     private MqttClient client;
     private int currentState = 5; // 5 = start screen
     private int currentDrinkInt = -1;
+    private int currentRound = 0;
+    private int currentScore = 0;
     private Dictionary<int, string> currentBottleMap = new Dictionary<int, string>();
     private bool isReconnecting = false;
 
@@ -174,9 +180,12 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
+        gameUIManager?.OnIdle();
 
         if (msg.round > 0)
         {
+            currentScore = msg.score;
+
             if (msg.round_score == 1 && currentDrinkInt >= 0)
             {
                 cocktailManager?.ShowFinalDrink(currentDrinkInt);
@@ -184,14 +193,17 @@ public class MQTTManager : MonoBehaviour
             }
             else if (msg.round_score == 0)
                 cocktailManager?.ShowFailMarker();
+
+            gameUIManager?.UpdateHUD(msg.round, currentScore);
+            StartCoroutine(ResetAfterDelay());
+            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")})");
         }
-
-        gameUIManager?.OnIdle();
-
-        if (currentState == 5 || currentState == 6)
-            Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
         else
-            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} (round: {(msg.round_score == 1 ? "PASS" : "FAIL")})");
+        {
+            currentRound = 0;
+            currentScore = 0;
+            Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
+        }
     }
 
     // state 5: start screen
@@ -213,6 +225,8 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
 
+        currentScore = msg.score;
+
         if (msg.round_score == 1 && currentDrinkInt >= 0)
         {
             cocktailManager?.ShowFinalDrink(currentDrinkInt);
@@ -221,7 +235,8 @@ public class MQTTManager : MonoBehaviour
         else if (msg.round_score == 0)
             cocktailManager?.ShowFailMarker();
 
-        gameUIManager?.OnGameEnd(msg.score);
+        gameUIManager?.UpdateHUD(msg.round, currentScore);
+        StartCoroutine(ShowGameEndAfterDelay(currentScore));
         Debug.Log($"[DEBUG] Game ended — total score: {msg.score}");
     }
 
@@ -235,8 +250,9 @@ public class MQTTManager : MonoBehaviour
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
             currentDrinkInt = msg.drink;
             currentBottleMap = bottleMap;
-            Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}");
-            gameUIManager?.OnNewOrder();
+            currentRound++;
+            Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}, round {currentRound}");
+            gameUIManager?.OnNewOrder(currentRound, currentScore);
             var recipe = ParseRecipe(rawJson);
             recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
         }
@@ -295,6 +311,7 @@ public class MQTTManager : MonoBehaviour
     // state 4: shaking
     void HandleShake(MQTTMessage msg)
     {
+        recipeOverlay?.MarkShakeStep();
         handSimulator?.OnMQTTShake(PublishAnimationComplete);
     }
 
@@ -389,6 +406,19 @@ public class MQTTManager : MonoBehaviour
             Debug.LogError($"[DEBUG] ❌ Cert validation error: {e.Message}");
             return false;
         }
+    }
+
+    IEnumerator ResetAfterDelay()
+    {
+        yield return new WaitForSeconds(roundResetDelay);
+        cocktailManager?.ClearCurrentCocktail();
+    }
+
+    IEnumerator ShowGameEndAfterDelay(int finalScore)
+    {
+        yield return new WaitForSeconds(roundResetDelay);
+        cocktailManager?.ClearCurrentCocktail();
+        gameUIManager?.OnGameEnd(finalScore);
     }
 
     void OnApplicationQuit()

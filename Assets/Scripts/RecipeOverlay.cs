@@ -14,7 +14,7 @@ public class RecipeOverlay : MonoBehaviour
     public Color defaultColor  = Color.white;
     public Color correctColor  = new Color(0.2f, 0.9f, 0.2f); // green
     public Color wrongColor    = new Color(0.9f, 0.2f, 0.2f); // red
-    public Color completeColor = new Color(0.6f, 0.9f, 1.0f); // light blue (finishing pour)
+    public Color completeColor = new Color(0.2f, 0.9f, 0.2f); // green (finishing pour / shake)
 
     private readonly List<TextMeshProUGUI> stepTexts = new List<TextMeshProUGUI>();
     private int currentStep = 0;
@@ -36,8 +36,8 @@ public class RecipeOverlay : MonoBehaviour
     public void SetupRecipe(int drinkInt, string[] ingredients, bool shake)
     {
         // Clear previous steps
-        foreach (Transform child in stepsContainer)
-            Destroy(child.gameObject);
+        for (int i = stepsContainer.childCount - 1; i >= 0; i--)
+            DestroyImmediate(stepsContainer.GetChild(i).gameObject);
         stepTexts.Clear();
         currentStep = 0;
         needsShake  = shake;
@@ -71,21 +71,24 @@ public class RecipeOverlay : MonoBehaviour
         currentStep++;
     }
 
-    // Called by MQTTManager on finishing pour (state 3, no pour_result, shaker picked up)
-    // Also advances the "Shake" step if not already done
-    public void MarkFinishingPour()
+    // Called by MQTTManager when shake completes (state 4 → state 2)
+    public void MarkShakeStep()
     {
         if (!needsShake) return;
 
-        // Mark "Shake" step complete if we haven't yet
         int shakeStep = stepTexts.Count - 2;
         if (shakeStep >= 0 && currentStep <= shakeStep)
         {
             stepTexts[shakeStep].color = completeColor;
             currentStep = shakeStep + 1;
         }
+    }
 
-        // Mark "Pour to Glass" step
+    // Called by MQTTManager on finishing pour (state 3, shaker → serving glass, no pour_result)
+    public void MarkFinishingPour()
+    {
+        if (!needsShake) return;
+
         int pourStep = stepTexts.Count - 1;
         if (pourStep >= 0 && currentStep <= pourStep)
         {

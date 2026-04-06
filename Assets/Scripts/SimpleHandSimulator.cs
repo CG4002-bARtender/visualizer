@@ -14,6 +14,7 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("Pour Settings")]
     public float pourAngle = 60f;
     public float pourActiveDuration = 2f;
+    public float pourHeightOffset = 0.25f;
     public GameObject liquidStreamPrefab;
 
     private bool isInPourState = false;
@@ -425,7 +426,7 @@ public class SimpleHandSimulator : MonoBehaviour
     {
         Vector3 startPosition = currentCup.transform.position;
         Quaternion startRotation = currentCup.transform.rotation;
-        Vector3 pourPosition = pourTarget.transform.position + Vector3.up * 0.25f;
+        Vector3 pourPosition = pourTarget.transform.position + Vector3.up * pourHeightOffset;
         // Tilt around the camera's right axis so the pour always faces toward the target
         Quaternion pouringRot = Quaternion.AngleAxis(pourAngle, arCamera.right);
 

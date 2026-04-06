@@ -97,19 +97,17 @@ def cmd_start_screen():
 def cmd_dismiss():
     """Dismiss start screen or restart after end screen → IDLE."""
     if state["screen"] == "start":
-        # First game start — includes full scoring fields zeroed
         state["round"] = 0
         state["score"] = 0
         pub({"state": 0, "hall_id": None, "round_score": 0, "round": 0, "score": 0})
         print("  Game started — send '1' for a new order.")
     elif state["screen"] == "end":
-        # Restart after end screen — minimal payload per spec
         state["round"] = 0
         state["score"] = 0
         pub({"state": 0, "hall_id": None})
         print("  Game restarted — send '1' for a new order.")
     else:
-        print("  Already in game.")
+        print("  Already in game."); return
 
     state["screen"]      = "game"
     state["hall_id"]     = None
