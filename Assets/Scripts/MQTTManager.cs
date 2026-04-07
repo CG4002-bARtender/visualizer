@@ -123,16 +123,19 @@ public class MQTTManager : MonoBehaviour
             {
                 client.Subscribe(new string[] { subscribeTopic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
                 Debug.Log($"[DEBUG] ✓ Connected and subscribed to {subscribeTopic}");
+                gameUIManager?.SetMQTTStatus(true, brokerAddress);
             }
             else
             {
                 Debug.LogError("[DEBUG] ❌ Failed to connect to MQTT broker");
+                gameUIManager?.SetMQTTStatus(false, brokerAddress);
             }
         }
         catch (Exception e)
         {
             Debug.LogError($"[DEBUG] ❌ MQTT Connection Error: {e.Message}\n{e}");
             Debug.LogError($"[DEBUG]    Ensure broker is running at {brokerAddress}:{(useTLS ? securePort : insecurePort)}");
+            gameUIManager?.SetMQTTStatus(false, brokerAddress);
         }
     }
 

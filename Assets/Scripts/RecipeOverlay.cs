@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
@@ -30,6 +31,17 @@ public class RecipeOverlay : MonoBehaviour
     void Awake()
     {
         overlayPanel?.SetActive(false);
+
+        // Ensure VerticalLayoutGroup lets rows control their own height
+        if (stepsContainer != null)
+        {
+            var vlg = stepsContainer.GetComponent<VerticalLayoutGroup>();
+            if (vlg != null)
+            {
+                vlg.childControlHeight      = true;
+                vlg.childForceExpandHeight  = false;
+            }
+        }
     }
 
     // Called by MQTTManager on new order
@@ -110,6 +122,12 @@ public class RecipeOverlay : MonoBehaviour
             tmp = row.GetComponentInChildren<TextMeshProUGUI>();
         tmp.text  = label;
         tmp.color = defaultColor;
+
+        // Make each row resize vertically to fit wrapped text
+        ContentSizeFitter csf = row.GetComponent<ContentSizeFitter>();
+        if (csf == null) csf = row.AddComponent<ContentSizeFitter>();
+        csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
         stepTexts.Add(tmp);
     }
 }

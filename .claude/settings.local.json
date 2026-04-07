@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mosquitto -v)",
+      "Bash(brew list:*)",
+      "Bash(pip3 show:*)",
+      "Bash(python3 -c \"import paho.mqtt.client as mqtt; c = mqtt.Client\\(\\); c.connect\\('localhost', 1883\\); print\\('OK'\\)\")",
+      "Bash(ipconfig getifaddr:*)"
+    ]
+  }
+}

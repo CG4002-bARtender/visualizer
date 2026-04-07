@@ -63,11 +63,15 @@ public class QRCodeManager : MonoBehaviour
     void SpawnBottleForQRCode(ARTrackedImage trackedImage)
     {
         string imageName = trackedImage.referenceImage.name;
-        
-        // Don't spawn if already exists
+
+        // Always register the transform so CocktailManager can place objects here
+        if (!trackedImages.ContainsKey(imageName))
+            trackedImages.Add(imageName, trackedImage);
+
+        // Don't spawn default prefab if already exists
         if (spawnedBottles.ContainsKey(imageName))
             return;
-        
+
         GameObject bottlePrefab = GetBottlePrefabByName(imageName);
         if (bottlePrefab != null)
         {
@@ -77,16 +81,23 @@ public class QRCodeManager : MonoBehaviour
             bottle.transform.localRotation = Quaternion.identity;
 
             spawnedBottles.Add(imageName, bottle);
-            trackedImages.Add(imageName, trackedImage);
-            
+
             Debug.Log($"[DEBUG] ✓ Spawned {bottlePrefab.name} for QR: {imageName}");
+        }
+        else
+        {
+            Debug.Log($"[DEBUG] ✓ Tracking QR: {imageName} (no default prefab)");
         }
     }
     
     void UpdateBottlePosition(ARTrackedImage trackedImage)
     {
         string imageName = trackedImage.referenceImage.name;
-        
+
+        // Keep transform up to date even if no default prefab was spawned
+        if (trackedImages.ContainsKey(imageName))
+            trackedImages[imageName] = trackedImage;
+
         if (spawnedBottles.ContainsKey(imageName))
         {
             // NEW: Keep visible unless tracking is completely lost

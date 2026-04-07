@@ -46,7 +46,7 @@ state = {
     "round_score": 1,        # 1 = pass, 0 = fail; reset each round
 }
 
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
 
 
 def pub(payload: dict):
@@ -269,6 +269,7 @@ MENU = """
   5   Shake [Enter to release] → SHAKE→GRAB (state 4→2)
   6   Release bottle → HOVER (state 1)
   7   Serve → IDLE or END_SCREEN (state 0 or 6)
+  r   Reset script state to start (use if app restarted)
   ?   Show this menu
   q   Quit
 
@@ -277,12 +278,26 @@ MENU = """
 """
 
 
+def cmd_reset():
+    """Reset script state to start without publishing anything."""
+    state["screen"]      = "start"
+    state["hall_id"]     = None
+    state["picked_up"]   = None
+    state["drink"]       = None
+    state["round"]       = 0
+    state["score"]       = 0
+    state["pour_step"]   = 0
+    state["round_score"] = 1
+    print("  Script state reset to start. Press 's' then '0' to begin.")
+
+
 def interactive():
     print(MENU)
     while True:
         status()
         cmd = input("cmd> ").strip().lower()
         if   cmd == "q": break
+        elif cmd == "r": cmd_reset()
         elif cmd == "s": cmd_start_screen()
         elif cmd == "0": cmd_dismiss()
         elif cmd == "1": cmd_new_order()
