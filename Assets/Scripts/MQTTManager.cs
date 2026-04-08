@@ -50,6 +50,7 @@ public class MQTTManager : MonoBehaviour
     private int currentScore = 0;
     private Dictionary<int, string> currentBottleMap = new Dictionary<int, string>();
     private bool isReconnecting = false;
+    private bool isConnecting = false;
 
     void Start()
     {
@@ -81,13 +82,19 @@ public class MQTTManager : MonoBehaviour
     void Reconnect()
     {
         isReconnecting = false;
+        if (client != null && client.IsConnected) return; // already connected by the time this fires
         Debug.Log("[DEBUG] 🔁 Attempting to reconnect...");
         ConnectToBrokerAsync();
     }
 
     void ConnectToBrokerAsync()
     {
-        System.Threading.ThreadPool.QueueUserWorkItem(_ => ConnectToBroker());
+        if (isConnecting) return; // prevent concurrent connection attempts
+        isConnecting = true;
+        System.Threading.ThreadPool.QueueUserWorkItem(_ => {
+            ConnectToBroker();
+            isConnecting = false;
+        });
     }
 
     void ConnectToBroker()

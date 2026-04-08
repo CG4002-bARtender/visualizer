@@ -78,12 +78,17 @@ public class CocktailManager : MonoBehaviour
         GameObject newItem = Instantiate(prefab, qrTransform.position, Quaternion.identity); // NEW: Spawn at QR position first
         newItem.transform.SetParent(qrTransform, false); // NEW: Parent FIRST with worldPositionStays = false
         
-        newItem.transform.localPosition = Vector3.up * heightOffset; // NEW: Then set LOCAL position (relative to QR)
+        newItem.transform.localPosition = Vector3.up * heightOffset;
         newItem.transform.localRotation = Quaternion.identity;
-        
-        currentCocktailItems.Add(newItem); // Track for cleanup    
-        qrCodeManager.RegisterBottleAtQR(qrName, newItem); // Register with QRCodeManager
-        
+
+        // Add label below bottle (use ingredient name from prefab name, cleaned up)
+        string label = System.Text.RegularExpressions.Regex.Replace(prefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
+        var labelGO = BottleLabelHelper.AddLabel(newItem.transform, label);
+        currentCocktailItems.Add(labelGO);
+
+        currentCocktailItems.Add(newItem);
+        qrCodeManager.RegisterBottleAtQR(qrName, newItem);
+
         Debug.Log($"[DEBUG]   ✓ Spawned {prefab.name} at {qrName}");
     }
     

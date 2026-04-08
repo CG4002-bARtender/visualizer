@@ -50,7 +50,6 @@ public class PourReceiver : MonoBehaviour
             contents.Add(liquidType);
         }
         
-        Debug.Log($"[DEBUG] ✓ Added {liquidType} to {containerName}. Fill: {fillAmount * 100:F0}%");
         
         // Update visual if needed
         // UpdateVisual();

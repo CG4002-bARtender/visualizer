@@ -61,7 +61,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5167505936356655555}
@@ -133,8 +133,6 @@ MonoBehaviour:
   containerType: 0
   fillAmount: 0
   maxCapacity: 2
-  emptyColor: {r: 0, g: 0, b: 0, a: 0}
-  fullColor: {r: 1, g: 0.8, b: 0, a: 0.5}
 --- !u!65 &8339460049316232343
 BoxCollider:
   m_ObjectHideFlags: 0

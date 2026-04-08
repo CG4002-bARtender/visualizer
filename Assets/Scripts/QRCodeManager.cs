@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class QRCodeManager : MonoBehaviour
 {
@@ -81,6 +82,10 @@ public class QRCodeManager : MonoBehaviour
             bottle.transform.localRotation = Quaternion.identity;
 
             spawnedBottles.Add(imageName, bottle);
+
+            // Label below bottle using cleaned prefab name
+            string label = Regex.Replace(bottlePrefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
+            BottleLabelHelper.AddLabel(bottle.transform, label);
 
             Debug.Log($"[DEBUG] ✓ Spawned {bottlePrefab.name} for QR: {imageName}");
         }
