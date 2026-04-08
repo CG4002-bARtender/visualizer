@@ -56,7 +56,7 @@ public class MQTTManager : MonoBehaviour
 #if !UNITY_EDITOR
         Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
 #endif
-        ConnectToBroker();
+        ConnectToBrokerAsync();
         InvokeRepeating(nameof(CheckConnection), 5f, 5f);
     }
 
@@ -65,7 +65,7 @@ public class MQTTManager : MonoBehaviour
         if (client == null || !client.IsConnected)
         {
             Debug.Log("[DEBUG] 🔄 Reconnecting to MQTT...");
-            ConnectToBroker();
+            ConnectToBrokerAsync();
         }
     }
 
@@ -82,7 +82,12 @@ public class MQTTManager : MonoBehaviour
     {
         isReconnecting = false;
         Debug.Log("[DEBUG] 🔁 Attempting to reconnect...");
-        ConnectToBroker();
+        ConnectToBrokerAsync();
+    }
+
+    void ConnectToBrokerAsync()
+    {
+        System.Threading.ThreadPool.QueueUserWorkItem(_ => ConnectToBroker());
     }
 
     void ConnectToBroker()
@@ -123,19 +128,19 @@ public class MQTTManager : MonoBehaviour
             {
                 client.Subscribe(new string[] { subscribeTopic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
                 Debug.Log($"[DEBUG] ✓ Connected and subscribed to {subscribeTopic}");
-                gameUIManager?.SetMQTTStatus(true, brokerAddress);
+                UnityMainThreadDispatcher.Instance().Enqueue(() => gameUIManager?.SetMQTTStatus(true, brokerAddress));
             }
             else
             {
                 Debug.LogError("[DEBUG] ❌ Failed to connect to MQTT broker");
-                gameUIManager?.SetMQTTStatus(false, brokerAddress);
+                UnityMainThreadDispatcher.Instance().Enqueue(() => gameUIManager?.SetMQTTStatus(false, brokerAddress));
             }
         }
         catch (Exception e)
         {
             Debug.LogError($"[DEBUG] ❌ MQTT Connection Error: {e.Message}\n{e}");
             Debug.LogError($"[DEBUG]    Ensure broker is running at {brokerAddress}:{(useTLS ? securePort : insecurePort)}");
-            gameUIManager?.SetMQTTStatus(false, brokerAddress);
+            UnityMainThreadDispatcher.Instance().Enqueue(() => gameUIManager?.SetMQTTStatus(false, brokerAddress));
         }
     }
 
