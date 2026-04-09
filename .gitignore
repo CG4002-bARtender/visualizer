@@ -11,6 +11,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+.DS_Store
 
 # MemoryCaptures can get excessive in size and may contain sensitive data
 /[Mm]emoryCaptures/

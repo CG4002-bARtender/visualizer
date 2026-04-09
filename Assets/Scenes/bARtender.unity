@@ -668,7 +668,7 @@ MonoBehaviour:
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
-  useTLS: 0
+  useTLS: 1
   mqttUsername: test
   mqttPassword: test
   caCertFileName: ca.crt

@@ -1,17 +1,25 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.10"
-# dependencies = ["paho-mqtt"]
-# ///
-"""Send a raw byte to an MQTT topic. Usage: uv run mqtt_send.py <topic> <int>"""
+import ssl
 import sys
+from pathlib import Path
 from paho.mqtt.publish import single
 
 if len(sys.argv) != 3:
     print(f"Usage: {sys.argv[0]} <topic> <int>")
     sys.exit(1)
 
+STREAMING_ASSETS = Path(__file__).parent / "Assets/StreamingAssets"
+CA_CERT   = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/ca.crt"
+CLIENT_CERT = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/unity.crt"
+CLIENT_KEY  = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/unity.key"
+
+tls = {
+    "ca_certs": str(CA_CERT),
+    "certfile": str(CLIENT_CERT),
+    "keyfile":  str(CLIENT_KEY),
+    "tls_version": ssl.PROTOCOL_TLS_CLIENT,
+}
+
 topic = sys.argv[1]
 value = int(sys.argv[2])
-single(topic, payload=bytes([value]), hostname="bARtender.local", port=1883)
+single(topic, payload=bytes([value]), hostname="bARtender.local", port=8883, tls=tls)
 print(f"Sent byte {value} to '{topic}'")
