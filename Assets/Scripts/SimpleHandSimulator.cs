@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class SimpleHandSimulator : MonoBehaviour
 {
@@ -55,7 +54,7 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("Highlight Settings")]
     public Color highlightColor = new Color(1f, 0.85f, 0f, 1f); // Gold tint
     private GameObject currentHighlightedObject = null;
-    private Dictionary<Renderer, Color> originalColors = new Dictionary<Renderer, Color>();
+    private System.Collections.Generic.Dictionary<Renderer, Color> originalColors = new System.Collections.Generic.Dictionary<Renderer, Color>();
 
     void Start()
     {
@@ -175,7 +174,6 @@ public class SimpleHandSimulator : MonoBehaviour
         if (obj == currentHighlightedObject) return;
 
         ClearHighlight();
-
         if (obj == null) return;
 
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
@@ -428,7 +426,7 @@ public class SimpleHandSimulator : MonoBehaviour
         Quaternion startRotation = currentCup.transform.rotation;
         Vector3 pourPosition = pourTarget.transform.position + Vector3.up * pourHeightOffset;
         // Tilt around the camera's right axis so the pour always faces toward the target
-        Quaternion pouringRot = Quaternion.AngleAxis(pourAngle, arCamera.right);
+        Quaternion pouringRot = Quaternion.AngleAxis(pourAngle, arCamera.forward);
 
         float elapsed = 0;
         float moveTime = 0.4f;

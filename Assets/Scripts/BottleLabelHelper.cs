@@ -3,28 +3,26 @@ using TMPro;
 
 public static class BottleLabelHelper
 {
-    public static float fontSize    = 0.06f;
-    public static float labelOffset = 0.001f; // just above table surface (at QR code level)
+    public static float labelOffset = 0.01f;
+    public static GameObject labelPrefab;
 
     public static GameObject AddLabel(Transform parent, string labelText, float extraYOffset = 0f)
     {
-        var go = new GameObject("BottleLabel");
-        go.transform.SetParent(parent, false);
+        if (labelPrefab == null)
+        {
+            Debug.LogWarning("[BottleLabelHelper] labelPrefab is not assigned.");
+            return new GameObject("BottleLabel_Empty");
+        }
+
+        var go = Object.Instantiate(labelPrefab, parent);
         go.transform.localPosition = new Vector3(0f, labelOffset + extraYOffset, 0f);
         go.transform.localRotation = Quaternion.identity;
-        go.transform.localScale    = Vector3.one * 0.1f; // scale down so text isn't huge
 
-        var tmp = go.AddComponent<TextMeshPro>();
-        tmp.text         = labelText;
-        tmp.fontSize     = fontSize;
-        tmp.alignment    = TextAlignmentOptions.Center;
-        tmp.color        = Color.white;
-        tmp.outlineWidth = 0.3f;
-        tmp.outlineColor = Color.black;
-        tmp.enableWordWrapping = false;
+        var tmp = go.GetComponentInChildren<TextMeshPro>();
+        if (tmp != null) tmp.text = labelText;
 
-        // Add a BillboardLabel component so it always faces the camera
-        go.AddComponent<BillboardLabel>();
+        if (go.GetComponent<BillboardLabel>() == null)
+            go.AddComponent<BillboardLabel>();
 
         return go;
     }

@@ -7,7 +7,8 @@
       "Bash(python3 -c \"import paho.mqtt.client as mqtt; c = mqtt.Client\\(\\); c.connect\\('localhost', 1883\\); print\\('OK'\\)\")",
       "Bash(ipconfig getifaddr:*)",
       "Bash(brew services:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(sudo:*)"
     ]
   }
 }

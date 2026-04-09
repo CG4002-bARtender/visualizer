@@ -315,7 +315,7 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   correctColor: {r: 0.2, g: 0.9, b: 0.2, a: 1}
   wrongColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
-  completeColor: {r: 0.6, g: 0.9, b: 1, a: 1}
+  completeColor: {r: 0.2, g: 0.9019608, b: 0.2, a: 1}
 --- !u!114 &70860799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,7 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc6dc1bfc1864563b2b8cba7b8f816c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: 172.20.10.13
+  brokerAddress: bARtender.local
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
@@ -750,9 +750,37 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: auraScale
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: pourAngle
+      value: -60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: auraColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: auraColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: auraColor.r
+      value: 0.9597633
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: auraMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 11c48fbf7506147758c453017eea616d, type: 2}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
       propertyPath: qrCodeManager
       value: 
       objectReference: {fileID: 945571473}
+    - target: {fileID: 5594175930147428499, guid: 0b002953a8eff4df383bb65e95372429, type: 3}
+      propertyPath: showDebugLogs
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1181,7 +1209,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!224 &630197943
 RectTransform:
@@ -1833,17 +1861,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackedImageManager: {fileID: 380555781}
-  bottlePrefabs:
-  - {fileID: 462167549459759977, guid: 6c3d7477a1810a140a03ea8a40e603d3, type: 3}
-  - {fileID: 301814982150458299, guid: 079581de47d19b14fae5ea0b59a6316e, type: 3}
-  - {fileID: 4719518006706772081, guid: 202053d64c6efc2438a26f01871802e9, type: 3}
-  - {fileID: 3740369041242573948, guid: 4586150fd931f15448f1ef4d95e3d875, type: 3}
-  - {fileID: 6922779023651844469, guid: 1ed2983c48461214886681457feedf79, type: 3}
-  bottle1Offset: 0.01
-  bottle2Offset: 0.02
-  bottle3Offset: 0.03
-  bottle4Offset: 0.04
-  bottle5Offset: 0.05
+  floatingLabelPrefab: {fileID: 4724004726434463527, guid: cc362c01971ce4ca79c7bb1590fdbd75, type: 3}
+  bottleLabelHeight: 0.01
+  slotNumberHeight: 0.01
 --- !u!4 &945571474
 Transform:
   m_ObjectHideFlags: 0
@@ -1910,7 +1930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.627451, g: 0.72156864, b: 0.8352941, a: 0.392}
+  m_Color: {r: 0.17034532, g: 0.3530452, b: 0.41509432, a: 0.68235296}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1986,7 +2006,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.59607846, g: 0.6901961, b: 0.8117647, a: 0.392}
+  m_Color: {r: 0.17034532, g: 0.3530452, b: 0.41509432, a: 0.68235296}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2693,7 +2713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5803922, g: 0.6745098, b: 0.79607844, a: 0.392}
+  m_Color: {r: 0.17034532, g: 0.3530452, b: 0.41509432, a: 0.68235296}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -58,6 +58,7 @@ public class MQTTManager : MonoBehaviour
 #if !UNITY_EDITOR
         Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
 #endif
+        gameUIManager?.SetMQTTStatus(false, brokerAddress);
         ConnectToBrokerAsync();
         InvokeRepeating(nameof(CheckConnection), 5f, 5f);
     }
@@ -202,6 +203,7 @@ public class MQTTManager : MonoBehaviour
         if (msg.round > 0)
         {
             currentScore = msg.score;
+            currentRound = msg.round + 1; // next round starts now
 
             if (msg.round_score == 1 && currentDrinkInt >= 0)
             {
@@ -211,14 +213,15 @@ public class MQTTManager : MonoBehaviour
             else if (msg.round_score == 0)
                 cocktailManager?.ShowFailMarker();
 
-            gameUIManager?.UpdateHUD(msg.round, currentScore);
+            gameUIManager?.UpdateHUD(currentRound, currentScore);
             StartCoroutine(ResetAfterDelay());
-            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")})");
+            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")}), next round: {currentRound}");
         }
         else
         {
-            currentRound = 0;
+            currentRound = 1; // first round starts now
             currentScore = 0;
+            gameUIManager?.UpdateHUD(currentRound, currentScore);
             Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
         }
     }
@@ -272,7 +275,6 @@ public class MQTTManager : MonoBehaviour
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
             currentDrinkInt = msg.drink;
             currentBottleMap = bottleMap;
-            currentRound++;
             Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}, round {currentRound}");
             gameUIManager?.OnNewOrder(currentRound, currentScore);
             var recipe = ParseRecipe(rawJson);
@@ -434,6 +436,7 @@ public class MQTTManager : MonoBehaviour
     {
         yield return new WaitForSeconds(roundResetDelay);
         cocktailManager?.ClearCurrentCocktail();
+        qrCodeManager?.RespawnDefaultBottles();
     }
 
     IEnumerator ShowGameEndAfterDelay(int finalScore)

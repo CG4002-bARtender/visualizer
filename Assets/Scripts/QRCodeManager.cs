@@ -2,30 +2,25 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 public class QRCodeManager : MonoBehaviour
 {
     [Header("AR Components")]
     public ARTrackedImageManager trackedImageManager;
-    
-    [Header("Bottle Prefabs (4 items)")]
-    public GameObject[] bottlePrefabs; // AlcoBottleV1, AlcoBottleV7, EmptyGlassV4, Shaker
-    
-    [Header("Bottle Positioning")]
-    public float bottle1Offset = 0.08f;  // AlcoBottleV1
-    public float bottle2Offset = 0.05f;  // AlcoBottleV7
-    public float bottle3Offset = 0.03f;  // EmptyGlassV4
-    public float bottle4Offset = 0.06f;  // Shaker 
-    public float bottle5Offset = 0.06f;  // Serving cup 
 
-    
+    [Header("Label Settings")]
+    public GameObject floatingLabelPrefab;
+    public float bottleLabelHeight = 0.01f;
+    public float slotNumberHeight  = 0.02f;
+
     // Track spawned objects
     private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
     private Dictionary<string, ARTrackedImage> trackedImages = new Dictionary<string, ARTrackedImage>();
     
     void Start()
     {
+        BottleLabelHelper.labelPrefab  = floatingLabelPrefab;
+        BottleLabelHelper.labelOffset  = bottleLabelHeight;
         // Scanning is disabled until the game enters idle state
         trackedImageManager.enabled = false;
     }
@@ -87,30 +82,17 @@ public class QRCodeManager : MonoBehaviour
         if (!trackedImages.ContainsKey(imageName))
             trackedImages.Add(imageName, trackedImage);
 
-        // Don't spawn default prefab if already exists
+        // Don't spawn if already exists
         if (spawnedBottles.ContainsKey(imageName))
             return;
 
-        GameObject bottlePrefab = GetBottlePrefabByName(imageName);
-        if (bottlePrefab != null)
-        {
-            GameObject bottle = Instantiate(bottlePrefab, trackedImage.transform.position, Quaternion.identity);
-            bottle.transform.SetParent(trackedImage.transform, false);
-            bottle.transform.localPosition = Vector3.up * GetBottleHeightOffset(imageName);
-            bottle.transform.localRotation = Quaternion.identity;
+        // Spawn a number label (e.g. qr0 → "0") above the QR code
+        string slotNumber = imageName.Replace("qr", "");
+        GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight);
 
-            spawnedBottles.Add(imageName, bottle);
+        spawnedBottles.Add(imageName, label);
 
-            // Label below bottle using cleaned prefab name
-            string label = Regex.Replace(bottlePrefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
-            BottleLabelHelper.AddLabel(bottle.transform, label);
-
-            Debug.Log($"[DEBUG] ✓ Spawned {bottlePrefab.name} for QR: {imageName}");
-        }
-        else
-        {
-            Debug.Log($"[DEBUG] ✓ Tracking QR: {imageName} (no default prefab)");
-        }
+        Debug.Log($"[DEBUG] ✓ Spawned slot number '{slotNumber}' for QR: {imageName}");
     }
     
     void UpdateBottlePosition(ARTrackedImage trackedImage)
@@ -153,30 +135,6 @@ public class QRCodeManager : MonoBehaviour
         }
     }
     
-    GameObject GetBottlePrefabByName(string qrCodeName)
-    {
-        int index = -1;
-        switch (qrCodeName)
-        {
-            case "qr0": index = 0; break;
-            case "qr1": index = 1; break;
-            case "qr2": index = 2; break;
-            case "qr3": index = 3; break;
-            case "qr4": index = 4; break;
-            default:
-                Debug.LogWarning($"[DEBUG] ⚠ No prefab mapped for QR code: {qrCodeName}");
-                return null;
-        }
-
-        if (index >= bottlePrefabs.Length)
-        {
-            Debug.LogWarning($"[DEBUG] ⚠ bottlePrefabs array too short — index {index} requested but only {bottlePrefabs.Length} entries assigned in Inspector");
-            return null;
-        }
-
-        return bottlePrefabs[index];
-    }
-        
     // Public method to get nearest QR code position (for cup snapping)
     public Vector3 GetNearestQRPosition(Vector3 referencePosition)
     {
@@ -200,19 +158,6 @@ public class QRCodeManager : MonoBehaviour
         return nearestPos + Vector3.up * 0.1f;
     }
     
-    float GetBottleHeightOffset(string qrCodeName)
-    {
-        switch (qrCodeName)
-        {
-            case "qr0": return bottle1Offset;
-            case "qr1": return bottle2Offset;
-            case "qr2": return bottle3Offset;
-            case "qr3": return bottle4Offset;
-            case "qr4": return bottle5Offset;
-            default: return bottle1Offset;
-        }
-    }
-
     // Get the Transform of a tracked QR code
     public Transform GetQRTransform(string qrName)
     {
@@ -252,6 +197,17 @@ public class QRCodeManager : MonoBehaviour
         if (spawnedBottles.ContainsKey(qrName))
             return spawnedBottles[qrName];
         return null;
+    }
+
+    // Re-spawn default bottles for all currently tracked QR images that have no bottle
+    // Called after a round ends and cocktail bottles are cleared
+    public void RespawnDefaultBottles()
+    {
+        foreach (var kvp in trackedImages)
+        {
+            if (!spawnedBottles.ContainsKey(kvp.Key))
+                SpawnBottleForQRCode(kvp.Value);
+        }
     }
 
 }
