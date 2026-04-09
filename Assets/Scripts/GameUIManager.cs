@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameUIManager : MonoBehaviour
@@ -18,11 +19,23 @@ public class GameUIManager : MonoBehaviour
     [Header("MQTT Status")]
     public TextMeshProUGUI mqttStatusText;
 
+    [Header("Idle Info")]
+    public GameObject idleInfoPanel;
+
+    [Header("Start Screen Mode Boxes")]
+    public Image normalModeBox;
+    public Image tutorialModeBox;
+    public Image cheatModeBox;
+    public Color modeHighlightColor = new Color(0.2f, 0.85f, 0.2f, 1f); // green
+    public Color modeDefaultColor   = new Color(1f, 1f, 1f, 0.15f);     // dim white
+
     void Awake()
     {
         startScreen?.SetActive(true);
         gameEndScreen?.SetActive(false);
         hudPanel?.SetActive(false);
+        idleInfoPanel?.SetActive(false);
+        ResetModeBoxes();
     }
 
     public void SetMQTTStatus(bool connected, string brokerAddress)
@@ -52,18 +65,45 @@ public class GameUIManager : MonoBehaviour
         startScreen?.SetActive(true);
         gameEndScreen?.SetActive(false);
         hudPanel?.SetActive(false);
+        idleInfoPanel?.SetActive(false);
+        ResetModeBoxes();
     }
 
-    public void OnIdle()
+    public void OnIdle(int mode = 0)
     {
+        HighlightModeBox(mode);
+        // Brief flash so player sees the selection, then transition
+        StartCoroutine(TransitionToIdle());
+    }
+
+    System.Collections.IEnumerator TransitionToIdle()
+    {
+        yield return new WaitForSeconds(1.5f);
         startScreen?.SetActive(false);
         gameEndScreen?.SetActive(false);
+        idleInfoPanel?.SetActive(true);
         if (mqttStatusText != null) mqttStatusText.gameObject.SetActive(false);
+        ResetModeBoxes();
+    }
+
+    void HighlightModeBox(int mode)
+    {
+        ResetModeBoxes();
+        Image box = mode == 0 ? normalModeBox : mode == 1 ? tutorialModeBox : cheatModeBox;
+        if (box != null) box.color = modeHighlightColor;
+    }
+
+    void ResetModeBoxes()
+    {
+        if (normalModeBox   != null) normalModeBox.color   = modeDefaultColor;
+        if (tutorialModeBox != null) tutorialModeBox.color = modeDefaultColor;
+        if (cheatModeBox    != null) cheatModeBox.color    = modeDefaultColor;
     }
 
     public void OnNewOrder(int round, int score)
     {
         gameEndScreen?.SetActive(false);
+        idleInfoPanel?.SetActive(false);
         if (hudPanel != null && !hudPanel.activeSelf)
             hudPanel.SetActive(true);
         UpdateHUD(round, score);

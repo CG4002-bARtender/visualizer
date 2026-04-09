@@ -13,7 +13,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 public class MQTTManager : MonoBehaviour
 {
     [Header("MQTT Broker Settings")]
-    public string brokerAddress = "172.20.10.2";
+    public string brokerAddress = "172.20.10.13";
     public int securePort = 8883;
     public int insecurePort = 1883;
     public string subscribeTopic = "game";
@@ -33,6 +33,7 @@ public class MQTTManager : MonoBehaviour
     public CocktailManager cocktailManager;
     public GameUIManager gameUIManager;
     public RecipeOverlay recipeOverlay;
+    public QRCodeManager qrCodeManager;
 
     [Header("Debug")]
     public bool showDebugLogs = true;
@@ -195,7 +196,8 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
-        gameUIManager?.OnIdle();
+        qrCodeManager?.EnableScanning();
+        gameUIManager?.OnIdle(msg.mode);
 
         if (msg.round > 0)
         {
@@ -228,7 +230,12 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
+        cocktailManager?.ClearCurrentCocktail();
+        qrCodeManager?.DisableScanning();
         gameUIManager?.OnStartScreen();
+        currentRound = 0;
+        currentScore = 0;
+        currentDrinkInt = -1;
         Debug.Log("[DEBUG] START_SCREEN received");
     }
 
@@ -451,6 +458,7 @@ public class MQTTManager : MonoBehaviour
 public class MQTTMessage
 {
     public int state;
+    public int mode;
     public int hall_id;
     public int picked_up;
     public int drink;

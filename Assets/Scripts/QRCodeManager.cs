@@ -24,14 +24,32 @@ public class QRCodeManager : MonoBehaviour
     private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
     private Dictionary<string, ARTrackedImage> trackedImages = new Dictionary<string, ARTrackedImage>();
     
+    void Start()
+    {
+        // Scanning is disabled until the game enters idle state
+        trackedImageManager.enabled = false;
+    }
+
     void OnEnable()
     {
         trackedImageManager.trackedImagesChanged += OnTrackedImagesChanged;
     }
-    
+
     void OnDisable()
     {
         trackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
+    }
+
+    public void EnableScanning()
+    {
+        if (!trackedImageManager.enabled)
+            trackedImageManager.enabled = true;
+    }
+
+    public void DisableScanning()
+    {
+        if (trackedImageManager.enabled)
+            trackedImageManager.enabled = false;
     }
     
     void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)

@@ -69,6 +69,11 @@ public class RecipeOverlay : MonoBehaviour
         {
             AddStep($"{ingredients.Length + 1}. Shake the shaker");
             AddStep($"{ingredients.Length + 2}. Pour shaker into glass");
+            AddStep($"{ingredients.Length + 3}. Thumbs up to Serve");
+        }
+        else
+        {
+            AddStep($"{ingredients.Length + 1}. Thumbs up to Serve");
         }
 
         overlayPanel?.SetActive(true);
@@ -88,7 +93,8 @@ public class RecipeOverlay : MonoBehaviour
     {
         if (!needsShake) return;
 
-        int shakeStep = stepTexts.Count - 2;
+        // Layout for shake drinks: [...pours, Shake, Pour into glass, Serve]
+        int shakeStep = stepTexts.Count - 3;
         if (shakeStep >= 0 && currentStep <= shakeStep)
         {
             stepTexts[shakeStep].color = completeColor;
@@ -101,7 +107,8 @@ public class RecipeOverlay : MonoBehaviour
     {
         if (!needsShake) return;
 
-        int pourStep = stepTexts.Count - 1;
+        // Layout for shake drinks: [...pours, Shake, Pour into glass, Serve]
+        int pourStep = stepTexts.Count - 2;
         if (pourStep >= 0 && currentStep <= pourStep)
         {
             stepTexts[pourStep].color = completeColor;

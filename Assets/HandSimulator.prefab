@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &977836060367325739
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Component:
+  - component: {fileID: 1287108241455881287}
+  - component: {fileID: 5594175930147428499}
+  m_Layer: 0
+  m_Name: HandSimulator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1287108241455881287
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977836060367325739}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.020357985, y: 0.12777634, z: 0.118091375}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5594175930147428499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977836060367325739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44949b88579534a2ead1a884b98a99d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  qrCodeManager: {fileID: 0}
+  arCamera: {fileID: 0}
+  holdDistance: 0.4
+  pourAngle: 90
+  pourActiveDuration: 2
+  pourHeightOffset: 0.1
+  liquidStreamPrefab: {fileID: 8379989405798344799, guid: b1ffcc721e5f34fd78899a215f606b46, type: 3}
+  shakeMoveTime: 0.5
+  shakeActiveDuration: 2
+  shakeReturnTime: 0.4
+  shakeFrequency: 3
+  shakeAmplitude: 0.08
+  shakeTiltAngle: 25
+  showDebugLogs: 1
+  highlightColor: {r: 1, g: 0.85, b: 0, a: 1}
