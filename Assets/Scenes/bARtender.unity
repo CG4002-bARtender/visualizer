@@ -679,7 +679,7 @@ MonoBehaviour:
   gameUIManager: {fileID: 789331966}
   recipeOverlay: {fileID: 70860797}
   qrCodeManager: {fileID: 945571473}
-  testingMode: 1
+  testingMode: 0
   showDebugLogs: 1
   reconnectInterval: 5
   roundResetDelay: 3
@@ -1553,7 +1553,7 @@ GameObject:
   - component: {fileID: 778291820}
   - component: {fileID: 778291822}
   m_Layer: 0
-  m_Name: RedTracker
+  m_Name: GreenCircleTracker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1568,17 +1568,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 778291819}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36243b2eef80f438089fb3cb2fefd700, type: 3}
+  m_Script: {fileID: 11500000, guid: b368c3ae98c7741bbb39ec39187eeefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   arCameraManager: {fileID: 0}
-  handSimulator: {fileID: 0}
+  handSimulator: {fileID: 271230425}
   greenThreshold: 0.6
   saturationThreshold: 0.4
   sampleStep: 6
-  offsetDistance: 0.4
+  offsetDistance: 0.375
   offsetAngle: 135
-  showDebugLogs: 0
+  showDebugLogs: 1
 --- !u!4 &778291821
 Transform:
   m_ObjectHideFlags: 0
@@ -1601,17 +1601,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 778291819}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13acca798cb6a43968479b41c9344b1e, type: 3}
+  m_Script: {fileID: 11500000, guid: 46786b3b6deb14826bdade5df204cfe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tracker: {fileID: 0}
+  tracker: {fileID: 778291820}
   splitScreen: {fileID: 0}
   markerRadius: 24
-  detectedColor: {r: 1, g: 0.2, b: 0.2, a: 0.9}
+  detectedColor: {r: 0.2, g: 1, b: 0.2, a: 0.9}
   rawCentroidColor: {r: 0.2, g: 0.5, b: 1, a: 0.9}
   lostColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.5}
+  showOverlay: 1
   showHUD: 1
   markerPrefab: {fileID: 0}
   markerDepth: 1.5
@@ -2638,7 +2639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3556c654596da4aa9b7d6c160c3a3d60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableStereo: 0
+  enableStereo: 1
   ipd: 0.064
 --- !u!1 &1455132343
 GameObject:

@@ -308,10 +308,10 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / shakeMoveTime);
-            Vector3 centerPos = GetCenterScreenPosition();
+            Vector3 handPos = GetCurrentHandPosition();
             if (currentCup != null)
             {
-                currentCup.transform.position = Vector3.Lerp(startPos, centerPos, t);
+                currentCup.transform.position = Vector3.Lerp(startPos, handPos, t);
                 currentCup.transform.rotation = Quaternion.Lerp(startRot, Quaternion.identity, t);
             }
             yield return null;
@@ -323,7 +323,7 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float wave = Mathf.Sin(elapsed * shakeFrequency * Mathf.PI * 2f);
-            Vector3 center = GetCenterScreenPosition();
+            Vector3 center = GetCurrentHandPosition();
             if (currentCup != null)
             {
                 currentCup.transform.position = center
