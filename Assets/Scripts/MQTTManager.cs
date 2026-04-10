@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Security;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,6 +45,11 @@ public class MQTTManager : MonoBehaviour
 
     [Header("Round Reset")]
     public float roundResetDelay = 5f;
+
+#if UNITY_IOS && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern IntPtr ResolveMDNS(string hostname);
+#endif
 
     private MqttClient client;
     private bool isTutorialMode = false;
@@ -108,8 +114,21 @@ public class MQTTManager : MonoBehaviour
             int port = useTLS ? securePort : insecurePort;
             Debug.Log($"[DEBUG] 🔄 Connecting to MQTT broker at {brokerAddress}:{port} (TLS: {useTLS})...");
 
-            // Resolve hostname to a routable IPv4 address (skip link-local and IPv6)
+            // Resolve hostname to a routable IPv4 address
             string resolvedAddress = brokerAddress;
+#if UNITY_IOS && !UNITY_EDITOR
+            // Use native getaddrinfo — Mono's Dns.GetHostEntry doesn't handle .local mDNS on iOS
+            IntPtr ptr = ResolveMDNS(brokerAddress);
+            if (ptr != IntPtr.Zero)
+            {
+                resolvedAddress = Marshal.PtrToStringAnsi(ptr);
+                Debug.Log($"[DNS] {brokerAddress} → {resolvedAddress} (native mDNS)");
+            }
+            else
+            {
+                Debug.LogError($"[DNS] Native mDNS resolution failed for {brokerAddress}, using hostname");
+            }
+#else
             try
             {
                 var hostEntry = System.Net.Dns.GetHostEntry(brokerAddress);
@@ -139,6 +158,7 @@ public class MQTTManager : MonoBehaviour
             {
                 Debug.LogError($"[DNS] Resolution failed for {brokerAddress}: {dnsEx.Message}");
             }
+#endif
 
             if (useTLS)
             {
@@ -175,7 +195,7 @@ public class MQTTManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("[DEBUG] ❌ Failed to connect to MQTT broker");
+                Debug.LogError($"[DEBUG] ❌ Connect() returned but IsConnected=false (TLS={useTLS}, port={port})");
                 UnityMainThreadDispatcher.Instance().Enqueue(() => gameUIManager?.SetMQTTStatus(false, brokerAddress));
             }
         }
@@ -224,7 +244,7 @@ public class MQTTManager : MonoBehaviour
                 {
                     tutorialManager?.HandleComplete();
                     isTutorialMode = false;
-                    if (qrCodeManager != null) qrCodeManager.suppressLabels = false;
+                    if (qrCodeManager != null) qrCodeManager.ShowLabels();
                     return;
                 }
                 return;
@@ -299,8 +319,8 @@ public class MQTTManager : MonoBehaviour
         cocktailManager?.ClearCurrentCocktail();
         if (qrCodeManager != null)
         {
-            qrCodeManager.ResetTracking();
-            qrCodeManager.suppressLabels = false;
+            qrCodeManager.ClearAllGameObjects();
+            qrCodeManager.ShowLabels();
             qrCodeManager.expectedQRCount = 5;
             qrCodeManager.trackedQRFilter = null;
             qrCodeManager.onQRCountChanged = null;
@@ -491,8 +511,8 @@ public class MQTTManager : MonoBehaviour
 
     bool ValidateServerCert(X509Certificate serverCert, byte[] caCertBytes)
     {
+        Debug.Log($"[TLS] ValidateServerCert called — subject: {serverCert?.Subject ?? "null"}");
         // TEMP: bypass validation to confirm TLS handshake succeeds end-to-end
-        Debug.Log("[TLS] ValidateServerCert called — bypassing validation");
         return true;
     }
 
@@ -500,7 +520,7 @@ public class MQTTManager : MonoBehaviour
     {
         yield return new WaitForSeconds(roundResetDelay);
         cocktailManager?.ClearCurrentCocktail();
-        qrCodeManager?.RespawnDefaultBottles();
+        // Labels re-appear automatically via RemoveBottleAtQR → ShowLabels
     }
 
     IEnumerator ShowGameEndAfterDelay(int finalScore)
@@ -515,9 +535,8 @@ public class MQTTManager : MonoBehaviour
         isTutorialMode = true;
         if (qrCodeManager != null)
         {
-            qrCodeManager.suppressLabels = true;
-            qrCodeManager.ResetTracking();   // clear internal dictionaries
-            qrCodeManager.RestartScanning(); // cycle ARTrackedImageManager so already-visible QRs re-fire
+            qrCodeManager.ClearAllGameObjects();
+            qrCodeManager.HideLabels();
         }
         tutorialManager?.StartTutorial();
     }

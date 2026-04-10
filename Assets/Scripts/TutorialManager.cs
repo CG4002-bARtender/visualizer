@@ -65,29 +65,39 @@ public class TutorialManager : MonoBehaviour
         tutorialPanel?.SetActive(true);
         tutorialEndPanel?.SetActive(false);
         ClearSpawned();
+
         if (qrCodeManager != null)
         {
             qrCodeManager.expectedQRCount = 3;
             qrCodeManager.trackedQRFilter = new System.Collections.Generic.HashSet<string> { "qr1", "qr2", "qr4" };
-        }
-        if (instructionText != null)
-            instructionText.text = $"Scanning QR codes... (0/3)\nMove closer until all codes appear.";
 
-        if (qrCodeManager != null)
-        {
-            qrCodeManager.onQRCountChanged = (detected, total) =>
-            {
-                if (instructionText != null)
-                    instructionText.text = detected < total
-                        ? $"Scanning QR codes... ({detected}/{total})\nMove closer until all codes appear."
-                        : Instructions[0];
-            };
-            qrCodeManager.onAllQRDetected = () =>
+            // If QRs are already tracked from a previous session, skip scanning UI
+            int alreadyTracked = qrCodeManager.CountTracked();
+            if (alreadyTracked >= 3)
             {
                 if (instructionText != null)
                     instructionText.text = Instructions[0];
                 StartCoroutine(SpawnBottleWhenTracked());
-            };
+            }
+            else
+            {
+                if (instructionText != null)
+                    instructionText.text = $"Scanning QR codes... ({alreadyTracked}/3)\nMove closer until all codes appear.";
+
+                qrCodeManager.onQRCountChanged = (detected, total) =>
+                {
+                    if (instructionText != null)
+                        instructionText.text = detected < total
+                            ? $"Scanning QR codes... ({detected}/{total})\nMove closer until all codes appear."
+                            : Instructions[0];
+                };
+                qrCodeManager.onAllQRDetected = () =>
+                {
+                    if (instructionText != null)
+                        instructionText.text = Instructions[0];
+                    StartCoroutine(SpawnBottleWhenTracked());
+                };
+            }
         }
         else
         {
@@ -111,66 +121,77 @@ public class TutorialManager : MonoBehaviour
 
     void ApplyStep(int step, int hallId = -1)
     {
-        // Show the next instruction (what user should do next)
-        int nextStep = step + 1;
-        if (instructionText != null && nextStep < Instructions.Length)
-            instructionText.text = Instructions[nextStep];
-
         switch (step)
         {
             case 0:
-                // Highlight whichever slot the hand is near
+                // Highlight wherever the hand is, but only advance instruction
+                // once the hand is actually at the bottle slot.
                 if (hallId >= 0)
                     handSimulator?.HighlightSlot(hallId);
+                if (hallId == SlotIndex(BOTTLE_SLOT))
+                    SetInstruction(1);
                 break;
 
             case 1:
-                // Correct bottle grabbed — also spawn shaker ready for pour
+                // Correct bottle grabbed — spawn shaker and advance instruction.
                 handSimulator?.ClearHighlight();
                 handSimulator?.GrabObjectAtSlot(SlotIndex(BOTTLE_SLOT));
                 SpawnObject(shakerPrefab, SHAKER_SLOT, shakerHeight, ref spawnedShaker);
+                SetInstruction(2);
                 break;
 
             case 2:
-                // Pour started — trigger pour animation into shaker
+                // Pour started.
                 StartCoroutine(DelayedAction(0.5f, () =>
                     handSimulator?.OnMQTTPour("shaker",
                         new Color(0.85f, 0.95f, 1f, 0.8f), null)));
+                SetInstruction(3);
                 break;
 
             case 3:
-                // Bottle released — wait for hall_id 2 to highlight shaker
+                // Bottle released — server-confirmed, always advance instruction.
+                // Highlight shaker only if hand is already there.
                 handSimulator?.OnReleaseCupButton();
+                SetInstruction(4);
                 if (hallId == SlotIndex(SHAKER_SLOT))
                     handSimulator?.HighlightSlot(SlotIndex(SHAKER_SLOT));
                 break;
 
             case 4:
-                // Shaker grabbed — also spawn empty glass ready for pour
+                // Shaker grabbed — spawn glass and advance instruction.
                 handSimulator?.ClearHighlight();
                 handSimulator?.GrabObjectAtSlot(SlotIndex(SHAKER_SLOT));
                 SpawnObject(glassPrefab, GLASS_SLOT, glassHeight, ref spawnedGlass);
+                SetInstruction(5);
                 break;
 
             case 5:
-                // Shake started
+                // Shake started.
                 StartCoroutine(DelayedAction(0.3f, () =>
                     handSimulator?.OnMQTTShake(null)));
+                SetInstruction(6);
                 break;
 
             case 6:
-                // Pour from shaker into glass
+                // Pour from shaker into glass.
                 StartCoroutine(DelayedAction(0.5f, () =>
                     handSimulator?.OnMQTTPour("serving_glass",
                         new Color(0.7f, 0.6f, 0.5f, 0.8f), null)));
+                SetInstruction(7);
                 break;
 
             case 7:
-                // Shaker released — serve prompt
+                // Shaker released — serve prompt.
                 handSimulator?.OnReleaseCupButton();
+                SetInstruction(8);
                 break;
-
         }
+    }
+
+    void SetInstruction(int index)
+    {
+        if (instructionText != null && index < Instructions.Length)
+            instructionText.text = Instructions[index];
     }
 
     public void HandleComplete()
@@ -187,7 +208,7 @@ public class TutorialManager : MonoBehaviour
         ClearSpawned();
         if (qrCodeManager != null)
         {
-            qrCodeManager.suppressLabels = false;
+            qrCodeManager.ShowLabels();
             qrCodeManager.expectedQRCount = 5;
             qrCodeManager.trackedQRFilter = null;
             qrCodeManager.onQRCountChanged = null;
@@ -201,9 +222,11 @@ public class TutorialManager : MonoBehaviour
 
     void ClearSpawned()
     {
-        if (spawnedBottle != null) { Destroy(spawnedBottle); spawnedBottle = null; }
-        if (spawnedShaker != null) { Destroy(spawnedShaker); spawnedShaker = null; }
-        if (spawnedGlass  != null) { Destroy(spawnedGlass);  spawnedGlass  = null; }
+        // Use RemoveBottleAtQR so QRCodeManager's registry stays in sync.
+        // It handles the null check and Destroy internally.
+        if (spawnedBottle != null) { qrCodeManager?.RemoveBottleAtQR(BOTTLE_SLOT); spawnedBottle = null; }
+        if (spawnedShaker != null) { qrCodeManager?.RemoveBottleAtQR(SHAKER_SLOT); spawnedShaker = null; }
+        if (spawnedGlass  != null) { qrCodeManager?.RemoveBottleAtQR(GLASS_SLOT);  spawnedGlass  = null; }
     }
 
     int SlotIndex(string qrName) => int.Parse(qrName.Replace("qr", ""));
@@ -218,7 +241,7 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        if (slot != null) Destroy(slot);
+        // RegisterBottleAtQR handles destroying the old object at this slot
         slot = Instantiate(prefab, parent);
         slot.transform.localPosition = Vector3.up * height;
         slot.transform.localRotation = Quaternion.identity;

@@ -12,21 +12,25 @@ public class QRCodeManager : MonoBehaviour
     public GameObject floatingLabelPrefab;
     public float slotNumberHeight = 0.03f;
 
-    [HideInInspector] public bool suppressLabels = false;
-
     [HideInInspector] public int expectedQRCount = 5;
-    [HideInInspector] public System.Collections.Generic.HashSet<string> trackedQRFilter = null; // null = count all
+    [HideInInspector] public System.Collections.Generic.HashSet<string> trackedQRFilter = null;
     [HideInInspector] public System.Action<int, int> onQRCountChanged;
     [HideInInspector] public System.Action onAllQRDetected;
 
-    // Track spawned objects
-    private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
+    // Persistent QR tracking — populated on first detection, never cleared
     private Dictionary<string, ARTrackedImage> trackedImages = new Dictionary<string, ARTrackedImage>();
-    
+
+    // Persistent number labels ("0", "1", …) — created once per QR, shown/hidden
+    private Dictionary<string, GameObject> defaultLabels = new Dictionary<string, GameObject>();
+
+    // Game objects (bottles, shakers, glasses) placed by CocktailManager / TutorialManager
+    private Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
+
+    private bool labelsHidden = false;
+
     void Start()
     {
         BottleLabelHelper.labelPrefab = floatingLabelPrefab;
-        // Scanning is disabled until the game enters idle state
         trackedImageManager.enabled = false;
     }
 
@@ -51,10 +55,9 @@ public class QRCodeManager : MonoBehaviour
         if (trackedImageManager.enabled)
             trackedImageManager.enabled = false;
     }
-    
+
     void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
     {
-        // Handle newly detected QR codes
         foreach (ARTrackedImage trackedImage in eventArgs.added)
         {
             // Strip any mesh/colliders from the anchor so it can't occlude or block held objects
@@ -63,107 +66,118 @@ public class QRCodeManager : MonoBehaviour
             var mr = trackedImage.GetComponent<MeshRenderer>();
             if (mr != null) mr.enabled = false;
 
-            SpawnBottleForQRCode(trackedImage);
+            HandleQRDetected(trackedImage);
         }
-        
-        // Handle updated QR codes
+
         foreach (ARTrackedImage trackedImage in eventArgs.updated)
         {
-            UpdateBottlePosition(trackedImage);
+            HandleQRUpdated(trackedImage);
         }
-        
-        // Handle removed QR codes
+
         foreach (ARTrackedImage trackedImage in eventArgs.removed)
         {
-            RemoveBottle(trackedImage);
+            HandleQRRemoved(trackedImage);
         }
     }
-    
-    void SpawnBottleForQRCode(ARTrackedImage trackedImage)
+
+    void HandleQRDetected(ARTrackedImage trackedImage)
     {
         string imageName = trackedImage.referenceImage.name;
+        bool isNew = !trackedImages.ContainsKey(imageName);
+        trackedImages[imageName] = trackedImage;
 
-        // Always register the transform so CocktailManager can place objects here
-        if (!trackedImages.ContainsKey(imageName))
+        // Create the default number label on first-ever detection (persists forever)
+        if (!defaultLabels.ContainsKey(imageName))
         {
-            trackedImages.Add(imageName, trackedImage);
-            if (onQRCountChanged != null || onAllQRDetected != null)
-            {
-                int counted = CountTracked();
-                onQRCountChanged?.Invoke(counted, expectedQRCount);
-                if (counted >= expectedQRCount)
-                    onAllQRDetected?.Invoke();
-            }
+            string slotNumber = imageName.Replace("qr", "");
+            GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight, absoluteOffset: true);
+            defaultLabels[imageName] = label;
+            label.SetActive(!labelsHidden && !gameObjects.ContainsKey(imageName));
+            Debug.Log($"[QR] Created label '{slotNumber}' for {imageName}");
+        }
+        else
+        {
+            // Re-anchor label that was detached during tracking loss
+            ReanchorObject(defaultLabels[imageName], trackedImage.transform);
         }
 
-        // Don't spawn if already exists
-        if (spawnedBottles.ContainsKey(imageName))
+        // Re-anchor game object that was detached during tracking loss
+        if (gameObjects.ContainsKey(imageName))
+            ReanchorObject(gameObjects[imageName], trackedImage.transform);
+
+        if (isNew)
+        {
+            int counted = CountTracked();
+            onQRCountChanged?.Invoke(counted, expectedQRCount);
+            if (counted >= expectedQRCount)
+                onAllQRDetected?.Invoke();
+        }
+    }
+
+    void HandleQRUpdated(ARTrackedImage trackedImage)
+    {
+        string imageName = trackedImage.referenceImage.name;
+        trackedImages[imageName] = trackedImage;
+
+        if (trackedImage.trackingState == TrackingState.None)
             return;
 
-        if (suppressLabels)
+        if (defaultLabels.ContainsKey(imageName))
         {
-            // In tutorial mode — track QR transform only, no label
-            var placeholder = new GameObject("TutorialQRPlaceholder");
-            placeholder.transform.SetParent(trackedImage.transform, false);
-            spawnedBottles.Add(imageName, placeholder);
-            return;
+            GameObject label = defaultLabels[imageName];
+            if (label != null && label.transform.parent != trackedImage.transform)
+                label.transform.SetParent(trackedImage.transform, false);
         }
 
-        // Spawn a number label (e.g. qr0 → "0") above the QR code
-        string slotNumber = imageName.Replace("qr", "");
-        GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight, absoluteOffset: true);
-
-        spawnedBottles.Add(imageName, label);
-
-        Debug.Log($"[DEBUG] ✓ Spawned slot number '{slotNumber}' for QR: {imageName}");
+        if (gameObjects.ContainsKey(imageName))
+        {
+            GameObject obj = gameObjects[imageName];
+            if (obj != null && obj.transform.parent != trackedImage.transform)
+                obj.transform.SetParent(trackedImage.transform, false);
+        }
     }
-    
-    void UpdateBottlePosition(ARTrackedImage trackedImage)
+
+    void HandleQRRemoved(ARTrackedImage trackedImage)
     {
         string imageName = trackedImage.referenceImage.name;
 
-        // Keep transform up to date even if no default prefab was spawned
-        if (trackedImages.ContainsKey(imageName))
-            trackedImages[imageName] = trackedImage;
+        // Detach objects so they survive the ARTrackedImage being destroyed by ARFoundation.
+        // They float at last known position and get re-anchored on re-detection.
+        if (defaultLabels.ContainsKey(imageName))
+        {
+            GameObject label = defaultLabels[imageName];
+            if (label != null) label.transform.SetParent(null, true);
+        }
 
-        if (spawnedBottles.ContainsKey(imageName))
+        if (gameObjects.ContainsKey(imageName))
         {
-            // NEW: Keep visible unless tracking is completely lost
-            GameObject bottle = spawnedBottles[imageName];
-            bool shouldShow = trackedImage.trackingState != TrackingState.None;
-            if (shouldShow)
-                {
-                    trackedImages[imageName] = trackedImage;
-                    
-                    // Ensure bottle stays parented and anchored
-                    if (bottle.transform.parent != trackedImage.transform)
-                        {
-                            bottle.transform.SetParent(trackedImage.transform, false);  // ← Change true to false
-                        }
-                        bottle.transform.localRotation = Quaternion.identity;  // ← Add this line
-                }
+            GameObject obj = gameObjects[imageName];
+            if (obj != null) obj.transform.SetParent(null, true);
         }
+
+        trackedImages.Remove(imageName);
     }
-    
-    void RemoveBottle(ARTrackedImage trackedImage)
+
+    void ReanchorObject(GameObject obj, Transform qrTransform)
     {
-        string imageName = trackedImage.referenceImage.name;
-        
-        if (spawnedBottles.ContainsKey(imageName))
-        {
-            Destroy(spawnedBottles[imageName]);
-            spawnedBottles.Remove(imageName);
-            trackedImages.Remove(imageName);
-            Debug.Log($"[DEBUG] ✗ Removed bottle: {imageName}");
-        }
+        if (obj != null && obj.transform.parent != qrTransform)
+            obj.transform.SetParent(qrTransform, true);
     }
-    
-    // Public method to get nearest QR code position (for cup snapping)
+
+    // ===== Public API =====
+
+    public Transform GetQRTransform(string qrName)
+    {
+        if (trackedImages.ContainsKey(qrName))
+            return trackedImages[qrName].transform;
+        return null;
+    }
+
     public Vector3 GetNearestQRPosition(Vector3 referencePosition)
     {
         Vector3 nearestPos = referencePosition;
         float nearestDist = float.MaxValue;
-        
+
         foreach (var trackedImage in trackedImages.Values)
         {
             if (trackedImage.trackingState == TrackingState.Tracking)
@@ -176,12 +190,70 @@ public class QRCodeManager : MonoBehaviour
                 }
             }
         }
-        
-        // Return position slightly above table
+
         return nearestPos + Vector3.up * 0.1f;
     }
-    
-    int CountTracked()
+
+    // Place a game object at a QR slot — hides the default label
+    public void RegisterBottleAtQR(string qrName, GameObject bottle)
+    {
+        RemoveBottleAtQR(qrName);
+        gameObjects[qrName] = bottle;
+
+        if (defaultLabels.ContainsKey(qrName) && defaultLabels[qrName] != null)
+            defaultLabels[qrName].SetActive(false);
+    }
+
+    // Remove the game object at a QR slot — shows the default label (if not suppressed)
+    public void RemoveBottleAtQR(string qrName)
+    {
+        if (gameObjects.ContainsKey(qrName))
+        {
+            GameObject obj = gameObjects[qrName];
+            if (obj != null)
+            {
+                obj.transform.SetParent(null);
+                Destroy(obj);
+            }
+            gameObjects.Remove(qrName);
+        }
+
+        if (!labelsHidden && defaultLabels.ContainsKey(qrName) && defaultLabels[qrName] != null)
+            defaultLabels[qrName].SetActive(true);
+    }
+
+    public GameObject GetBottleAtQR(string qrName)
+    {
+        if (gameObjects.ContainsKey(qrName))
+            return gameObjects[qrName];
+        return null;
+    }
+
+    // Remove all game objects from all slots — shows labels where appropriate
+    public void ClearAllGameObjects()
+    {
+        var keys = new List<string>(gameObjects.Keys);
+        foreach (string key in keys)
+            RemoveBottleAtQR(key);
+    }
+
+    // Label visibility — for tutorial mode
+    public void HideLabels()
+    {
+        labelsHidden = true;
+        foreach (var label in defaultLabels.Values)
+            if (label != null) label.SetActive(false);
+    }
+
+    public void ShowLabels()
+    {
+        labelsHidden = false;
+        foreach (var kvp in defaultLabels)
+            if (kvp.Value != null)
+                kvp.Value.SetActive(!gameObjects.ContainsKey(kvp.Key));
+    }
+
+    public int CountTracked()
     {
         if (trackedQRFilter == null) return trackedImages.Count;
         int count = 0;
@@ -189,83 +261,4 @@ public class QRCodeManager : MonoBehaviour
             if (trackedQRFilter.Contains(key)) count++;
         return count;
     }
-
-    public void ClearAllSpawned()
-    {
-        foreach (var go in spawnedBottles.Values)
-            if (go != null) Destroy(go);
-        spawnedBottles.Clear();
-    }
-
-    public void ResetTracking()
-    {
-        ClearAllSpawned();
-        trackedImages.Clear();
-    }
-
-    public void RestartScanning()
-    {
-        StartCoroutine(RestartScanningCoroutine());
-    }
-
-    System.Collections.IEnumerator RestartScanningCoroutine()
-    {
-        if (trackedImageManager.enabled)
-            trackedImageManager.enabled = false;
-        yield return null; // one frame — forces ARFoundation to drop all tracked images
-        trackedImageManager.enabled = true;
-    }
-
-    // Get the Transform of a tracked QR code
-    public Transform GetQRTransform(string qrName)
-    {
-        if (trackedImages.ContainsKey(qrName))
-        {
-            return trackedImages[qrName].transform;
-        }
-        
-        return null;
-    }
-    public void RemoveBottleAtQR(string qrName)
-    {
-        if (spawnedBottles.ContainsKey(qrName))
-        {
-            GameObject bottle = spawnedBottles[qrName];
-            if (bottle != null)
-            {
-                Destroy(bottle);
-            }
-            spawnedBottles.Remove(qrName);
-        }
-    }
-
-    // Register a new bottle at QR (for cocktail manager)
-    public void RegisterBottleAtQR(string qrName, GameObject bottle)
-    {
-        // Remove old if exists
-        RemoveBottleAtQR(qrName);
-
-        // Add new
-        spawnedBottles[qrName] = bottle;
-    }
-
-    // Get the spawned object at a QR slot (for MQTT slot-based grab)
-    public GameObject GetBottleAtQR(string qrName)
-    {
-        if (spawnedBottles.ContainsKey(qrName))
-            return spawnedBottles[qrName];
-        return null;
-    }
-
-    // Re-spawn default bottles for all currently tracked QR images that have no bottle
-    // Called after a round ends and cocktail bottles are cleared
-    public void RespawnDefaultBottles()
-    {
-        foreach (var kvp in trackedImages)
-        {
-            if (!spawnedBottles.ContainsKey(kvp.Key))
-                SpawnBottleForQRCode(kvp.Value);
-        }
-    }
-
 }
