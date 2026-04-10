@@ -225,8 +225,8 @@ public class SimpleHandSimulator : MonoBehaviour
 
     public void OnMQTTPour(string pourTargetName, Color liquidColor, System.Action onComplete = null)
     {
-        if (!isHoldingCup || currentCup == null) return;
-        if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) return;
+        if (!isHoldingCup || currentCup == null) { onComplete?.Invoke(); return; }
+        if (isInPourState || pourEntryCoroutine != null || pourSequenceCoroutine != null) { onComplete?.Invoke(); return; }
 
         PourReceiver target = null;
         if (pourTargetName == "shaker")
@@ -237,12 +237,14 @@ public class SimpleHandSimulator : MonoBehaviour
         if (target == null)
         {
             if (showDebugLogs) Debug.LogWarning($"[DEBUG] No PourReceiver found for target: {pourTargetName}");
+            onComplete?.Invoke();
             return;
         }
 
         if (!target.CanReceiveLiquid())
         {
             if (showDebugLogs) Debug.Log($"[DEBUG] {target.containerName} is already full");
+            onComplete?.Invoke();
             return;
         }
 
@@ -274,8 +276,8 @@ public class SimpleHandSimulator : MonoBehaviour
 
     public void OnMQTTShake(System.Action onComplete = null)
     {
-        if (!isHoldingCup || currentCup == null) return;
-        if (isInShakeState || shakeSequenceCoroutine != null) return;
+        if (!isHoldingCup || currentCup == null) { onComplete?.Invoke(); return; }
+        if (isInShakeState || shakeSequenceCoroutine != null) { onComplete?.Invoke(); return; }
 
         shakeCompleteCallback = onComplete;
         shakeSequenceCoroutine = StartCoroutine(ShakeSequence());

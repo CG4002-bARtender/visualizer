@@ -47,8 +47,6 @@ public class MQTTManager : MonoBehaviour
     [Header("Reconnection")]
     public float reconnectInterval = 5f;
 
-    [Header("Round Reset")]
-    public float roundResetDelay = 5f;
 
 #if UNITY_IOS && !UNITY_EDITOR
     [DllImport("__Internal")]
@@ -308,7 +306,7 @@ public class MQTTManager : MonoBehaviour
                 cocktailManager?.ShowFailMarker();
 
             gameUIManager?.UpdateHUD(currentRound, currentScore);
-            StartCoroutine(ResetAfterDelay());
+            PublishAnimReady();
             Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")}), next round: {currentRound}");
         }
         else
@@ -366,7 +364,9 @@ public class MQTTManager : MonoBehaviour
             cocktailManager?.ShowFailMarker();
 
         gameUIManager?.UpdateHUD(msg.round, currentScore);
-        StartCoroutine(ShowGameEndAfterDelay(currentScore));
+        cocktailManager?.ClearCurrentCocktail();
+        gameUIManager?.OnGameEnd(currentScore);
+        PublishAnimReady();
         Debug.Log($"[DEBUG] Game ended — total score: {msg.score}");
     }
 
@@ -375,7 +375,8 @@ public class MQTTManager : MonoBehaviour
     {
         if (rawJson.Contains("\"bottle_map\""))
         {
-            // New order arriving — set up the bar layout
+            // New order arriving — clear previous cocktail and set up the bar layout
+            cocktailManager?.ClearCurrentCocktail();
             Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
             cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
             currentDrinkInt = msg.drink;
@@ -421,7 +422,7 @@ public class MQTTManager : MonoBehaviour
             string ingredient = currentBottleMap.ContainsKey(msg.picked_up) ? currentBottleMap[msg.picked_up] : "";
             pourColor = SimpleHandSimulator.GetIngredientColorByName(ingredient);
         }
-        handSimulator?.OnMQTTPour(msg.pour_target, pourColor, PublishAnimationComplete);
+        handSimulator?.OnMQTTPour(msg.pour_target, pourColor, PublishAnimReady);
 
         if (!string.IsNullOrEmpty(msg.pour_result))
             recipeOverlay?.MarkIngredientStep(msg.pour_result);   // ingredient pour
@@ -429,18 +430,18 @@ public class MQTTManager : MonoBehaviour
             recipeOverlay?.MarkFinishingPour();                   // shaker → glass
     }
 
-    void PublishAnimationComplete()
+    void PublishAnimReady()
     {
         if (client == null || !client.IsConnected) return;
-        client.Publish("animation", new byte[] { 0x01 }, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-        if (showDebugLogs) Debug.Log("[DEBUG] Published animation complete to 'animation' topic");
+        client.Publish("anim", new byte[] { 0x01 }, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+        if (showDebugLogs) Debug.Log("[DEBUG] Published anim ACK to 'anim' topic");
     }
 
     // state 4: shaking
     void HandleShake(MQTTMessage msg)
     {
         recipeOverlay?.MarkShakeStep();
-        handSimulator?.OnMQTTShake(PublishAnimationComplete);
+        handSimulator?.OnMQTTShake(PublishAnimReady);
     }
 
     struct RecipeData { public string[] ingredients; public bool shake; }
@@ -527,20 +528,6 @@ public class MQTTManager : MonoBehaviour
         Debug.Log($"[TLS] ValidateServerCert called — subject: {serverCert?.Subject ?? "null"}");
         // TEMP: bypass validation to confirm TLS handshake succeeds end-to-end
         return true;
-    }
-
-    IEnumerator ResetAfterDelay()
-    {
-        yield return new WaitForSeconds(roundResetDelay);
-        cocktailManager?.ClearCurrentCocktail();
-        // Labels re-appear automatically via RemoveBottleAtQR → ShowLabels
-    }
-
-    IEnumerator ShowGameEndAfterDelay(int finalScore)
-    {
-        yield return new WaitForSeconds(roundResetDelay);
-        cocktailManager?.ClearCurrentCocktail();
-        gameUIManager?.OnGameEnd(finalScore);
     }
 
     public void ActivateTutorialMode()
