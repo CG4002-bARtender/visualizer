@@ -21,6 +21,7 @@ public class GameUIManager : MonoBehaviour
 
     [Header("Idle Info")]
     public GameObject idleInfoPanel;
+    public TextMeshProUGUI idleInfoText;
 
     [Header("Start Screen Mode Boxes")]
     public Image normalModeBox;
@@ -69,18 +70,23 @@ public class GameUIManager : MonoBehaviour
         ResetModeBoxes();
     }
 
-    public void OnIdle(int mode = 0)
+    public void OnIdle(int mode = 0, int round = 0)
     {
         HighlightModeBox(mode);
-        // Brief flash so player sees the selection, then transition
-        StartCoroutine(TransitionToIdle());
+        StartCoroutine(TransitionToIdle(round));
     }
 
-    System.Collections.IEnumerator TransitionToIdle()
+    System.Collections.IEnumerator TransitionToIdle(int round)
     {
         yield return new WaitForSeconds(1.5f);
         startScreen?.SetActive(false);
         gameEndScreen?.SetActive(false);
+        if (idleInfoText != null)
+        {
+            idleInfoText.text = round <= 1
+                ? "Move closer to the QR codes until bottles appear.\nThen, the customer can make an order."
+                : "Customer can make an order.";
+        }
         idleInfoPanel?.SetActive(true);
         if (mqttStatusText != null) mqttStatusText.gameObject.SetActive(false);
         ResetModeBoxes();

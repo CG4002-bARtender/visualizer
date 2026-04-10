@@ -10,8 +10,7 @@ public class QRCodeManager : MonoBehaviour
 
     [Header("Label Settings")]
     public GameObject floatingLabelPrefab;
-    public float bottleLabelHeight = 0.01f;
-    public float slotNumberHeight  = 0.02f;
+    public float slotNumberHeight = 0.03f;
 
     // Track spawned objects
     private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
@@ -19,8 +18,7 @@ public class QRCodeManager : MonoBehaviour
     
     void Start()
     {
-        BottleLabelHelper.labelPrefab  = floatingLabelPrefab;
-        BottleLabelHelper.labelOffset  = bottleLabelHeight;
+        BottleLabelHelper.labelPrefab = floatingLabelPrefab;
         // Scanning is disabled until the game enters idle state
         trackedImageManager.enabled = false;
     }
@@ -88,7 +86,7 @@ public class QRCodeManager : MonoBehaviour
 
         // Spawn a number label (e.g. qr0 → "0") above the QR code
         string slotNumber = imageName.Replace("qr", "");
-        GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight);
+        GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight, absoluteOffset: true);
 
         spawnedBottles.Add(imageName, label);
 

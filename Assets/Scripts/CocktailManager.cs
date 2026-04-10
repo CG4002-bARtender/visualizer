@@ -47,6 +47,10 @@ public class CocktailManager : MonoBehaviour
     public GameObject successMarkerPrefab;
     public float markerHeight = 0.08f;
 
+    [Header("Label Settings")]
+    public GameObject bottleLabelPrefab;
+    public float bottleLabelHeight = -0.04f;
+
     [Header("Settings")]
     public float bottleHeight = 0.08f;
     public float shakerHeight = 0.06f;
@@ -83,7 +87,7 @@ public class CocktailManager : MonoBehaviour
 
         // Add label below bottle (use ingredient name from prefab name, cleaned up)
         string label = System.Text.RegularExpressions.Regex.Replace(prefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
-        var labelGO = BottleLabelHelper.AddLabel(newItem.transform, label);
+        var labelGO = BottleLabelHelper.AddLabel(newItem.transform, label, bottleLabelHeight, absoluteOffset: true, prefabOverride: bottleLabelPrefab);
         currentCocktailItems.Add(labelGO);
 
         currentCocktailItems.Add(newItem);
@@ -188,7 +192,7 @@ public class CocktailManager : MonoBehaviour
         currentResultMarker = Instantiate(prefab, qrTransform.position, Quaternion.identity);
         currentResultMarker.transform.SetParent(qrTransform, false);
         currentResultMarker.transform.localPosition = Vector3.up * markerHeight;
-        currentResultMarker.transform.localRotation = Quaternion.identity;
+        currentResultMarker.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
         Debug.Log($"[DEBUG] {label} marker shown at qr4");
     }
 

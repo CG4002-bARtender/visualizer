@@ -425,8 +425,8 @@ public class SimpleHandSimulator : MonoBehaviour
         Vector3 startPosition = currentCup.transform.position;
         Quaternion startRotation = currentCup.transform.rotation;
         Vector3 pourPosition = pourTarget.transform.position + Vector3.up * pourHeightOffset;
-        // Tilt around the camera's right axis so the pour always faces toward the target
-        Quaternion pouringRot = Quaternion.AngleAxis(pourAngle, arCamera.forward);
+        // Tilt left in world space (roll around world Z axis)
+        Quaternion pouringRot = Quaternion.Euler(0f, 0f, pourAngle);
 
         float elapsed = 0;
         float moveTime = 0.4f;
@@ -509,7 +509,7 @@ public class SimpleHandSimulator : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             if (currentCup != null)
-                currentCup.transform.rotation = Quaternion.Lerp(startRot, arCamera.rotation, elapsed / tiltTime);
+                currentCup.transform.rotation = Quaternion.Lerp(startRot, Quaternion.identity, elapsed / tiltTime);
             yield return null;
         }
     }

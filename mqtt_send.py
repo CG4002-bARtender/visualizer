@@ -8,9 +8,9 @@ if len(sys.argv) != 3:
     sys.exit(1)
 
 STREAMING_ASSETS = Path(__file__).parent / "Assets/StreamingAssets"
-CA_CERT   = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/ca.crt"
-CLIENT_CERT = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/unity.crt"
-CLIENT_KEY  = "/Users/zihui/CAPSTONE/bARtender_clone/Assets/StreamingAssets/unity.key"
+CA_CERT     = STREAMING_ASSETS / "ca.crt"
+CLIENT_CERT = STREAMING_ASSETS / "unity.crt"
+CLIENT_KEY  = STREAMING_ASSETS / "unity.key"
 
 tls = {
     "ca_certs": str(CA_CERT),
