@@ -6,6 +6,7 @@ public class SimpleHandSimulator : MonoBehaviour
     [Header("References")]
     public QRCodeManager qrCodeManager;
     public Transform arCamera;
+    public SplitScreenManager splitScreen;
 
     [Header("Held Object Settings")]
     public float holdDistance = 0.4f; // Distance in front of camera when holding
@@ -59,9 +60,9 @@ public class SimpleHandSimulator : MonoBehaviour
     void Start()
     {
         if (arCamera == null)
-        {
             arCamera = Camera.main.transform;
-        }
+        if (splitScreen == null)
+            splitScreen = FindObjectOfType<SplitScreenManager>();
 
     }
 
@@ -91,11 +92,12 @@ public class SimpleHandSimulator : MonoBehaviour
     {
         if (currentCup == null || arCamera == null) return;
 
-        // Use red dot screen position when detected, otherwise fall back to screen center
         Vector2 targetScreenPos = greenDotDetected ? greenDotScreenPos : new Vector2(0.5f, 0.5f);
+        bool isStereo = splitScreen != null && splitScreen.enableStereo;
+        float screenX = targetScreenPos.x * Screen.width * (isStereo ? 0.5f : 1f);
 
         Vector3 screenPoint = new Vector3(
-            targetScreenPos.x * Screen.width,
+            screenX,
             targetScreenPos.y * Screen.height,
             holdDistance
         );
@@ -368,7 +370,9 @@ public class SimpleHandSimulator : MonoBehaviour
     Vector3 GetCurrentHandPosition()
     {
         Vector2 targetScreenPos = greenDotDetected ? greenDotScreenPos : new Vector2(0.5f, 0.5f);
-        Vector3 screenPoint = new Vector3(targetScreenPos.x * Screen.width, targetScreenPos.y * Screen.height, holdDistance);
+        bool isStereo = splitScreen != null && splitScreen.enableStereo;
+        float screenX = targetScreenPos.x * Screen.width * (isStereo ? 0.5f : 1f);
+        Vector3 screenPoint = new Vector3(screenX, targetScreenPos.y * Screen.height, holdDistance);
         return arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
     }
 
