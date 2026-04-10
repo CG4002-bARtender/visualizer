@@ -13,7 +13,7 @@ using UnityEngine.XR.ARFoundation;
 [RequireComponent(typeof(Camera))]
 public class SplitScreenManager : MonoBehaviour
 {
-    public bool enableStereo = true;
+    public bool enableStereo = false;
     public float ipd = 0f;
 
     private Camera arCamera;

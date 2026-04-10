@@ -679,6 +679,7 @@ MonoBehaviour:
   gameUIManager: {fileID: 789331966}
   recipeOverlay: {fileID: 70860797}
   qrCodeManager: {fileID: 945571473}
+  testingMode: 1
   showDebugLogs: 1
   reconnectInterval: 5
   roundResetDelay: 3
@@ -1550,6 +1551,7 @@ GameObject:
   m_Component:
   - component: {fileID: 778291821}
   - component: {fileID: 778291820}
+  - component: {fileID: 778291822}
   m_Layer: 0
   m_Name: RedTracker
   m_TagString: Untagged
@@ -1571,7 +1573,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arCameraManager: {fileID: 0}
   handSimulator: {fileID: 0}
-  redThreshold: 0.6
+  greenThreshold: 0.6
   saturationThreshold: 0.4
   sampleStep: 6
   showDebugLogs: 0
@@ -1590,6 +1592,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &778291822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778291819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13acca798cb6a43968479b41c9344b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tracker: {fileID: 0}
+  splitScreen: {fileID: 0}
+  markerRadius: 24
+  detectedColor: {r: 1, g: 0.2, b: 0.2, a: 0.9}
+  lostColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.5}
+  showHUD: 1
+  markerPrefab: {fileID: 0}
+  markerDepth: 1.5
 --- !u!1 &789331961
 GameObject:
   m_ObjectHideFlags: 0
@@ -1698,6 +1720,7 @@ MonoBehaviour:
   cheatModeBox: {fileID: 1102958555}
   modeHighlightColor: {r: 0, g: 0.7524271, b: 1, a: 1}
   modeDefaultColor: {r: 0.6462264, g: 0.91410273, b: 1, a: 0.9843137}
+  testingMode: 0
 --- !u!1 &791367490
 GameObject:
   m_ObjectHideFlags: 0
@@ -2612,7 +2635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3556c654596da4aa9b7d6c160c3a3d60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableStereo: 1
+  enableStereo: 0
   ipd: 0.064
 --- !u!1 &1455132343
 GameObject:

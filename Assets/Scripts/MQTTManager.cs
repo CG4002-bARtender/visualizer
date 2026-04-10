@@ -35,6 +35,10 @@ public class MQTTManager : MonoBehaviour
     public RecipeOverlay recipeOverlay;
     public QRCodeManager qrCodeManager;
 
+    [Header("Testing")]
+    [Tooltip("Disable MQTT entirely — skips all connection attempts. Use this when testing features in isolation.")]
+    public bool testingMode = false;
+
     [Header("Debug")]
     public bool showDebugLogs = true;
 
@@ -55,6 +59,12 @@ public class MQTTManager : MonoBehaviour
 
     void Start()
     {
+        if (testingMode)
+        {
+            Debug.Log("[MQTTManager] testingMode=true — MQTT disabled. Game logic will not run.");
+            return;
+        }
+
 #if !UNITY_EDITOR
         Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
 #endif
@@ -65,6 +75,7 @@ public class MQTTManager : MonoBehaviour
 
     void CheckConnection()
     {
+        if (testingMode) return;
         if (client == null || !client.IsConnected)
         {
             Debug.Log("[DEBUG] 🔄 Reconnecting to MQTT...");
@@ -74,6 +85,7 @@ public class MQTTManager : MonoBehaviour
 
     void Update()
     {
+        if (testingMode) return;
         if (!isReconnecting && (client == null || !client.IsConnected))
         {
             isReconnecting = true;
@@ -83,6 +95,7 @@ public class MQTTManager : MonoBehaviour
 
     void Reconnect()
     {
+        if (testingMode) return;
         isReconnecting = false;
         if (client != null && client.IsConnected) return; // already connected by the time this fires
         Debug.Log("[DEBUG] 🔁 Attempting to reconnect...");

@@ -30,8 +30,22 @@ public class GameUIManager : MonoBehaviour
     public Color modeHighlightColor = new Color(0.2f, 0.85f, 0.2f, 1f); // green
     public Color modeDefaultColor   = new Color(1f, 1f, 1f, 0.15f);     // dim white
 
+    [Header("Testing")]
+    [Tooltip("Hide all game UI on boot. Use alongside MQTTManager.testingMode.")]
+    public bool testingMode = false;
+
     void Awake()
     {
+        if (testingMode)
+        {
+            startScreen?.SetActive(false);
+            gameEndScreen?.SetActive(false);
+            hudPanel?.SetActive(false);
+            idleInfoPanel?.SetActive(false);
+            if (mqttStatusText != null) mqttStatusText.gameObject.SetActive(false);
+            return;
+        }
+
         startScreen?.SetActive(true);
         gameEndScreen?.SetActive(false);
         hudPanel?.SetActive(false);

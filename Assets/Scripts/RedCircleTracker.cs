@@ -10,7 +10,7 @@ public class RedCircleTracker : MonoBehaviour
 
     [Header("Color Detection Settings")]
     [Range(0f, 1f)]
-    public float redThreshold = 0.6f;
+    public float greenThreshold = 0.6f;
     [Range(0f, 1f)]
     public float saturationThreshold = 0.4f;
     public int sampleStep = 6;
@@ -42,7 +42,7 @@ public class RedCircleTracker : MonoBehaviour
             handSimulator?.OnHandPositionReceived(redPosition.x, redPosition.y);
 
             if (showDebugLogs)
-                Debug.Log($"[RedDot] ({redPosition.x:F3}, {redPosition.y:F3}) | pixels: {lastRedPixelCount}");
+                Debug.Log($"[GreenDot] ({redPosition.x:F3}, {redPosition.y:F3}) | pixels: {lastRedPixelCount}");
         }
         else
         {
@@ -98,7 +98,7 @@ public class RedCircleTracker : MonoBehaviour
                 float g = buffer[index + 1] / 255f;
                 float b = buffer[index + 2] / 255f;
 
-                if (IsRedPixel(r, g, b))
+                if (IsGreenPixel(r, g, b))
                 {
                     totalX += x;
                     totalY += y;
@@ -116,7 +116,7 @@ public class RedCircleTracker : MonoBehaviour
             float centerX = totalX / redPixelCount;
             float centerY = totalY / redPixelCount;
 
-            redPosition.x = centerX / width;
+            redPosition.x = 1.0f - (centerX / width);
             redPosition.y = 1.0f - (centerY / height);
         }
         else
@@ -125,10 +125,10 @@ public class RedCircleTracker : MonoBehaviour
         }
     }
 
-    bool IsRedPixel(float r, float g, float b)
+    bool IsGreenPixel(float r, float g, float b)
     {
-        if (r < redThreshold) return false;
-        if (r <= g || r <= b) return false;
+        if (g < greenThreshold) return false;
+        if (g <= r || g <= b) return false;
 
         float maxVal = Mathf.Max(r, g, b);
         float minVal = Mathf.Min(r, g, b);
