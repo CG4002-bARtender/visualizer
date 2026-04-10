@@ -1,6 +1,8 @@
 # ============================================================
 # Unity
 # ============================================================
+# Machine-specific: bundle ID / team ID differ per developer
+ProjectSettings/ProjectSettings.asset
 .utmp/
 /[Ll]ibrary/*
 !/Library/LastSceneManagerSetup.txt

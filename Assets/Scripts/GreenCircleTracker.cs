@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class RedCircleTracker : MonoBehaviour
+public class GreenCircleTracker : MonoBehaviour
 {
     [Header("References")]
     public ARCameraManager arCameraManager;
@@ -15,13 +15,22 @@ public class RedCircleTracker : MonoBehaviour
     public float saturationThreshold = 0.4f;
     public int sampleStep = 6;
 
+    [Header("Grip Offset")]
+    [Tooltip("Distance to shift from wrist centroid toward grip center (normalized 0–1 screen space)")]
+    [Range(0f, 0.6f)]
+    public float offsetDistance = 0.375f;
+    [Tooltip("Direction to shift, in degrees. 0=right, 90=up, 180=left, 270=down")]
+    [Range(0f, 360f)]
+    public float offsetAngle = 45f;
+
     [Header("Debug")]
     public bool showDebugLogs = false;
 
-    private bool redDetected = false;
-    private Vector2 redPosition = Vector2.zero;
+    private bool greenDetected = false;
+    private Vector2 greenPosition = Vector2.zero;
+    private Vector2 rawCentroid = Vector2.zero;
     private int frameSkip = 0;
-    private int lastRedPixelCount = 0;
+    private int lastGreenPixelCount = 0;
 
     void Start()
     {
@@ -35,26 +44,26 @@ public class RedCircleTracker : MonoBehaviour
         if (frameSkip < 2) return;
         frameSkip = 0;
 
-        DetectRedCircle();
+        DetectGreenCircle();
 
-        if (redDetected)
+        if (greenDetected)
         {
-            handSimulator?.OnHandPositionReceived(redPosition.x, redPosition.y);
+            handSimulator?.OnHandPositionReceived(greenPosition.x, greenPosition.y);
 
             if (showDebugLogs)
-                Debug.Log($"[GreenDot] ({redPosition.x:F3}, {redPosition.y:F3}) | pixels: {lastRedPixelCount}");
+                Debug.Log($"[GreenDot] ({greenPosition.x:F3}, {greenPosition.y:F3}) | pixels: {lastGreenPixelCount}");
         }
         else
         {
-            handSimulator?.OnRedDotLost();
+            handSimulator?.OnGreenDotLost();
         }
     }
 
-    void DetectRedCircle()
+    void DetectGreenCircle()
     {
         if (!arCameraManager.TryAcquireLatestCpuImage(out var image))
         {
-            redDetected = false;
+            greenDetected = false;
             return;
         }
 
@@ -84,7 +93,7 @@ public class RedCircleTracker : MonoBehaviour
 
         float totalX = 0;
         float totalY = 0;
-        int redPixelCount = 0;
+        int greenPixelCount = 0;
 
         for (int y = 0; y < height; y += sampleStep)
         {
@@ -102,26 +111,32 @@ public class RedCircleTracker : MonoBehaviour
                 {
                     totalX += x;
                     totalY += y;
-                    redPixelCount++;
+                    greenPixelCount++;
                 }
             }
         }
 
-        lastRedPixelCount = redPixelCount;
+        lastGreenPixelCount = greenPixelCount;
 
-        if (redPixelCount > 5)
+        if (greenPixelCount > 5)
         {
-            redDetected = true;
+            greenDetected = true;
 
-            float centerX = totalX / redPixelCount;
-            float centerY = totalY / redPixelCount;
+            float centerX = totalX / greenPixelCount;
+            float centerY = totalY / greenPixelCount;
 
-            redPosition.x = 1.0f - (centerX / width);
-            redPosition.y = 1.0f - (centerY / height);
+            float rawX = 1.0f - (centerX / width);
+            float rawY = 1.0f - (centerY / height);
+            rawCentroid = new Vector2(rawX, rawY);
+
+            float aspect = (float)width / height;
+            float rad = offsetAngle * Mathf.Deg2Rad;
+            greenPosition.x = Mathf.Clamp01(rawX + offsetDistance * Mathf.Cos(rad));
+            greenPosition.y = Mathf.Clamp01(rawY + offsetDistance * Mathf.Sin(rad) * aspect);
         }
         else
         {
-            redDetected = false;
+            greenDetected = false;
         }
     }
 
@@ -140,7 +155,8 @@ public class RedCircleTracker : MonoBehaviour
         return saturation >= saturationThreshold;
     }
 
-    public bool IsRedDetected() => redDetected;
-    public Vector2 GetRedPosition() => redPosition;
-    public int GetRedPixelCount() => lastRedPixelCount;
+    public bool IsGreenDetected() => greenDetected;
+    public Vector2 GetGreenPosition() => greenPosition;
+    public Vector2 GetRawCentroid() => rawCentroid;
+    public int GetGreenPixelCount() => lastGreenPixelCount;
 }

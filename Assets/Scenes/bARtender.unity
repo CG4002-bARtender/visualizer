@@ -1576,6 +1576,8 @@ MonoBehaviour:
   greenThreshold: 0.6
   saturationThreshold: 0.4
   sampleStep: 6
+  offsetDistance: 0.4
+  offsetAngle: 135
   showDebugLogs: 0
 --- !u!4 &778291821
 Transform:
@@ -1608,6 +1610,7 @@ MonoBehaviour:
   splitScreen: {fileID: 0}
   markerRadius: 24
   detectedColor: {r: 1, g: 0.2, b: 0.2, a: 0.9}
+  rawCentroidColor: {r: 0.2, g: 0.5, b: 1, a: 0.9}
   lostColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.5}
   showHUD: 1
   markerPrefab: {fileID: 0}

@@ -9,18 +9,20 @@ using UnityEngine.UI;
 /// No scene setup required — the canvas is created at runtime.
 /// In stereo mode, a crosshair is drawn in each eye half at the same relative position.
 /// </summary>
-public class RedDotDebugVisualizer : MonoBehaviour
+public class GreenDotDebugVisualizer : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Leave blank to auto-find in scene.")]
-    public RedCircleTracker tracker;
+    public GreenCircleTracker tracker;
     [Tooltip("Leave blank to auto-find in scene.")]
     public SplitScreenManager splitScreen;
 
     [Header("Overlay")]
     public float markerRadius = 24f;
     public Color detectedColor = new Color(0.2f, 1f, 0.2f, 0.9f);
+    public Color rawCentroidColor = new Color(0.2f, 0.5f, 1f, 0.9f);
     public Color lostColor = new Color(0.4f, 0.4f, 0.4f, 0.5f);
+    public bool showOverlay = true;
     public bool showHUD = true;
 
     [Header("World-Space Marker (optional)")]
@@ -31,7 +33,9 @@ public class RedDotDebugVisualizer : MonoBehaviour
     // Canvas overlay
     private GameObject _overlayRoot;
     private RectTransform _leftRT, _rightRT;
+    private RectTransform _rawLeftRT, _rawRightRT;
     private Image[] _leftImgs, _rightImgs;
+    private Image[] _rawLeftImgs, _rawRightImgs;
     private Text _hudText;
 
     // World-space marker
@@ -40,7 +44,7 @@ public class RedDotDebugVisualizer : MonoBehaviour
 
     void Start()
     {
-        if (tracker    == null) tracker    = FindObjectOfType<RedCircleTracker>();
+        if (tracker    == null) tracker    = FindObjectOfType<GreenCircleTracker>();
         if (splitScreen == null) splitScreen = FindObjectOfType<SplitScreenManager>();
         _cam = Camera.main;
 
@@ -68,6 +72,10 @@ public class RedDotDebugVisualizer : MonoBehaviour
         _rightImgs = BuildCrosshair(_overlayRoot.transform, "Right", out _rightRT);
         _rightRT.gameObject.SetActive(false);
 
+        _rawLeftImgs  = BuildSimpleCross(_overlayRoot.transform, "RawLeft",  out _rawLeftRT);
+        _rawRightImgs = BuildSimpleCross(_overlayRoot.transform, "RawRight", out _rawRightRT);
+        _rawRightRT.gameObject.SetActive(false);
+
         if (showHUD)
         {
             var hudGO = new GameObject("HUD");
@@ -83,6 +91,7 @@ public class RedDotDebugVisualizer : MonoBehaviour
             _hudText.fontStyle = FontStyle.Bold;
             _hudText.color     = Color.green;
         }
+
     }
 
     // Builds a crosshair (6 Image rects) parented under 'parent', returns the root RectTransform.
@@ -108,6 +117,24 @@ public class RedDotDebugVisualizer : MonoBehaviour
         return imgs;
     }
 
+    // Builds a plain + cross (no border ring) — used for the raw centroid indicator.
+    Image[] BuildSimpleCross(Transform parent, string label, out RectTransform rootRT)
+    {
+        var go = new GameObject($"[GreenDot] {label}");
+        go.transform.SetParent(parent, false);
+        rootRT = go.AddComponent<RectTransform>();
+        rootRT.anchorMin = rootRT.anchorMax = new Vector2(0.5f, 0.5f);
+        rootRT.sizeDelta = Vector2.zero;
+
+        float len = markerRadius * 1.2f;
+        float t   = 3f;
+
+        var imgs = new Image[2];
+        imgs[0] = AddRect(rootRT, "H", new Vector2(len * 2, t), Vector2.zero);
+        imgs[1] = AddRect(rootRT, "V", new Vector2(t, len * 2), Vector2.zero);
+        return imgs;
+    }
+
     Image AddRect(Transform parent, string n, Vector2 size, Vector2 offset)
     {
         var go = new GameObject(n);
@@ -128,42 +155,50 @@ public class RedDotDebugVisualizer : MonoBehaviour
 
     void Update()
     {
-        if (tracker == null || _overlayRoot == null) return;
+        if (tracker == null || _overlayRoot == null || !showOverlay) return;
 
-        bool detected  = tracker.IsRedDetected();
-        Vector2 pos    = tracker.GetRedPosition();
-        int pixelCount = tracker.GetRedPixelCount();
+        bool detected  = tracker.IsGreenDetected();
+        Vector2 pos    = tracker.GetGreenPosition();
+        Vector2 raw    = tracker.GetRawCentroid();
+        int pixelCount = tracker.GetGreenPixelCount();
         bool isStereo  = splitScreen != null && splitScreen.enableStereo;
 
         Color c = detected ? detectedColor : lostColor;
         SetColor(_leftImgs,  c);
         SetColor(_rightImgs, c);
 
+        Color rawC = detected ? rawCentroidColor : lostColor;
+        SetColor(_rawLeftImgs,  rawC);
+        SetColor(_rawRightImgs, rawC);
+
         // Canvas coordinate system with center anchor:
         //   (0,0) = screen center, x right, y up, units = screen pixels
-        float hw      = Screen.width  * 0.5f;
-        // pos.y: 0=bottom, 1=top — matches canvas Y direction
-        float canvasY = (pos.y - 0.5f) * Screen.height;
+        float hw       = Screen.width * 0.5f;
+        float canvasY  = (pos.y - 0.5f) * Screen.height;
+        float rawCanvasY = (raw.y - 0.5f) * Screen.height;
 
         if (isStereo)
         {
-            // Left eye  fills screen x [0,    hw] → canvas x [-hw, 0]
-            // Right eye fills screen x [hw, width] → canvas x [0,  hw]
             _rightRT.gameObject.SetActive(true);
-            _leftRT.anchoredPosition  = new Vector2(hw * (pos.x - 1f), canvasY);
-            _rightRT.anchoredPosition = new Vector2(hw *  pos.x,        canvasY);
+            _rawRightRT.gameObject.SetActive(true);
+            _leftRT.anchoredPosition     = new Vector2(hw * (pos.x - 1f), canvasY);
+            _rightRT.anchoredPosition    = new Vector2(hw *  pos.x,        canvasY);
+            _rawLeftRT.anchoredPosition  = new Vector2(hw * (raw.x - 1f), rawCanvasY);
+            _rawRightRT.anchoredPosition = new Vector2(hw *  raw.x,        rawCanvasY);
         }
         else
         {
             _rightRT.gameObject.SetActive(false);
-            _leftRT.anchoredPosition = new Vector2((pos.x - 0.5f) * Screen.width, canvasY);
+            _rawRightRT.gameObject.SetActive(false);
+            _leftRT.anchoredPosition    = new Vector2((pos.x - 0.5f) * Screen.width, canvasY);
+            _rawLeftRT.anchoredPosition = new Vector2((raw.x - 0.5f) * Screen.width, rawCanvasY);
         }
 
         if (_hudText != null)
         {
             _hudText.color = detected ? Color.green : Color.gray;
             _hudText.text  = detected
-                ? $"GREEN DOT  ({pos.x:F3}, {pos.y:F3})  px:{pixelCount}"
+                ? $"RAW ({raw.x:F3}, {raw.y:F3})  GRIP ({pos.x:F3}, {pos.y:F3})  px:{pixelCount}"
                 : $"GREEN DOT: LOST  px:{pixelCount}";
         }
 

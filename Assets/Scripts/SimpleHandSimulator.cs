@@ -46,9 +46,9 @@ public class SimpleHandSimulator : MonoBehaviour
     private Vector3 originalPosition;
     private Quaternion originalRotation;
 
-    // Red dot tracking state
-    private Vector2 redDotScreenPos = new Vector2(0.5f, 0.5f); // Normalized 0-1, defaults to center
-    private bool redDotDetected = false;
+    // Green dot tracking state
+    private Vector2 greenDotScreenPos = new Vector2(0.5f, 0.5f); // Normalized 0-1, defaults to center
+    private bool greenDotDetected = false;
 
     // Highlight state
     [Header("Highlight Settings")]
@@ -92,7 +92,7 @@ public class SimpleHandSimulator : MonoBehaviour
         if (currentCup == null || arCamera == null) return;
 
         // Use red dot screen position when detected, otherwise fall back to screen center
-        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+        Vector2 targetScreenPos = greenDotDetected ? greenDotScreenPos : new Vector2(0.5f, 0.5f);
 
         Vector3 screenPoint = new Vector3(
             targetScreenPos.x * Screen.width,
@@ -367,7 +367,7 @@ public class SimpleHandSimulator : MonoBehaviour
 
     Vector3 GetCurrentHandPosition()
     {
-        Vector2 targetScreenPos = redDotDetected ? redDotScreenPos : new Vector2(0.5f, 0.5f);
+        Vector2 targetScreenPos = greenDotDetected ? greenDotScreenPos : new Vector2(0.5f, 0.5f);
         Vector3 screenPoint = new Vector3(targetScreenPos.x * Screen.width, targetScreenPos.y * Screen.height, holdDistance);
         return arCamera.GetComponent<Camera>().ScreenToWorldPoint(screenPoint);
     }
@@ -542,17 +542,17 @@ public class SimpleHandSimulator : MonoBehaviour
         return spout;
     }
 
-    // ===== RED DOT TRACKING - Called by RedCircleTracker =====
+    // ===== GREEN DOT TRACKING - Called by GreenCircleTracker =====
 
     public void OnHandPositionReceived(float normalizedX, float normalizedY)
     {
-        redDotScreenPos = new Vector2(normalizedX, normalizedY);
-        redDotDetected = true;
+        greenDotScreenPos = new Vector2(normalizedX, normalizedY);
+        greenDotDetected = true;
     }
 
-    public void OnRedDotLost()
+    public void OnGreenDotLost()
     {
-        redDotDetected = false;
+        greenDotDetected = false;
     }
 
 }
