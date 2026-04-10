@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bARtender.unity
     guid: 8306aced05a9f4b9e9c9cee244bf5ed1
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: 8abd2532a24b94882bfb06c588047a8e
   m_configObjects:
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 493832d4416b14a7a887961208ad4cb4, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 95582c4c311ee4538a4ad067613ee4fb, type: 2}

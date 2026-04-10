@@ -9,7 +9,7 @@ public class AutoBuild
     {
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes = new[] { "Assets/Scenes/bARtender.unity" }, 
+            scenes = System.Array.ConvertAll(EditorBuildSettings.scenes, s => s.path),
             locationPathName = "Build",
             target = BuildTarget.iOS,
             options = BuildOptions.AcceptExternalModificationsToPlayer

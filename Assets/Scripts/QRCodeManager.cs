@@ -12,6 +12,13 @@ public class QRCodeManager : MonoBehaviour
     public GameObject floatingLabelPrefab;
     public float slotNumberHeight = 0.03f;
 
+    [HideInInspector] public bool suppressLabels = false;
+
+    [HideInInspector] public int expectedQRCount = 5;
+    [HideInInspector] public System.Collections.Generic.HashSet<string> trackedQRFilter = null; // null = count all
+    [HideInInspector] public System.Action<int, int> onQRCountChanged;
+    [HideInInspector] public System.Action onAllQRDetected;
+
     // Track spawned objects
     private Dictionary<string, GameObject> spawnedBottles = new Dictionary<string, GameObject>();
     private Dictionary<string, ARTrackedImage> trackedImages = new Dictionary<string, ARTrackedImage>();
@@ -78,11 +85,29 @@ public class QRCodeManager : MonoBehaviour
 
         // Always register the transform so CocktailManager can place objects here
         if (!trackedImages.ContainsKey(imageName))
+        {
             trackedImages.Add(imageName, trackedImage);
+            if (onQRCountChanged != null || onAllQRDetected != null)
+            {
+                int counted = CountTracked();
+                onQRCountChanged?.Invoke(counted, expectedQRCount);
+                if (counted >= expectedQRCount)
+                    onAllQRDetected?.Invoke();
+            }
+        }
 
         // Don't spawn if already exists
         if (spawnedBottles.ContainsKey(imageName))
             return;
+
+        if (suppressLabels)
+        {
+            // In tutorial mode — track QR transform only, no label
+            var placeholder = new GameObject("TutorialQRPlaceholder");
+            placeholder.transform.SetParent(trackedImage.transform, false);
+            spawnedBottles.Add(imageName, placeholder);
+            return;
+        }
 
         // Spawn a number label (e.g. qr0 → "0") above the QR code
         string slotNumber = imageName.Replace("qr", "");
@@ -156,6 +181,41 @@ public class QRCodeManager : MonoBehaviour
         return nearestPos + Vector3.up * 0.1f;
     }
     
+    int CountTracked()
+    {
+        if (trackedQRFilter == null) return trackedImages.Count;
+        int count = 0;
+        foreach (var key in trackedImages.Keys)
+            if (trackedQRFilter.Contains(key)) count++;
+        return count;
+    }
+
+    public void ClearAllSpawned()
+    {
+        foreach (var go in spawnedBottles.Values)
+            if (go != null) Destroy(go);
+        spawnedBottles.Clear();
+    }
+
+    public void ResetTracking()
+    {
+        ClearAllSpawned();
+        trackedImages.Clear();
+    }
+
+    public void RestartScanning()
+    {
+        StartCoroutine(RestartScanningCoroutine());
+    }
+
+    System.Collections.IEnumerator RestartScanningCoroutine()
+    {
+        if (trackedImageManager.enabled)
+            trackedImageManager.enabled = false;
+        yield return null; // one frame — forces ARFoundation to drop all tracked images
+        trackedImageManager.enabled = true;
+    }
+
     // Get the Transform of a tracked QR code
     public Transform GetQRTransform(string qrName)
     {

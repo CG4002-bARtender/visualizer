@@ -34,6 +34,7 @@ public class MQTTManager : MonoBehaviour
     public GameUIManager gameUIManager;
     public RecipeOverlay recipeOverlay;
     public QRCodeManager qrCodeManager;
+    public TutorialManager tutorialManager;
 
     [Header("Debug")]
     public bool showDebugLogs = true;
@@ -45,6 +46,7 @@ public class MQTTManager : MonoBehaviour
     public float roundResetDelay = 5f;
 
     private MqttClient client;
+    private bool isTutorialMode = false;
     private int currentState = 5; // 5 = start screen
     private int currentDrinkInt = -1;
     private int currentRound = 0;
@@ -200,6 +202,34 @@ public class MQTTManager : MonoBehaviour
             MQTTMessage msg = JsonUtility.FromJson<MQTTMessage>(json);
             if (msg == null) return;
 
+            // Detect tutorial mode entry: {"state": 1, "mode": 1}
+            if (!isTutorialMode && msg.mode == 1)
+            {
+                ActivateTutorialMode();
+                gameUIManager?.OnIdle(msg.mode, currentRound);
+                return;
+            }
+
+            if (isTutorialMode)
+            {
+                int tutorialStep = ParseTutorialStep(json);
+                if (tutorialStep >= 0)
+                {
+                    int hallId = ParseHallId(json);
+                    tutorialManager?.HandleStep(tutorialStep, hallId);
+                    return;
+                }
+                // START_SCREEN (5) = tutorial complete
+                if (msg.state == 5)
+                {
+                    tutorialManager?.HandleComplete();
+                    isTutorialMode = false;
+                    if (qrCodeManager != null) qrCodeManager.suppressLabels = false;
+                    return;
+                }
+                return;
+            }
+
             switch (msg.state)
             {
                 case 0: HandleIdle(msg);          break;
@@ -267,7 +297,16 @@ public class MQTTManager : MonoBehaviour
         handSimulator?.OnReleaseCupButton();
         recipeOverlay?.Hide();
         cocktailManager?.ClearCurrentCocktail();
-        qrCodeManager?.DisableScanning();
+        if (qrCodeManager != null)
+        {
+            qrCodeManager.ResetTracking();
+            qrCodeManager.suppressLabels = false;
+            qrCodeManager.expectedQRCount = 5;
+            qrCodeManager.trackedQRFilter = null;
+            qrCodeManager.onQRCountChanged = null;
+            qrCodeManager.onAllQRDetected = null;
+        }
+        isTutorialMode = false;
         gameUIManager?.OnStartScreen();
         currentRound = 0;
         currentScore = 0;
@@ -413,6 +452,13 @@ public class MQTTManager : MonoBehaviour
     }
 
     // Returns hall_id as int, or -1 if the field is null or missing
+    int ParseTutorialStep(string rawJson)
+    {
+        var match = Regex.Match(rawJson, "\"tutorial_step\"\\s*:\\s*(\\d+)");
+        if (!match.Success) return -1;
+        return int.Parse(match.Groups[1].Value);
+    }
+
     int ParseHallId(string rawJson)
     {
         var match = Regex.Match(rawJson, "\"hall_id\"\\s*:\\s*(\\d+|null)");
@@ -464,6 +510,18 @@ public class MQTTManager : MonoBehaviour
         gameUIManager?.OnGameEnd(finalScore);
     }
 
+    public void ActivateTutorialMode()
+    {
+        isTutorialMode = true;
+        if (qrCodeManager != null)
+        {
+            qrCodeManager.suppressLabels = true;
+            qrCodeManager.ResetTracking();   // clear internal dictionaries
+            qrCodeManager.RestartScanning(); // cycle ARTrackedImageManager so already-visible QRs re-fire
+        }
+        tutorialManager?.StartTutorial();
+    }
+
     void OnApplicationQuit()
     {
         if (client != null && client.IsConnected) client.Disconnect();
@@ -488,4 +546,5 @@ public class MQTTMessage
     public int round_score;
     public int round;
     public int score;
+    public int tutorial_step = -99;
 }
