@@ -10,7 +10,10 @@
       "Bash(python3:*)",
       "Bash(sudo:*)",
       "Bash(ls -la /Users/shalini/Projects/visualizer/Assets/Scripts/*.cs)",
-      "Bash(grep -h \"^using\\\\|^namespace\" /Users/shalini/Projects/visualizer/Assets/Scripts/*.cs)"
+      "Bash(grep -h \"^using\\\\|^namespace\" /Users/shalini/Projects/visualizer/Assets/Scripts/*.cs)",
+      "Bash(git rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ]
   }
 }

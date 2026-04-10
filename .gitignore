@@ -155,3 +155,9 @@ crashlytics-build.properties
 # ============================================================
 /[Aa]ssets/StreamingAssets/*.pfx
 /[Aa]ssets/StreamingAssets/*.key
+
+# ============================================================
+# Local setup — machine-specific, not committed
+# ============================================================
+/ProjectSettings/
+/[Aa]ssets/Plugins/iOS/MDNSResolver*

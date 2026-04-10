@@ -58,6 +58,7 @@ public class CocktailManager : MonoBehaviour
 
     // Track currently spawned items for cleanup
     private List<GameObject> currentCocktailItems = new List<GameObject>();
+    private HashSet<string> activeQRSlots = new HashSet<string>(); // QR slots currently occupied by cocktail items
     private GameObject currentResultMarker;
     
     void ReplaceItemAtQR(string qrName, GameObject prefab, float heightOffset)
@@ -78,19 +79,19 @@ public class CocktailManager : MonoBehaviour
         
         // Remove existing item at this QR
         qrCodeManager.RemoveBottleAtQR(qrName);
-        
-        GameObject newItem = Instantiate(prefab, qrTransform.position, Quaternion.identity); // NEW: Spawn at QR position first
-        newItem.transform.SetParent(qrTransform, false); // NEW: Parent FIRST with worldPositionStays = false
-        
+
+        GameObject newItem = Instantiate(prefab);
+        newItem.transform.SetParent(qrTransform, false);
         newItem.transform.localPosition = Vector3.up * heightOffset;
         newItem.transform.localRotation = Quaternion.identity;
 
         // Add label below bottle (use ingredient name from prefab name, cleaned up)
+        // Label is a child of newItem and will be destroyed with it — don't track separately
         string label = System.Text.RegularExpressions.Regex.Replace(prefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
-        var labelGO = BottleLabelHelper.AddLabel(newItem.transform, label, bottleLabelHeight, absoluteOffset: true, prefabOverride: bottleLabelPrefab);
-        currentCocktailItems.Add(labelGO);
+        BottleLabelHelper.AddLabel(newItem.transform, label, bottleLabelHeight, absoluteOffset: true, prefabOverride: bottleLabelPrefab);
 
         currentCocktailItems.Add(newItem);
+        activeQRSlots.Add(qrName);
         qrCodeManager.RegisterBottleAtQR(qrName, newItem);
 
         Debug.Log($"[DEBUG]   ✓ Spawned {prefab.name} at {qrName}");
@@ -98,6 +99,11 @@ public class CocktailManager : MonoBehaviour
     
     public void ClearCurrentCocktail()
     {
+        // Unregister from QRCodeManager first so its dictionary doesn't hold stale refs
+        foreach (string qrName in activeQRSlots)
+            qrCodeManager.RemoveBottleAtQR(qrName);
+        activeQRSlots.Clear();
+
         foreach (GameObject item in currentCocktailItems)
         {
             if (item != null)
@@ -111,7 +117,7 @@ public class CocktailManager : MonoBehaviour
             currentResultMarker = null;
         }
 
-        Debug.Log("[DEBUG] 🧹 Cleared previous cocktail items");
+        Debug.Log("[DEBUG] Cleared previous cocktail items");
     }
     
     // ===== MQTT-DRIVEN SETUP =====

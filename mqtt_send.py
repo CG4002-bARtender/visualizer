@@ -21,5 +21,5 @@ tls = {
 
 topic = sys.argv[1]
 value = int(sys.argv[2])
-single(topic, payload=bytes([value]), hostname="bARtender.local", port=8883, tls=tls)
+single(topic, payload=bytes([value]), hostname="localhost", port=8883, tls=tls)
 print(f"Sent byte {value} to '{topic}'")

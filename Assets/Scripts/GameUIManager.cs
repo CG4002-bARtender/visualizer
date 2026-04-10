@@ -23,6 +23,9 @@ public class GameUIManager : MonoBehaviour
     public GameObject idleInfoPanel;
     public TextMeshProUGUI idleInfoText;
 
+    [Header("References")]
+    public MQTTManager mqttManager;
+
     [Header("Start Screen Mode Boxes")]
     public Image normalModeBox;
     public Image tutorialModeBox;
@@ -51,6 +54,7 @@ public class GameUIManager : MonoBehaviour
         hudPanel?.SetActive(false);
         idleInfoPanel?.SetActive(false);
         ResetModeBoxes();
+
     }
 
     public void SetMQTTStatus(bool connected, string brokerAddress)
@@ -87,12 +91,20 @@ public class GameUIManager : MonoBehaviour
     public void OnIdle(int mode = 0, int round = 0)
     {
         HighlightModeBox(mode);
-        StartCoroutine(TransitionToIdle(round));
+        StartCoroutine(TransitionToIdle(mode, round));
     }
 
-    System.Collections.IEnumerator TransitionToIdle(int round)
+    System.Collections.IEnumerator TransitionToIdle(int mode, int round)
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
+        ResetModeBoxes();
+
+        if (mode == 1)
+        {
+            startScreen?.SetActive(false);
+            yield break;
+        }
+
         startScreen?.SetActive(false);
         gameEndScreen?.SetActive(false);
         if (idleInfoText != null)
@@ -103,7 +115,6 @@ public class GameUIManager : MonoBehaviour
         }
         idleInfoPanel?.SetActive(true);
         if (mqttStatusText != null) mqttStatusText.gameObject.SetActive(false);
-        ResetModeBoxes();
     }
 
     void HighlightModeBox(int mode)
