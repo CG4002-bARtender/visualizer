@@ -13,7 +13,9 @@
       "Bash(grep -h \"^using\\\\|^namespace\" /Users/shalini/Projects/visualizer/Assets/Scripts/*.cs)",
       "Bash(git rm:*)",
       "Bash(git checkout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(//Users/zihui/Capstone/**)",
+      "Read(//Users/zihui/**)"
     ]
   }
 }

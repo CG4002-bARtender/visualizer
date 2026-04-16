@@ -181,6 +181,7 @@ public class SimpleHandSimulator : MonoBehaviour
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
         {
+            if (IsTMPRenderer(r)) continue;
             originalColors[r] = r.material.color;
             r.material.color = highlightColor;
         }
@@ -202,6 +203,14 @@ public class SimpleHandSimulator : MonoBehaviour
 
         originalColors.Clear();
         currentHighlightedObject = null;
+    }
+
+    // TextMeshPro materials use _FaceColor instead of _Color — accessing .color on them throws.
+    static bool IsTMPRenderer(Renderer r)
+    {
+        if (r == null || r.sharedMaterial == null) return false;
+        string shader = r.sharedMaterial.shader?.name ?? "";
+        return shader.StartsWith("TextMeshPro");
     }
 
     public void GrabObjectAtSlot(int slotId)
@@ -382,17 +391,17 @@ public class SimpleHandSimulator : MonoBehaviour
 
     PourReceiver FindPourReceiverByType(string containerType)
     {
-        PourReceiver[] allReceivers = FindObjectsOfType<PourReceiver>();
-
-        foreach (PourReceiver receiver in allReceivers)
+        // Look up the live object registered at the known slot — avoids FindObjectsOfType
+        // returning stale (Destroy-pending) instances from the previous round which can have
+        // fillAmount >= maxCapacity and silently block the pour.
+        string qrSlot = containerType == "shaker" ? "qr2" : "qr4";
+        GameObject obj = qrCodeManager?.GetBottleAtQR(qrSlot);
+        if (obj == null)
         {
-            if (containerType == "shaker" && receiver.containerType == PourReceiver.ContainerType.Shaker)
-                return receiver;
-            else if (containerType == "serving" && receiver.containerType == PourReceiver.ContainerType.ServingGlass)
-                return receiver;
+            if (showDebugLogs) Debug.LogWarning($"[DEBUG] No object at slot {qrSlot} for pour target '{containerType}'");
+            return null;
         }
-
-        return null;
+        return obj.GetComponentInChildren<PourReceiver>();
     }
 
     IEnumerator PourSequence(PourReceiver pourTarget)

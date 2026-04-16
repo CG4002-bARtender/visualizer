@@ -43,7 +43,7 @@ public class PourReceiver : MonoBehaviour
     {
         if (!CanReceiveLiquid()) return;
         
-        fillAmount = Mathf.Clamp01(fillAmount + amount);
+        fillAmount = Mathf.Clamp(fillAmount + amount, 0f, maxCapacity);
         
         if (!contents.Contains(liquidType))
         {

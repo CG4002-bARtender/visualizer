@@ -50,8 +50,6 @@ public class GreenCircleTracker : MonoBehaviour
         {
             handSimulator?.OnHandPositionReceived(greenPosition.x, greenPosition.y);
 
-            if (showDebugLogs)
-                Debug.Log($"[GreenDot] ({greenPosition.x:F3}, {greenPosition.y:F3}) | pixels: {lastGreenPixelCount}");
         }
         else
         {

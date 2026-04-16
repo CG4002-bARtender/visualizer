@@ -20,6 +20,10 @@ public class QRCodeManager : MonoBehaviour
     // Persistent QR tracking — populated on first detection, never cleared
     private Dictionary<string, ARTrackedImage> trackedImages = new Dictionary<string, ARTrackedImage>();
 
+    // Persistent anchor GameObjects — survive ARTrackedImage destruction on tracking loss.
+    // All labels and game objects are parented to these, not to ARTrackedImage directly.
+    private Dictionary<string, GameObject> qrAnchors = new Dictionary<string, GameObject>();
+
     // Persistent number labels ("0", "1", …) — created once per QR, shown/hidden
     private Dictionary<string, GameObject> defaultLabels = new Dictionary<string, GameObject>();
 
@@ -86,24 +90,35 @@ public class QRCodeManager : MonoBehaviour
         bool isNew = !trackedImages.ContainsKey(imageName);
         trackedImages[imageName] = trackedImage;
 
+        // Create or sync the persistent anchor for this QR.
+        // The anchor is a plain GameObject that is never destroyed — all labels and
+        // game objects are parented to it so they survive tracking loss without jumping.
+        if (!qrAnchors.ContainsKey(imageName))
+        {
+            var anchor = new GameObject($"QRAnchor_{imageName}");
+            anchor.transform.SetPositionAndRotation(
+                trackedImage.transform.position,
+                trackedImage.transform.rotation);
+            qrAnchors[imageName] = anchor;
+        }
+        else
+        {
+            qrAnchors[imageName].transform.SetPositionAndRotation(
+                trackedImage.transform.position,
+                trackedImage.transform.rotation);
+        }
+
+        Transform anchorT = qrAnchors[imageName].transform;
+
         // Create the default number label on first-ever detection (persists forever)
         if (!defaultLabels.ContainsKey(imageName))
         {
             string slotNumber = imageName.Replace("qr", "");
-            GameObject label = BottleLabelHelper.AddLabel(trackedImage.transform, slotNumber, slotNumberHeight, absoluteOffset: true);
+            GameObject label = BottleLabelHelper.AddLabel(anchorT, slotNumber, slotNumberHeight, absoluteOffset: true);
             defaultLabels[imageName] = label;
             label.SetActive(!labelsHidden && !gameObjects.ContainsKey(imageName));
             Debug.Log($"[QR] Created label '{slotNumber}' for {imageName}");
         }
-        else
-        {
-            // Re-anchor label that was detached during tracking loss
-            ReanchorObject(defaultLabels[imageName], trackedImage.transform);
-        }
-
-        // Re-anchor game object that was detached during tracking loss
-        if (gameObjects.ContainsKey(imageName))
-            ReanchorObject(gameObjects[imageName], trackedImage.transform);
 
         if (isNew)
         {
@@ -119,57 +134,35 @@ public class QRCodeManager : MonoBehaviour
         string imageName = trackedImage.referenceImage.name;
         trackedImages[imageName] = trackedImage;
 
-        if (trackedImage.trackingState == TrackingState.None)
+        // Only move the anchor when tracking is fully reliable.
+        // Limited state can report a QR at another QR's position, which would
+        // drag the bottle there. Freeze at last known good position instead.
+        if (trackedImage.trackingState != TrackingState.Tracking)
             return;
 
-        if (defaultLabels.ContainsKey(imageName))
-        {
-            GameObject label = defaultLabels[imageName];
-            if (label != null && label.transform.parent != trackedImage.transform)
-                label.transform.SetParent(trackedImage.transform, false);
-        }
-
-        if (gameObjects.ContainsKey(imageName))
-        {
-            GameObject obj = gameObjects[imageName];
-            if (obj != null && obj.transform.parent != trackedImage.transform)
-                obj.transform.SetParent(trackedImage.transform, false);
-        }
+        // Keep anchor in sync with the live tracked image each frame.
+        // Labels and game objects move with it automatically as children.
+        if (qrAnchors.ContainsKey(imageName))
+            qrAnchors[imageName].transform.SetPositionAndRotation(
+                trackedImage.transform.position,
+                trackedImage.transform.rotation);
     }
 
     void HandleQRRemoved(ARTrackedImage trackedImage)
     {
         string imageName = trackedImage.referenceImage.name;
-
-        // Detach objects so they survive the ARTrackedImage being destroyed by ARFoundation.
-        // They float at last known position and get re-anchored on re-detection.
-        if (defaultLabels.ContainsKey(imageName))
-        {
-            GameObject label = defaultLabels[imageName];
-            if (label != null) label.transform.SetParent(null, true);
-        }
-
-        if (gameObjects.ContainsKey(imageName))
-        {
-            GameObject obj = gameObjects[imageName];
-            if (obj != null) obj.transform.SetParent(null, true);
-        }
-
+        // The ARTrackedImage GameObject is being destroyed by ARFoundation, but our
+        // anchor (and everything parented to it) is a separate object — it stays at
+        // the last known position until tracking resumes. No detaching needed.
         trackedImages.Remove(imageName);
-    }
-
-    void ReanchorObject(GameObject obj, Transform qrTransform)
-    {
-        if (obj != null && obj.transform.parent != qrTransform)
-            obj.transform.SetParent(qrTransform, true);
     }
 
     // ===== Public API =====
 
     public Transform GetQRTransform(string qrName)
     {
-        if (trackedImages.ContainsKey(qrName))
-            return trackedImages[qrName].transform;
+        if (qrAnchors.ContainsKey(qrName))
+            return qrAnchors[qrName].transform;
         return null;
     }
 
@@ -211,10 +204,7 @@ public class QRCodeManager : MonoBehaviour
         {
             GameObject obj = gameObjects[qrName];
             if (obj != null)
-            {
-                obj.transform.SetParent(null);
                 Destroy(obj);
-            }
             gameObjects.Remove(qrName);
         }
 
@@ -251,6 +241,19 @@ public class QRCodeManager : MonoBehaviour
         foreach (var kvp in defaultLabels)
             if (kvp.Value != null)
                 kvp.Value.SetActive(!gameObjects.ContainsKey(kvp.Key));
+    }
+
+    public void RestartScanning()
+    {
+        StartCoroutine(RestartScanningCoroutine());
+    }
+
+    System.Collections.IEnumerator RestartScanningCoroutine()
+    {
+        if (trackedImageManager.enabled)
+            trackedImageManager.enabled = false;
+        yield return null; // one frame — ARFoundation fires removed events, clearing trackedImages
+        trackedImageManager.enabled = true;
     }
 
     public int CountTracked()

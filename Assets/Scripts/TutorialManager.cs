@@ -200,10 +200,11 @@ public class TutorialManager : MonoBehaviour
         SpawnObject(finalDrinkPrefab, GLASS_SLOT, glassHeight, ref spawnedGlass);
         if (instructionText != null) instructionText.gameObject.SetActive(false);
         tutorialEndPanel?.SetActive(true);
-        StartCoroutine(DelayedAction(5f, EndTutorial));
     }
 
-    void EndTutorial()
+    // Idempotent cleanup — safe to call on any state transition.
+    // Caller is responsible for showing whatever UI comes next.
+    public void CleanupTutorialState()
     {
         ClearSpawned();
         if (qrCodeManager != null)
@@ -217,7 +218,6 @@ public class TutorialManager : MonoBehaviour
         if (instructionText != null) instructionText.gameObject.SetActive(true);
         tutorialPanel?.SetActive(false);
         tutorialEndPanel?.SetActive(false);
-        FindObjectOfType<GameUIManager>()?.OnStartScreen();
     }
 
     void ClearSpawned()

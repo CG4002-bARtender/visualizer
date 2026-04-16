@@ -161,3 +161,5 @@ crashlytics-build.properties
 # ============================================================
 /ProjectSettings/
 /[Aa]ssets/Plugins/iOS/MDNSResolver*
+ProjectSettings/ProjectSettings.asset
+UserSettings/Layouts/CurrentMaximizeLayout.dwlt

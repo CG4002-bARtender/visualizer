@@ -110,7 +110,7 @@ public class GameUIManager : MonoBehaviour
         if (idleInfoText != null)
         {
             idleInfoText.text = round <= 1
-                ? "Move closer to the QR codes until bottles appear.\nThen, the customer can make an order."
+                ? "Move closer to the QR codes until all 5 numbers appear.\nThen, the customer can make an order."
                 : "Customer can make an order.";
         }
         idleInfoPanel?.SetActive(true);
@@ -129,6 +129,12 @@ public class GameUIManager : MonoBehaviour
         if (normalModeBox   != null) normalModeBox.color   = modeDefaultColor;
         if (tutorialModeBox != null) tutorialModeBox.color = modeDefaultColor;
         if (cheatModeBox    != null) cheatModeBox.color    = modeDefaultColor;
+    }
+
+    public void SetIdleText(string text)
+    {
+        if (idleInfoText != null) idleInfoText.text = text;
+        idleInfoPanel?.SetActive(true);
     }
 
     public void OnNewOrder(int round, int score)

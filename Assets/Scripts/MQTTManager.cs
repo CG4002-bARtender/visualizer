@@ -18,7 +18,7 @@ public class MQTTManager : MonoBehaviour
     public int securePort = 8883;
     public int insecurePort = 1883;
     public string subscribeTopic = "game";
-    public bool useTLS = true;
+    public bool useTLS = false;
 
     [Header("Authentication")]
     public string mqttUsername = "";
@@ -62,6 +62,11 @@ public class MQTTManager : MonoBehaviour
     private Dictionary<int, string> currentBottleMap = new Dictionary<int, string>();
     private bool isReconnecting = false;
     private bool isConnecting = false;
+
+    // Buffered order — held until all 5 QR labels are visible
+    private int pendingDrinkInt = -1;
+    private Dictionary<int, string> pendingBottleMap = null;
+    private string pendingRawJson = null;
 
     void Start()
     {
@@ -201,7 +206,7 @@ public class MQTTManager : MonoBehaviour
             if (client.IsConnected)
             {
                 client.Subscribe(new string[] { subscribeTopic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
-                Debug.Log($"[DEBUG] ✓ Connected and subscribed to {subscribeTopic}");
+                Debug.Log($"[MQTT] ✓ Connected and subscribed to '{subscribeTopic}'");
                 UnityMainThreadDispatcher.Instance().Enqueue(() => gameUIManager?.SetMQTTStatus(true, brokerAddress));
             }
             else
@@ -226,18 +231,17 @@ public class MQTTManager : MonoBehaviour
 
     void ProcessMessage(string json)
     {
-        if (showDebugLogs) Debug.Log($"[DEBUG] 📩 MQTT: {json}");
+        if (showDebugLogs) Debug.Log($"[STATE] 📩 Raw MQTT: {json}");
 
         try
         {
             MQTTMessage msg = JsonUtility.FromJson<MQTTMessage>(json);
             if (msg == null) return;
 
-            // Detect tutorial mode entry: {"state": 1, "mode": 1}
+            // Detect tutorial mode entry: state=0, mode=1
             if (!isTutorialMode && msg.mode == 1)
             {
                 ActivateTutorialMode();
-                gameUIManager?.OnIdle(msg.mode, currentRound);
                 return;
             }
 
@@ -250,12 +254,16 @@ public class MQTTManager : MonoBehaviour
                     tutorialManager?.HandleStep(tutorialStep, hallId);
                     return;
                 }
-                // START_SCREEN (5) = tutorial complete
+                // START_SCREEN (5) = tutorial complete.
+                // Show the end panel + final drink and ACK immediately. Server owns the
+                // timeout before sending the next state; when that arrives the normal
+                // handler will call CleanupTutorialState() and hide the end panel.
                 if (msg.state == 5)
                 {
-                    tutorialManager?.HandleComplete();
                     isTutorialMode = false;
                     if (qrCodeManager != null) qrCodeManager.ShowLabels();
+                    tutorialManager?.HandleComplete();
+                    PublishAnimReady("tutorial complete");
                     return;
                 }
                 return;
@@ -271,7 +279,7 @@ public class MQTTManager : MonoBehaviour
                 case 5: HandleStartScreen();       break;
                 case 6: HandleGameEnd(msg);        break;
                 default:
-                    if (showDebugLogs) Debug.LogWarning($"[DEBUG] Unknown state: {msg.state}");
+                    if (showDebugLogs) Debug.LogWarning($"[STATE] ⚠ Unknown state: {msg.state}");
                     break;
             }
 
@@ -279,13 +287,14 @@ public class MQTTManager : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[DEBUG] ❌ Error parsing MQTT message: {ex.Message}");
+            Debug.LogError($"[STATE] ❌ Error parsing MQTT message: {ex.Message}");
         }
     }
 
     // state 0: idle — dismisses start/end screens, or shows round end mid-game
     void HandleIdle(MQTTMessage msg)
     {
+        tutorialManager?.CleanupTutorialState();
         handSimulator?.ExitPourState();
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
@@ -306,15 +315,15 @@ public class MQTTManager : MonoBehaviour
                 cocktailManager?.ShowFailMarker();
 
             gameUIManager?.UpdateHUD(currentRound, currentScore);
-            PublishAnimReady();
-            Debug.Log($"[DEBUG] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")}), next round: {currentRound}");
+            PublishAnimReady($"round {msg.round} end");
+            Debug.Log($"[STATE 0 / IDLE] Round {msg.round} ended — score: {msg.score} ({(msg.round_score == 1 ? "PASS" : "FAIL")}), next round: {currentRound}");
         }
         else
         {
             currentRound = 1; // first round starts now
             currentScore = 0;
             gameUIManager?.UpdateHUD(currentRound, currentScore);
-            Debug.Log("[DEBUG] Entered idle from " + (currentState == 5 ? "start screen" : "game end"));
+            Debug.Log("[STATE 0 / IDLE] Entering idle from " + (currentState == 5 ? "start screen" : "game end"));
         }
 
         gameUIManager?.OnIdle(msg.mode, currentRound);
@@ -323,6 +332,7 @@ public class MQTTManager : MonoBehaviour
     // state 5: start screen
     void HandleStartScreen()
     {
+        tutorialManager?.CleanupTutorialState();
         handSimulator?.ExitPourState();
         handSimulator?.ExitShakeState();
         handSimulator?.OnReleaseCupButton();
@@ -338,11 +348,14 @@ public class MQTTManager : MonoBehaviour
             qrCodeManager.onAllQRDetected = null;
         }
         isTutorialMode = false;
+        pendingDrinkInt  = -1;
+        pendingBottleMap = null;
+        pendingRawJson   = null;
         gameUIManager?.OnStartScreen();
         currentRound = 0;
         currentScore = 0;
         currentDrinkInt = -1;
-        Debug.Log("[DEBUG] START_SCREEN received");
+        Debug.Log("[STATE 5 / START SCREEN] Returned to start screen");
     }
 
     // state 6: game end
@@ -366,8 +379,8 @@ public class MQTTManager : MonoBehaviour
         gameUIManager?.UpdateHUD(msg.round, currentScore);
         cocktailManager?.ClearCurrentCocktail();
         gameUIManager?.OnGameEnd(currentScore);
-        PublishAnimReady();
-        Debug.Log($"[DEBUG] Game ended — total score: {msg.score}");
+        PublishAnimReady("game end");
+        Debug.Log($"[STATE 6 / GAME END] Game ended — total score: {msg.score}");
     }
 
     // state 1: new order (has bottle_map) OR hand hover position update OR release from GRAB
@@ -375,16 +388,38 @@ public class MQTTManager : MonoBehaviour
     {
         if (rawJson.Contains("\"bottle_map\""))
         {
-            // New order arriving — clear previous cocktail and set up the bar layout
-            cocktailManager?.ClearCurrentCocktail();
-            Dictionary<int, string> bottleMap = ParseBottleMap(rawJson);
-            cocktailManager?.SetupFromMQTT(msg.drink, bottleMap);
-            currentDrinkInt = msg.drink;
-            currentBottleMap = bottleMap;
-            Debug.Log($"[DEBUG] 🍹 New order: drink {msg.drink}, round {currentRound}");
-            gameUIManager?.OnNewOrder(currentRound, currentScore);
-            var recipe = ParseRecipe(rawJson);
-            recipeOverlay?.SetupRecipe(msg.drink, recipe.ingredients, recipe.shake);
+            int tracked = qrCodeManager != null ? qrCodeManager.CountTracked() : 5;
+            int needed  = qrCodeManager != null ? qrCodeManager.expectedQRCount : 5;
+
+            if (tracked < needed)
+            {
+                // Not all labels visible yet — buffer the order and wait
+                pendingDrinkInt  = msg.drink;
+                pendingBottleMap = ParseBottleMap(rawJson);
+                pendingRawJson   = rawJson;
+
+                Debug.Log($"[STATE 1 / HOVER] 🕐 Order buffered (drink {msg.drink}) — waiting for QR codes ({tracked}/{needed})");
+
+                gameUIManager?.SetIdleText(
+                    $"Scanning QR codes... ({tracked}/{needed})\nMove closer until all codes appear.");
+
+                qrCodeManager.onQRCountChanged = (detected, total) =>
+                {
+                    gameUIManager?.SetIdleText(
+                        $"Scanning QR codes... ({detected}/{total})\nMove closer until all codes appear.");
+                };
+
+                qrCodeManager.onAllQRDetected = () =>
+                {
+                    qrCodeManager.onQRCountChanged = null;
+                    qrCodeManager.onAllQRDetected  = null;
+                    if (pendingBottleMap != null)
+                        ApplyPendingOrder();
+                };
+                return;
+            }
+
+            ApplyOrder(msg.drink, ParseBottleMap(rawJson), rawJson);
         }
         else
         {
@@ -399,30 +434,66 @@ public class MQTTManager : MonoBehaviour
             handSimulator?.ClearHighlight();
     }
 
+    void ApplyPendingOrder()
+    {
+        if (pendingBottleMap == null) return;
+        int drink       = pendingDrinkInt;
+        var bottleMap   = pendingBottleMap;
+        var rawJson     = pendingRawJson;
+        pendingDrinkInt  = -1;
+        pendingBottleMap = null;
+        pendingRawJson   = null;
+        Debug.Log($"[STATE 1 / HOVER] ✅ Applying buffered order — drink {drink} (all QR codes now visible)");
+        ApplyOrder(drink, bottleMap, rawJson);
+    }
+
+    void ApplyOrder(int drink, Dictionary<int, string> bottleMap, string rawJson)
+    {
+        cocktailManager?.ClearCurrentCocktail();
+        cocktailManager?.SetupFromMQTT(drink, bottleMap);
+        currentDrinkInt  = drink;
+        currentBottleMap = bottleMap;
+        Debug.Log($"[STATE 1 / HOVER] 🍹 New order received — drink {drink}, round {currentRound}");
+        gameUIManager?.OnNewOrder(currentRound, currentScore);
+        var recipe = ParseRecipe(rawJson);
+        recipeOverlay?.SetupRecipe(drink, recipe.ingredients, recipe.shake);
+    }
+
     // state 2: bottle grabbed (or returned to grab after shake)
     void HandleGrab(MQTTMessage msg)
     {
         // Only grab if this is a fresh GRAB transition (not returning from SHAKE)
         if (currentState != 4)
+        {
+            Debug.Log($"[STATE 2 / GRAB] Grabbing slot {msg.picked_up}");
             handSimulator?.GrabObjectAtSlot(msg.picked_up);
+        }
+        else
+        {
+            Debug.Log($"[STATE 2 / GRAB] Returning to grab after shake — slot {msg.picked_up} (skipping re-grab)");
+        }
     }
 
     // state 3: pouring
     void HandlePour(MQTTMessage msg)
     {
         Color pourColor;
+        string source;
         if (msg.picked_up == 2)
         {
             // Shaker → glass: use the drink's color
             pourColor = SimpleHandSimulator.GetIngredientColorByName(GetDrinkMixedColorKey(currentDrinkInt));
+            source = "shaker";
         }
         else
         {
             // Bottle → shaker/glass: look up the ingredient at this slot
-            string ingredient = currentBottleMap.ContainsKey(msg.picked_up) ? currentBottleMap[msg.picked_up] : "";
+            string ingredient = currentBottleMap.ContainsKey(msg.picked_up) ? currentBottleMap[msg.picked_up] : "unknown";
             pourColor = SimpleHandSimulator.GetIngredientColorByName(ingredient);
+            source = $"slot {msg.picked_up} ({ingredient})";
         }
-        handSimulator?.OnMQTTPour(msg.pour_target, pourColor, PublishAnimReady);
+        Debug.Log($"[STATE 3 / POUR] Pouring from {source} → {msg.pour_target}");
+        handSimulator?.OnMQTTPour(msg.pour_target, pourColor, () => PublishAnimReady($"pour → {msg.pour_target}"));
 
         if (!string.IsNullOrEmpty(msg.pour_result))
             recipeOverlay?.MarkIngredientStep(msg.pour_result);   // ingredient pour
@@ -430,18 +501,23 @@ public class MQTTManager : MonoBehaviour
             recipeOverlay?.MarkFinishingPour();                   // shaker → glass
     }
 
-    void PublishAnimReady()
+    void PublishAnimReady(string reason = "unknown")
     {
-        if (client == null || !client.IsConnected) return;
+        if (client == null || !client.IsConnected)
+        {
+            Debug.LogWarning($"[ANIM ACK] ⚠ Skipped ({reason}) — MQTT not connected");
+            return;
+        }
         client.Publish("anim", new byte[] { 0x01 }, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-        if (showDebugLogs) Debug.Log("[DEBUG] Published anim ACK to 'anim' topic");
+        Debug.Log($"[ANIM ACK] ✓ Sent — reason: {reason}");
     }
 
     // state 4: shaking
     void HandleShake(MQTTMessage msg)
     {
+        Debug.Log("[STATE 4 / SHAKE] Shaking shaker");
         recipeOverlay?.MarkShakeStep();
-        handSimulator?.OnMQTTShake(PublishAnimReady);
+        handSimulator?.OnMQTTShake(() => PublishAnimReady("shake complete"));
     }
 
     struct RecipeData { public string[] ingredients; public bool shake; }
@@ -538,7 +614,9 @@ public class MQTTManager : MonoBehaviour
             qrCodeManager.ClearAllGameObjects();
             qrCodeManager.HideLabels();
         }
-        tutorialManager?.StartTutorial();
+        tutorialManager?.StartTutorial(); // sets up filter + callbacks before restart
+        qrCodeManager?.RestartScanning(); // cycle manager so already-visible QRs re-fire
+        gameUIManager?.OnIdle(1, 0);      // hide start screen → tutorial transition
     }
 
     void OnApplicationQuit()

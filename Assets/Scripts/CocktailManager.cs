@@ -49,7 +49,7 @@ public class CocktailManager : MonoBehaviour
 
     [Header("Label Settings")]
     public GameObject bottleLabelPrefab;
-    public float bottleLabelHeight = -0.04f;
+    public float bottleLabelHeight = 0.15f;
 
     [Header("Settings")]
     public float bottleHeight = 0.08f;
@@ -85,10 +85,12 @@ public class CocktailManager : MonoBehaviour
         newItem.transform.localPosition = Vector3.up * heightOffset;
         newItem.transform.localRotation = Quaternion.identity;
 
-        // Add label below bottle (use ingredient name from prefab name, cleaned up)
-        // Label is a child of newItem and will be destroyed with it — don't track separately
-        string label = System.Text.RegularExpressions.Regex.Replace(prefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
-        BottleLabelHelper.AddLabel(newItem.transform, label, bottleLabelHeight, absoluteOffset: true, prefabOverride: bottleLabelPrefab);
+        // Add label above bottle — glasses (qr4) get no label
+        if (qrName != "qr4")
+        {
+            string label = System.Text.RegularExpressions.Regex.Replace(prefab.name, @"(Prefab|prefab|AlcoBottle|EmptyGlass|Drink|V\d+)$", "").Trim();
+            BottleLabelHelper.AddLabel(newItem.transform, label, bottleLabelHeight, absoluteOffset: true, prefabOverride: bottleLabelPrefab);
+        }
 
         currentCocktailItems.Add(newItem);
         activeQRSlots.Add(qrName);

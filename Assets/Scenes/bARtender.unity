@@ -668,7 +668,7 @@ MonoBehaviour:
   securePort: 8883
   insecurePort: 1883
   subscribeTopic: game
-  useTLS: 1
+  useTLS: 0
   mqttUsername: test
   mqttPassword: test
   caCertFileName: ca.crt
@@ -679,11 +679,10 @@ MonoBehaviour:
   gameUIManager: {fileID: 789331966}
   recipeOverlay: {fileID: 70860797}
   qrCodeManager: {fileID: 945571473}
-  testingMode: 0
   tutorialManager: {fileID: 1820995979}
+  testingMode: 0
   showDebugLogs: 1
   reconnectInterval: 5
-  roundResetDelay: 3
 --- !u!4 &215324652
 Transform:
   m_ObjectHideFlags: 0
@@ -1911,7 +1910,7 @@ MonoBehaviour:
   successMarkerPrefab: {fileID: 5384421626665863186, guid: d4ed9646dc8df44418c50302a246863e, type: 3}
   markerHeight: 0.12
   bottleLabelPrefab: {fileID: 894780568}
-  bottleLabelHeight: -0.3
+  bottleLabelHeight: 0.3
   bottleHeight: 0.03
   shakerHeight: 0.03
   glassHeight: 0.03
@@ -2121,7 +2120,6 @@ MonoBehaviour:
   trackedImageManager: {fileID: 380555781}
   floatingLabelPrefab: {fileID: 817302024}
   slotNumberHeight: 0.07
-  suppressLabels: 0
   expectedQRCount: 5
 --- !u!4 &945571474
 Transform:
@@ -2271,7 +2269,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tutorial finished!
+  m_text: Thumbs up to start the game!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9a14a8a1184c5f14fbce3338ea4d7a35, type: 2}
   m_sharedMaterial: {fileID: -2775795804827455145, guid: 9a14a8a1184c5f14fbce3338ea4d7a35, type: 2}
@@ -3069,7 +3067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3556c654596da4aa9b7d6c160c3a3d60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableStereo: 1
+  enableStereo: 0
   ipd: 0.064
 --- !u!1 &1455132343
 GameObject:
