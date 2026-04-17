@@ -14,11 +14,11 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 public class MQTTManager : MonoBehaviour
 {
     [Header("MQTT Broker Settings")]
-    public string brokerAddress = "172.20.10.13";
+    public string brokerAddress = "bARtender.local";
     public int securePort = 8883;
     public int insecurePort = 1883;
     public string subscribeTopic = "game";
-    public bool useTLS = false;
+    public bool useTLS = true;
 
     [Header("Authentication")]
     public string mqttUsername = "";
