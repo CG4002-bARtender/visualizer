@@ -14,7 +14,7 @@ import json
 import argparse
 import paho.mqtt.client as mqtt
 
-BROKER     = "localhost"
+BROKER     = "172.20.10.13"
 PORT       = 1883
 TOPIC      = "game"
 MAX_ROUNDS = 3

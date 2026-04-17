@@ -7,5 +7,5 @@ if len(sys.argv) != 3:
 
 topic = sys.argv[1]
 value = int(sys.argv[2])
-single(topic, payload=bytes([value]), hostname="10.236.176.83", port=1883)
+single(topic, payload=bytes([value]), hostname="172.20.10.13", port=1883)
 print(f"Sent byte {value} to '{topic}'")
